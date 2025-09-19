@@ -1,0 +1,744 @@
+* {
+    margin: 0;
+}
+
+/*GENERALES*/
+
+/*Para párrafos introductorios
+ o para la primera sección de cada página*/
+.texto-principal {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 18px;
+    line-height: 2;
+}
+
+/*Para el resto de los párrafos*/
+.texto-secundario {
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    line-height: 2;
+}
+
+/*títulos de cada sección*/
+h3.subtitulo,
+h2.subtitulo {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 40px;
+    padding-top: 15px;
+    padding-bottom: 20px;
+    border-bottom: solid 1px #CDC6B9;
+    margin-bottom: 25px;
+}
+
+h3 {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 22px;
+    padding-top: 5px;
+}
+
+a {
+    text-decoration: none;
+    font-family: 'Roboto', sans-serif;
+}
+
+p {
+    font-family: 'Roboto', sans-serif;
+}
+
+
+/*Estilo de las citas*/
+
+h2.cita {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 40px;
+    line-height: 1.5;
+    padding-bottom: 20px;
+    border-bottom: solid 1px #CDC6B9;
+}
+
+h4.autor-cita {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 12px;
+    color: #87796dbe;
+
+}
+
+p.autor-cita {
+    font-size: 12px;
+    color: #87796dbe;
+}
+
+
+
+/**********ELEMENTOS HEADER**********/
+
+/******NAVBAR******/
+
+/*enlaces*/
+.fondo-nav {
+    background-color: #efebe8 !important;
+}
+
+.texto-nav a {
+    color: #202d2d !important;
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 18px;
+}
+
+a.nav-link {
+    padding: 0 20px !important;
+}
+
+.nav-link.active {
+    color: #919C1B !important;
+}
+
+.nav-link:hover {
+    color: #919C1B !important;
+}
+
+.dropdown-item {
+    font-size: 18px !important;
+}
+
+/*boton dropdown*/
+.dropdown-toggle::after {
+    display: none;
+}
+
+.dropdown-item.active {
+    margin: 0 !important;
+    background-color: #efebe8;
+    color: #919C1B !important;
+}
+
+/*menú desplegado */
+.offcanvas.show:not(.hiding) {
+    background-color: #efebe8 !important;
+}
+
+.dropdown-menu.show {
+    background-color: #efebe8 !important;
+}
+
+.offcanvas-header {
+    padding: 25px 40px;
+}
+
+.dropdown-item:hover {
+    color: #919C1B !important;
+    background-color: #efebe8 !important;
+}
+
+.offcanvas-body {
+    text-align: center;
+}
+
+.offcanvas-body a {
+    font-size: 20px;
+}
+
+.iconos-nav {
+    padding: 30px;
+    text-align: center;
+}
+
+/**********ESTO APLICA A TODOS LOS BANNERS**********/
+.banner-1linea,
+.banner-2lineas,
+.banner-3lineas {
+    background-color: #efebe8;
+}
+
+/*El número de renglones determina el padding superior*/
+
+/*títulos de 1 renglon*/
+.banner-1linea h1 {
+    padding: 588px 30px 55px 0;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 68px;
+    color: #efebe8;
+    margin: 0px;
+}
+
+/*títulos de 2 renglones*/
+.banner-2lineas h1 {
+    padding: 507px 30px 55px 0;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 68px;
+    color: #efebe8;
+    margin: 0px;
+}
+
+/*títulos de 3 renglones*/
+.banner-3lineas h1 {
+    padding: 425px 30px 55px 0;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 68px;
+    color: #efebe8;
+    margin: 0px;
+}
+
+.banner-1linea .inicio,
+.banner-2lineas .inicio,
+.banner-3lineas .inicio {
+    /* background-image: url(/imagenes/banners/fondo-inicio.jpg); */
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+    background-position: center;
+    margin: 0 30px;
+}
+/* defino las imágenes del banner */
+.imagen1{
+    background-image: url(/imagenes/banners/fondo-inicio.jpg);
+}
+.imagen2{
+    background-image: url(/imagenes/banners/fondo-actividades.jpg);
+}
+.imagen3{
+    background-image: url(/imagenes/banners/fondo-colaboradores.jpg);
+}
+.imagen4{
+    background-image: url(/imagenes/banners/fondo-directorio.jpg);
+}
+.imagen5{
+    background-image: url(/imagenes/banners/fondo-educacion.jpg);
+}
+.imagen6{
+    background-image: url(/imagenes/banners/fondo-historia.jpg);
+}
+.imagen7{
+    background-image: url(/imagenes/banners/fondo-mapa.jpg);
+}
+.imagen8{
+    background-image: url(/imagenes/banners/fondo-recorridos.jpg);
+}
+.imagen9{
+    background-image: url(/imagenes/banners/fondo-servicios.jpg);
+}
+.imagen10{
+    background-image: url(/imagenes/banners/fondo-educacion.jpg);
+}
+
+/*redes sociales*/
+.redes-header {
+    display: inline;
+}
+
+.iconos {
+    padding: 5px 30px;
+}
+
+.iconos img {
+    position: relative;
+    transition: all 0.2s linear;
+}
+
+.iconos img:hover {
+    transform: translate3d(0, 4px, 0);
+}
+
+/*boton scroll down -circular*/
+
+.button-scroll-down p {
+    color: #87796d !important;
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 16px;
+    margin: -28px -6px;
+}
+
+.button-scroll-down {
+    position: relative;
+    padding: 5px;
+    margin: -35px auto;
+    background: #64383E;
+    height: 45px;
+    width: 45px;
+    border-radius: 50%;
+    transition: all 0.2s linear;
+}
+
+.button-scroll-down:hover {
+    transform: translate3d(0, 10px, 0);
+}
+
+.button-scroll-down::after {
+    content: "";
+    position: absolute;
+    left: 12px;
+    z-index: 11;
+    display: block;
+    width: 20px;
+    height: 20px;
+    border-top: 2px solid #efebe8;
+    border-left: 2px solid #efebe8;
+}
+
+.button-scroll-down::after {
+    top: 10px;
+    transform: rotate(225deg);
+}
+
+
+/**********ELEMENTOS FOOTER**********/
+footer {
+    background-color: #202d2d;
+    color: #CDC6B9;
+}
+
+footer h5 {
+    font-size: 18px;
+    color: #87796d;
+}
+
+footer p {
+    font-size: 14px;
+}
+
+.botones {
+    text-align: center;
+}
+
+footer .logo {
+    margin: 20px 0;
+    width: 100px;
+}
+
+/*botón grande*/
+.boton-grande {
+    background-color: #64383E;
+    padding: 15px 38px;
+    color: #efebe8;
+    font-size: 18px;
+}
+
+.boton-grande:hover {
+    background-color: #CDC6B9;
+    color: #64383E;
+}
+
+/*botón subir*/
+.button-scroll-up p {
+    color: #CDC6B9 !important;
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 16px;
+    margin: 48px -3px;
+}
+
+.button-scroll-up {
+    position: relative;
+    padding: 5px;
+    margin: -35px auto;
+    background: #87796d;
+    height: 45px;
+    width: 45px;
+    border-radius: 50%;
+    transition: all 0.2s linear;
+}
+
+.button-scroll-up:hover {
+    transform: translate3d(0, -10px, 0);
+}
+
+.button-scroll-up::after {
+    content: "";
+    position: absolute;
+    left: 12px;
+    z-index: 11;
+    display: block;
+    width: 20px;
+    height: 20px;
+    border-top: 2px solid #efebe8;
+    border-left: 2px solid #efebe8;
+}
+
+.button-scroll-up::after {
+    top: 15px;
+    transform: rotate(45deg);
+}
+
+
+
+
+
+
+/*****AQUÍ INICIAN LAS MEDIA QUERIES******/
+
+/*GENERALES*/
+
+
+@media (max-width: 575px) {
+
+    /*pie de imagen- botones corousel*/
+    .owl-theme .owl-dots .owl-dot span {
+        width: 8px;
+        height: 8px;
+        margin: 4px 6px;
+    }
+}
+
+@media (max-width: 767px) {
+
+    /*títulos de cada sección*/
+    h2.subtitulo,
+    h3.subtitulo {
+        font-size: 38px;
+    }
+
+    /*citas*/
+    h2.cita,
+    h3.cita {
+        font-size: 28px;
+    }
+
+
+    h4.autor-cita {
+        font-size: 10px;
+    }
+
+    p.autor-cita {
+        font-size: 10px;
+    }
+
+}
+
+
+@media (min-width: 768px) and (max-width: 1199.98px) {
+
+    /*citas*/
+    h2.cita,
+    h3.cita {
+        font-size: 30px;
+    }
+
+    h4.autor-cita {
+        font-size: 11px;
+    }
+
+    p.autor-cita {
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 1199.98px) {
+
+    /*párrafos*/
+    .texto-principal {
+        font-size: 16px;
+    }
+
+}
+
+/**********ESTO APLICA A LA NAV***********/
+@media only screen and (max-width: 991px) {
+
+    .nav-item,
+    .nav-item .dropdown {
+        padding-bottom: 25px;
+    }
+
+    .dropdown-item {
+        text-align: center;
+    }
+
+    .offcanvas-body {
+        padding: 20px 40px;
+    }
+}
+
+/**********ESTO APLICA A TODOS LOS BANNERS**********/
+
+/*redes sociales*/
+
+@media only screen and (max-width: 575px) {
+    .redes-header .iconos {
+        display: none;
+    }
+
+    a .button-scroll-down {
+        margin-top: 10px;
+    }
+}
+
+@media only screen and (min-width: 991px) {
+    .iconos-nav {
+        display: none;
+    }
+}
+
+/*Imagenes del banner small*/
+
+@media (max-width: 449px) {
+
+    .banner-index .inicio {
+        background-image: url(/imagenes/banners/fondo-inicio-vertical.jpg);
+    }
+
+    .banner-recorridos .inicio {
+        background-image: url(/imagenes/banners/fondo-recorridos-vertical.jpg);
+    }
+
+    .banner-mapa .inicio {
+        background-image: url(/imagenes/banners/fondo-mapa-vertical.jpg);
+    }
+
+    .banner-historia .inicio {
+        background-image: url(/imagenes/banners/fondo-historia-vertical.jpg);
+    }
+
+    .banner-servicios .inicio {
+        background-image: url(/imagenes/banners/fondo-servicios-vertical.jpg);
+    }
+
+    .banner-colaboradores .inicio {
+        background-image: url(/imagenes/banners/fondo-colaboradores-vertical.jpg);
+    }
+
+    .banner-directorio .inicio {
+        background-image: url(/imagenes/banners/fondo-directorio-vertical.jpg);
+    }
+
+    .banner-educacion .inicio {
+        background-image: url(/imagenes/banners/fondo-educacion-vertical.jpg);
+    }
+
+    .banner-actividades .inicio {
+        background-image: url(/imagenes/banners/fondo-actividades-vertical.jpg);
+    }
+}
+
+@media (max-width: 575px) {
+
+    .banner-index h1,
+    .banner-recorridos h1,
+    .banner-mapa h1,
+    .banner-historia h1,
+    .banner-servicios h1,
+    .banner-directorio h1,
+    .banner-colaboradores h1,
+    .banner-educacion h1,
+    .banner-actividades h1 {
+        font-size: 45px;
+        padding-right: 10px;
+    }
+
+    /*títulos de 3 renglones*/
+    .banner-index h1 {
+        padding-top: 420px;
+        padding-bottom: 85px;
+    }
+
+    /*títulos de 2 renglones*/
+    .banner-recorridos h1 {
+        padding-top: 476px;
+        padding-bottom: 85px;
+    }
+
+    /*títulos de 1 renglón*/
+    .banner-mapa h1,
+    .banner-historia h1,
+    .banner-servicios h1,
+    .banner-directorio h1,
+    .banner-colaboradores h1,
+    .banner-educacion h1,
+    .banner-actividades h1 {
+        padding-top: 531px;
+        padding-bottom: 85px;
+    }
+}
+
+@media (min-width: 450px) and (max-width: 991px) {
+    .banner-index .inicio {
+        background-image: url(/imagenes/banners/fondo-inicio-medium.jpg);
+    }
+
+    .banner-recorridos .inicio {
+        background-image: url(/imagenes/banners/fondo-recorridos-medium.jpg);
+    }
+
+    .banner-mapa .inicio {
+        background-image: url(/imagenes/banners/fondo-mapa-medium.jpg);
+    }
+
+    .banner-historia .inicio {
+        background-image: url(/imagenes/banners/fondo-historia-medium.jpg);
+    }
+
+    .banner-servicios .inicio {
+        background-image: url(/imagenes/banners/fondo-servicios-medium.jpg);
+    }
+
+    .banner-colaboradores .inicio {
+        background-image: url(/imagenes/banners/fondo-colaboradores-medium.jpg);
+    }
+
+    .banner-directorio .inicio {
+        background-image: url(/imagenes/banners/fondo-directorio-medium.jpg);
+    }
+
+    .banner-educacion .inicio {
+        background-image: url(/imagenes/banners/fondo-educacion-medium.jpg);
+    }
+
+    .banner-actividades .inicio {
+        background-image: url(/imagenes/banners/fondo-actividades-medium.jpg);
+    }
+
+}
+
+
+@media (min-width: 576px) and (max-width: 1199px) {
+
+    .banner-index h1,
+    .banner-recorridos h1,
+    .banner-mapa h1,
+    .banner-historia h1,
+    .banner-servicios h1,
+    .banner-directorio h1,
+    .banner-colaboradores h1,
+    .banner-educacion h1,
+    .banner-actividades h1 {
+        font-size: 56px;
+    }
+
+    /*títulos de 3 renglones*/
+    .banner-index h1 {
+        padding-top: 360px;
+    }
+
+    /*títulos de 2 renglones*/
+    .banner-recorridos h1 {
+        padding-top: 428px;
+    }
+
+    /*títulos de 1 renglón*/
+    .banner-mapa h1,
+    .banner-historia h1,
+    .banner-servicios h1,
+    .banner-directorio h1,
+    .banner-colaboradores h1,
+    .banner-educacion h1,
+    .banner-actividades h1 {
+        padding-top: 495px;
+        padding-bottom: 55px;
+    }
+
+}
+
+/********** AQUÍ INICIA INDEX **********/
+
+/*S2 ENTERATE*/
+
+@media (min-width: 575px) {
+
+    .home-hero {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: minmax(180px, auto) minmax(180px, auto);
+        grid-auto-rows: minmax(200px, auto);
+    }
+
+    .recorridos-menu {
+        grid-column: 1 / 3;
+        grid-row: 1 / 3;
+    }
+
+    .mapa-menu {
+        grid-column: 1;
+        grid-row: 3 / 6;
+    }
+
+    .actividades-menu {
+        grid-column: 1;
+        grid-row: 3 / 6;
+    }
+
+    .educacion-menu {
+        grid-column: 1;
+        grid-row: 6;
+    }
+}
+
+@media (min-width: 576px) {
+
+    .home-hero {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: minmax(140px, auto) minmax(140px, auto);
+        grid-auto-rows: minmax(100px, auto);
+    }
+
+    .recorridos-menu {
+        grid-column: 1;
+        grid-row: 1 / 4;
+    }
+
+    .mapa-menu {
+        grid-column: 1;
+        grid-row: 4 / 5;
+    }
+
+    .actividades-menu {
+        grid-column: 2;
+        grid-row: 1 / 3;
+    }
+
+    .educacion-menu {
+        grid-column: 2;
+        grid-row: 3 / 5;
+    }
+}
+
+@media (max-width: 767px) {
+
+    .wrapper h3 {
+        font-size: 28px;
+    }
+
+    .wrapper p {
+        font-size: 16px;
+    }
+}
+
+@media (min-width: 768px) {
+    .home-hero {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: minmax(140px, auto) minmax(140px, auto);
+        grid-auto-rows: minmax(100px, auto);
+    }
+
+    .recorridos-menu {
+        grid-column: 1;
+        grid-row: 1 / 5;
+    }
+
+    .mapa-menu {
+        grid-column: 1;
+        grid-row: 5 / 6;
+    }
+
+    .actividades-menu {
+        grid-column: 2;
+        grid-row: 1 / 4;
+    }
+
+    .educacion-menu {
+        grid-column: 2;
+        grid-row: 4 / 6;
+    }
+}
+
+/*S3 GALERIA-INICIO*/
+
+@media (max-width: 575px) {
+
+    .galeria-inicio h2 {
+        font-size: 18px;
+    }
+
+    /*pie de imagen*/
+
+    .galeria-inicio h3 {
+        font-size: 8px;
+        padding: 4px 2px;
+    }
+}

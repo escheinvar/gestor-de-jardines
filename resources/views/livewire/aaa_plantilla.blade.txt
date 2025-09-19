@@ -1,0 +1,21 @@
+{{-- @extends('plantillas.base') --}}
+
+@section('title')  @endsection
+@section('meta-description') Meta @endsection
+<!-- silenciar banner if required -->
+@section('banner') banner-1linea @endsection <!-- banner-1linea banner-2lineas banner-3lineas -->
+@section('banner-title') Titulo @endsection
+@section('banner-img') imagen1 @endsection <!-- imagen1 a imagen10 -->
+<!-- silenciar cintillo-ubica if required -->
+@section('cintillo-ubica') -> {{ request()->path() }} @endsection
+@section('cintillo') &nbsp; @endsection
+
+<!-- ----------------------------------------------------------- -->
+<!-- ------------ INICIA CONTENIDO PRINCIPAL ------------------- -->
+{{-- @section('main-Nolivewire')@endsection --}}
+<div>
+
+</div>
+<!-- ------------ TERMINA CONTENIDO PRINCIPAL ------------------- -->
+<!-- ----------------------------------------------------------- -->
+@section('scripts') @endsection

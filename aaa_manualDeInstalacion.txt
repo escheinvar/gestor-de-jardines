@@ -1,0 +1,187 @@
+#### https://www.skynat-s.com/blog/how-to-install-and-configure-laravel-with-nginx-on-ubuntu-24-04/
+
+###################################################### Instalar sistema operativo
+### Descargar sistema operativo ubuntu 24.04 en formato iso
+### Generar usb booteable con iso
+### Preparar bios para iniciar desde usb
+### Incertar usb y reiniciar equipo
+### Instalar ubuntu siguiendo las instrucciones. Una vez esté instalado el sistema operativo:
+
+###################################################### Agregar Nuevo usuario de ubuntu para el sistema
+adduser jardin
+sudo adduser jardin sudo
+
+###################################################### Instalar PHP y librerías
+sudo apt install php8.3 php8.3-fpm php8.3-cli php8.3-common php8.3-curl php8.3-mbstring php8.3-mysql php8.3-xml php8.3-zip php-gd php-imagick
+
+###################################################### Instalar nginx
+sudo apt install nginx -y
+
+###################################################### Instalo Postgresql
+### agrego repositorio
+sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+### agrego key de repositorio
+curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/postgresql.gpg
+### actualizo listado
+apt update
+### instalo postgres
+sudo apt install postgresql
+### inicio servicio postgres
+sudo systemctl start postgresql
+sudo systemctl enable postgresql
+
+###################################################### Configuro Postgres
+### configuro para usar password md5 (para conect remotevia PgADMIN X EJ)
+sudo sed -i '/^host/s/ident/md5/' /etc/postgresql/17/main/pg_hba.conf #### sustituye ident por md5 en lineas que inicien con "host"
+sudo sed -i '/^local/s/peer/trust/' /etc/postgresql/17/main/pg_hba.conf
+
+### permito conecciones remotas a postgres:
+sudo nano /etc/postgresql/17/main/postgresql.conf
+### modifico las siguientes líneas
+listen_addresses = '*'
+password_encription = md5
+
+### editar /etc/postgresql/17/main/pg_hba.conf  y agregar al final:
+host    all    all    0.0.0.0/0    md5
+
+### ingreso a postgres y pongo password a usuario
+sudo -u postgres psql
+ALTER USER postgres PASSWORD 'VeryStronGPassWord@1137';
+exit;
+
+### Reinicio postgres
+sudo systemctl restart postgresql
+
+### permito postgres en firewall
+sudo ufw allow 5432/tcp
+
+###################################################### instalo libreria php postgres
+### para php-postgres
+apt install php-pgsql
+#apt install php-mysql php-sqlite
+
+### para php ngnix
+php -v
+systemctl start php8.3-fpm
+
+### habilitar para que inicien juntos
+systemctl enable php8.3-fpm nginx
+
+#### librerias php que suelo usar:
+apt install php8.3-gd php8.3-intl php8.3-xsl  php-zip php-xml php-gd
+
+###################################################### Instalo composer
+curl -sS https://getcomposer.org/installer | php
+sudo mv composer.phar /usr/local/bin/composer
+composer --version
+
+###################################################### Creo proyecto laravel
+cd /var/www/html
+git clone https://git....
+composer install
+### copiar archivo .env
+php artisan key:generate
+php artisan migrate --seed
+
+##### doy permisos
+cd myproject
+sudo chown -R www-data:www-data /var/www/html/myproject
+sudo chmod -R 775 /var/www/html/myproject/storage /var/www/html/myproject/bootstrap/cache
+
+### o en su caso, cambio owner:
+#sudo nano /etc/nginx/nginx.conf
+
+###################################################### Configuro nginx para laravel:
+sudo nano /etc/nginx/sites-available/myproject
+server {
+    listen 80;
+    server_name mydomain.com;
+    root /var/www/html/myproject/public; #replace with your document root
+
+    add_header X-Frame-Options "SAMEORIGIN";
+    add_header X-Content-Type-Options "nosniff";
+
+    index index.php;
+    charset utf-8;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location = /favicon.ico { access_log off; log_not_found off; }
+    location = /robots.txt  { access_log off; log_not_found off; }
+
+    error_page 404 /index.php;
+
+    location ~ ^/index\.php(/|$) {
+        fastcgi_pass unix:/var/run/php/php8.3-fpm.sock;
+        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+        include fastcgi_params;
+        fastcgi_hide_header X-Powered-By;
+    }
+
+    location ~ /\.(?!well-known).* {
+        deny all;
+    }
+}
+### Creo liga simbólica
+sudo ln -s /etc/nginx/sites-available/myproject /etc/nginx/sites-enabled/
+### reinicio
+sudo nginx -t
+sudo systemctl restart nginx
+
+###################################################### Si genero + de 1 archivo nginx (con diferente server_name y root o diferente listen 80 listen 8001):
+sudo nano /etc/nginx/nginx.conf
+## descomentar:
+http {
+    server_names_hash_bucket_size 64;
+}
+sudo nginx -t
+sudo systemctl restart nginx
+
+###################################################### Configuro nombre de host:
+sudo nano /etc/hosts
+### agregar linea:
+45.90.223.160  jardinoaxaca.org   www.jardinoaxaca.org
+
+
+####################################################################################
+###################################################### CREAR E INSTALAR CERTIIFICADO
+### https://www.digicert.com/kb/csr-ssl-installation/nginx-openssl.htm
+### https://support.hostinger.com/en/articles/6865487-how-to-install-ssl-on-vps-using-certbot
+
+### instalo
+sudo apt install python3 python3-venv libaugeas0
+###instalo certbot
+sudo python3 -m venv /opt/certbot/
+sudo /opt/certbot/bin/pip install --upgrade pip
+sudo /opt/certbot/bin/pip install certbot certbot-nginx
+### creo liga simbólica
+sudo ln -s /opt/certbot/bin/certbot /usr/bin/certbot
+### instalo certificado y lo activo  ######################### ACTUALIZAR CERTIFICADO
+sudo certbot --nginx
+
+####lo meto a cron pa que se actualice (dura 90 dias)
+echo "0 0,12 * * * root /opt/certbot/bin/python -c 'import random; import time; time.sleep(random.random() * 3600)' && sudo certbot renew -q" | sudo tee -a /etc/crontab > /dev/null
+
+
+#### para ver certificados:
+sudo certbot certificates
+#### para borrar certificados:
+#sudo certbot delete
+
+
+############################################ Configurar php pa tamaño ojo:
+#### En phpinfo() ver: configuration file, upload_max_filesize y post_max_size.
+### En archivo /etc/php/8.4/apache1, .../8.4/cli  .../8.4/fpm
+upload_max_filesize= 256M
+post_max_size = 256M
+
+
+###########################################
+### Cambiar en /config/livewire:
+'temporary_file_upload' => [
+        'max_file_size'=> 128,   ### máximo: 128 MB
+
+php artisan view:clear
+php artisan cache:clear

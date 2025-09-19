@@ -1,0 +1,14 @@
+########################################################################
+########################################   NOTAS DE GESTOR DE JARDINES
+########################################################################
+##### Iniciamos con laravel 12.28.1 y php 8.4.5
+composer create-project laravel/laravel gestorDeJardines
+
+##### Instalé livewire 3.6:
+composer require livewire/livewire
+
+##### Instalé mailgun y http-client v. 7.3
+composer require symfony/mailgun-mailer symfony/http-client
+
+##### Generé liga para subir archivos a public (php artisan  storage:link)
+ln -s public/ storage/app/private
