@@ -146,7 +146,7 @@ class BuzonController extends Component
             ->orderBy('rol_ccamsiglas','asc')
             ->orderBy('rol_crolrol','asc')
             ->get();
-#dd($destinatarios->all());
+
         return view('livewire.sistema.buzon-controller',[
             'buzon'=>$buzon,
             'destinatarios'=>$destinatarios,

@@ -5,6 +5,7 @@ use App\Http\Controllers\login\loginController;
 use App\Http\Controllers\login\logoutController;
 use App\Http\Middleware\rolAdminMiddleware;
 use App\Http\Middleware\UsuarioAutenticadoConRolMiddleware;
+use App\Livewire\Admin\CampusYjardinesController;
 use App\Livewire\Sistema\AdminUsuariosController;
 use App\Livewire\Sistema\BuzonController;
 use App\Livewire\Sistema\HomeConfigController;
@@ -38,4 +39,5 @@ Route::middleware([UsuarioAutenticadoConRolMiddleware::class])->group(function()
     Route::get('/buzon',BuzonController::class)->name('buzon');
     Route::get('/config',HomeConfigController::class)->name('config');
     Route::get('/usuarios',AdminUsuariosController::class)->name('usuarios')->middleware(rolAdminMiddleware::class);
+    Route::get('/campus',CampusYjardinesController::class)->name('campus')->middleware(rolAdminMiddleware::class);
 });

@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
             CatJardinesSeeder::class,
             UsrRolesSeeder::class,
             BuzonSeeder::class,
+            EstadosMunicipiosSeeder::class,
         ]);
 
     }

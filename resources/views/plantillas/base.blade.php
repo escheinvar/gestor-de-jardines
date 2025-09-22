@@ -98,7 +98,7 @@
                                         </a>
                                         <ul class="dropdown-menu">
                                             <li><a class="dropdown-item @if(request()->path() == 'usuarios') active @endif" href="/usuarios">Usuarios</a></li>
-                                            <li><a class="dropdown-item @if(request()->path() == 'laespecie') active @endif" href="/laespecie">Jardines y Campus</a></li>
+                                            <li><a class="dropdown-item @if(request()->path() == 'campus') active @endif" href="/campus">Campus y Jardines</a></li>
                                             {{-- <li><a class="dropdown-item @if(request()->path() == 'elclavo/busca') active @endif" href="/elclavo/busca">Clavo</a></li> --}}
                                         </ul>
                                     </li>
