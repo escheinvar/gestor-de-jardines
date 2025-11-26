@@ -12,3 +12,26 @@ composer require symfony/mailgun-mailer symfony/http-client
 
 ##### Generé liga para subir archivos a public (php artisan  storage:link)
 ln -s public/ storage/app/private
+
+##### Instalé laravel sanctum y api route
+php artisan install:api
+
+##### Instalé Laravel jwt para autenticar API
+composer require tymon/jwt-auth
+
+
+##### Generé un helper para enviar mensajes a buzones
+#   EnviaMensajeAbuzon($to,$from,$asunto,$mensaje,$notas,$comp,$ifReply,$mails)
+#    EnviaMensajeAbuzon(
+#      'to',         ### to: id usr del destinatario
+#      'from',       ### from: id usr del remitente
+#      'asunto',     ### asunto: texto del asunto
+#      'mensaje,     ### mensje: <html> del mensaje
+#      'notas',      ### notas: <html> de las notas
+#      'comp',       ### comp: nombre del componente desde el que se genera el mensaje
+#      'ifReply'     ### if_reply: msj_id del mensaje al que se responde (o vacío para mensajes nuevos)
+#      ['1','2'],    ### array de mails a enviar ó vacío ''
+#    );
+# La función genera el inbox del buzón y además envía un correo electrónico (cuando se indica el array de mails
+# y además cuando el usuario acepta correos desde su configuración)
+#

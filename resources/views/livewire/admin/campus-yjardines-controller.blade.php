@@ -11,6 +11,11 @@
 {{-- @section('main-Nolivewire')@endsection --}}
 <div>
     <h2>Administración de campus y jardines</h2>
+    <div style="font-size: 80%;color:grey;">
+        Este catálogo es administrado por el rol <b>Admin</b>
+        {{-- @if($idEjem > 0) de {{ $ejemplar->ejm_ccamsiglas }} @endif --}}
+         @if($edit=='0') <error style="font-size: 90%;"> No autorizado</error> @else <span style="font-size:90%;color:green;"> Autorizado </span>@endif <br>
+    </div>
 
     <div class="table-responsive-sm">
         <table class="table table-striped">
@@ -19,7 +24,8 @@
                     <th>Nombre corto del campus </th>
                     <th>Siglas del campus</th>
                     <th>Nombre completo del campus</th>
-                    <th>Nombre del jardín (Siglas jardín) [tipo]</th>
+                    <th>Jardín al que pertenece (Siglas) [tipo]</th>
+                    <th>Edo / mpio</th>
                     <th></th>
                 </tr>
             </thead>
@@ -48,6 +54,9 @@
 
                         </td>
                         <td>
+                            {{ $c->ccam_edo }} / {{ $c->ccam_mpio }}
+                        </td>
+                        <td>
 
                             <i class="bi bi-pencil-square"></i>
                         </td>
@@ -73,6 +82,7 @@
                             Ingresando nuevo campus
                         @else
                             Editando campus {{ $campus->where('ccam_id',$tipoModalCampus)->value('ccam_name')}}
+                            {{ $tipoModalCampus }}
                         @endif
                     </h2>
                     <button type="button" wire:click="CierraElModalCampus()" class="btn-close" data-bs-dismiss="modal"> </button>
@@ -82,14 +92,14 @@
                     <div class="row">
                         <!-- mobre completo del campus-->
                         <div class="col-sm-12 col-md-6 form-group">
-                            <label for="NombreCompletoCampus" class="form-label">Nombre completo del campus:</label>
+                            <label for="NombreCompletoCampus" class="form-label">Nombre completo del campus <red>*</red></label>
                             <input wire:model="NombreCompletoCampus" type="email" class="form-control" id="NombreCompletoCampus">
                             <div class="form-text">Indica el nombre completo oficial del Campus</div>
                             @error('NombreCompletoCampus')<error>{{ $message }}</error>@enderror
                         </div>
                         <!-- Jardín al que pertenece -->
                         <div class="col-sm-12 col-md-6 form-group">
-                            <label for="jardin" class="form-label">Jardin al que pertenece:</label>
+                            <label for="jardin" class="form-label">Jardin al que pertenece <red>*</red>:</label>
                             <select wire:model.live="jardinCampus" class="form-select" style="width:93%;display:inline-block;margin-right:3px;" id="jardinCampus">
                                 <option value="">Indica un jardin</option>
                                 @foreach ($jardines as $j)
@@ -113,27 +123,54 @@
 
                         <!-- nombre corto del campus-->
                         <div class="col-sm-12 col-md-6 form-group" >
-                            <label for="NombreCortoCampus" class="form-label">Nombre Corto del campus:</label>
+                            <label for="NombreCortoCampus" class="form-label">Nombre Corto del campus <red>*</red>:</label>
                             <input wire:model="NombreCortoCampus" type="email" class="form-control" id="NombreCortoCampus">
                             <div class="form-text">Indica un nombre corto con el que se identificará al campus en el sistema</div>
                             @error('NombreCortoCampus')<error>{{ $message }}</error>@enderror
                         </div>
-                        <!-- nombre corto del campus-->
+                        <!-- Siglas del campus-->
                         <div class="col-sm-12 col-md-6 form-group" >
-                            <label for="SiglasCampus" class="form-label">Siglas del campus:</label>
+                            <label for="SiglasCampus" class="form-label">Siglas del campus <red>*</red>:</label>
                             <input wire:model="SiglasCampus" type="email" class="form-control" id="SiglasCampus">
                             <div class="form-text">Siglas que identifican al campus (no puede haber dos campus con las mismas siglas en el sistema)</div>
                             @error('SiglasCampus')<error>{{ $message }}</error>@enderror
                         </div>
+                        <!-- Estado en el que se encuntra -->
+                        <div class="col-sm-12 col-md-6 form-group">
+                            <label for="EstadoCampus" class="form-label">Estado en el que se encuentra <red>*</red>:</label>
+                            <select wire:model.live="EstadoCampus" class="form-select" style="width:93%;display:inline-block;margin-right:3px;" id="EstadoCampus">
+                                <option value="">Indica un estado</option>
+                                @foreach ($estados as $j)
+                                    <option value="{{ $j->cedo_nombre }}">{{ $j->cedo_nombre }}</option>
+                                @endforeach
+                            </select>
+                            <div class="form-text">{{ $c->cjar_logo }}Indica el estado de la república en el que se encuentra el campus</div>
+                            @error('EstadoCampus')<error>{{ $message }}</error>@enderror
+                        </div>
+                        <!-- Municipio en el que se encuntra -->
+                        <div class="col-sm-12 col-md-6 form-group">
+                            <label for="MunicipioCampus" class="form-label">Municipio en el que se encuentra <red>*</red>:</label>
+                            <select wire:model.live="MunicipioCampus" class="form-select" style="width:93%;display:inline-block;margin-right:3px;" id="MunicipioCampus">
+                                <option value="">Indica un Municipio</option>
+                                @if($EstadoCampus != '')
+                                    @foreach ($municipios as $j)
+                                        <option value='{{ $j->cmun_mpioname }}'>{{ $j->cmun_mpioname }}</option>
+                                    @endforeach
+                                @endif
+                            </select>
+                            <div class="form-text">{{ $c->cjar_logo }}Indica el municipio en el que se encuentra el campus</div>
+                            @error('MunicipioCampus')<error>{{ $message }}</error>@enderror
+                        </div>
+
                         <!-- dirección del campus -->
-                        <div class="col-12 col-md-6 form-group">
+                        <div class="col-12 col-md-8 form-group">
                             <label for="DireccionCampus" class="form-label">Dirección del campus:</label>
                             <textarea wire:model="DireccionCampus" class="form-control" id="DireccionCampus"></textarea>
                             <div class="form-text">Dirección en la que se encuentra el campus</div>
                             @error('DireccionCampus')<error>{{ $message }}</error>@enderror
                         </div>
                         <!-- desactivar campus -->
-                        <div class="col-12 col-md-6 form-check">
+                        <div class="col-12 col-md-4 form-check">
                             <input class="form-check-input" wire:model.live="CampusInactivo" type="checkbox" id="checkDefault">
                             <label class="form-check-label" for="checkDefault">
                                 Inactivar campus

@@ -18,7 +18,7 @@ class rolAdminMiddleware
         if(in_array('admin',session('rol'))){
             return $next($request);
         }else{
-            return redirect()->route('login');
+            return redirect()->route('noauth',[" "]);
         }
     }
 }

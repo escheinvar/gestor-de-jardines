@@ -26,6 +26,12 @@ class DatabaseSeeder extends Seeder
             UsrRolesSeeder::class,
             BuzonSeeder::class,
             EstadosMunicipiosSeeder::class,
+            CatCamellonesSeeder::class,
+            CatTipoimgSeeder::class,
+            CatAutoridadesSeeder::class,
+            CatConceptosSeeder::class,
+            BitacoraSeeder::class,
+            #CatEspeciesSeeder::class,
         ]);
 
     }

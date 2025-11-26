@@ -14,6 +14,7 @@ class AdminUsuariosController extends Component
 {
     use WithFileUploads;
 
+    public $edit;
     public  $usrId,$correo,$usrname,$nombre,$apellido,$nace;
     public  $Inactiva,$mensajes,$avatar,$NvoAvatar,$rolesUsr,$orden,$sentido;
     public  $NvoRol, $NvoJardin;
@@ -34,6 +35,13 @@ class AdminUsuariosController extends Component
     }
 
     public function render() {
+        ################################# Revisa permisos
+        if(in_array('admin',session('rol'))){
+            $this->edit=TRUE;
+        }else{
+            $this->edit=FALSE;
+        }
+
         $usuarios=User::select(['id','act','email','usrname','nombre','apellido','nace','avatar'])
             ->orderBy($this->orden,$this->sentido)
             ->get();
@@ -45,16 +53,18 @@ class AdminUsuariosController extends Component
             ->get();
             // $catLenguas=CatLenguasModel::orderBy('clen_lengua','asc')->get();
             #dd($roles,$catLenguas);
+
         $catJards=cat_campus::join('cat_jardines','ccam_cjarid','=','cjar_id')
             ->select('ccam_siglas','ccam_name','cjar_siglas','cjar_name')
             ->OrderBy('ccam_siglas')
             ->orderBy('ccam_name')
             ->get();
+
         return view('livewire.sistema.admin-usuarios-controller',[
             'usuarios'=>$usuarios,
             'roles'=>$roles,
             'catJards'=>$catJards,
-            'catRoles'=>cat_roles::select('crol_rol','crol_describe')->get(),
+            'catRoles'=>cat_roles::select('crol_rol','crol_describe')->orderBy('crol_rol')->get(),
         ]);
     }
 
@@ -92,6 +102,8 @@ class AdminUsuariosController extends Component
         usr_roles::where('rol_id',$rolId)->update([
             'rol_act'=>'0',
         ]);
+        $this->NvoRol='';
+        $this->NvoJardin='';
         $this->AbreModal($this->usrId);
     }
 
@@ -102,6 +114,8 @@ class AdminUsuariosController extends Component
             'rol_ccamsiglas'=>$this->NvoJardin,
             'rol_crolrol'=>$this->NvoRol,
         ]);
+        $this->NvoRol='';
+        $this->NvoJardin='';
         $this->AbreModal($this->usrId);
     }
 

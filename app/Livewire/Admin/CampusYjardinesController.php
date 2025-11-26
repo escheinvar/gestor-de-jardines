@@ -5,15 +5,18 @@ namespace App\Livewire\Admin;
 use App\Models\cat_campus;
 use App\Models\cat_jardines;
 use App\Models\estados;
+use App\Models\municipios;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\WithFileUploads;
 
 class CampusYjardinesController extends Component
 {
     use WithFileUploads;
+    public $edit;
 
     public function mount(){
         $this->NvoLogo='';
+        $this->EstadoCampus='';
     }
     ###############################################
     ############# Inicia sección de modal de Campus
@@ -23,7 +26,7 @@ class CampusYjardinesController extends Component
     public function AbreElModalCampus($tipo){
         if($tipo=='nuevo'){
             $this-> tipoModalCampus = 'Nuevo';
-            $this->reset('jardinCampus','NombreCompletoCampus','NombreCortoCampus','SiglasCampus','DireccionCampus','CampusInactivo');
+            $this->reset('jardinCampus','NombreCompletoCampus','NombreCortoCampus','SiglasCampus','EstadoCampus','MunicipioCampus','DireccionCampus','CampusInactivo');
 
         }else{
             $this-> tipoModalCampus = $tipo; //contiene ccam_id
@@ -31,6 +34,8 @@ class CampusYjardinesController extends Component
             $this->NombreCompletoCampus=cat_campus::where('ccam_id',$tipo)->value('ccam_nombre');
             $this->NombreCortoCampus=cat_campus::where('ccam_id',$tipo)->value('ccam_name');
             $this->SiglasCampus=cat_campus::where('ccam_id',$tipo)->value('ccam_siglas');
+            $this->EstadoCampus=cat_campus::where('ccam_id',$tipo)->value('ccam_edo');
+            $this->MunicipioCampus=cat_campus::where('ccam_id',$tipo)->value('ccam_mpio');
             $this->DireccionCampus=cat_campus::where('ccam_id',$tipo)->value('ccam_direccion');
             $ActivoCampus=cat_campus::where('ccam_id',$tipo)->value('ccam_act');
             if($ActivoCampus=='1'){$this->CampusInactivo=FALSE;}else{$this->CampusInactivo=TRUE;}
@@ -40,19 +45,21 @@ class CampusYjardinesController extends Component
     }
 
     public function CierraElModalCampus(){
-        $this->reset('jardinCampus','NombreCompletoCampus','NombreCortoCampus','SiglasCampus','DireccionCampus','CampusInactivo');
+        $this->reset('jardinCampus','NombreCompletoCampus','NombreCortoCampus','SiglasCampus','EstadoCampus','MunicipioCampus','DireccionCampus','CampusInactivo');
         $this->resetValidation();
         $this->dispatch('CierraMiModalCampus');
     }
 
     public function GuardaElModalCampus(){
-        if($this->tipoModalCampus=='Nuevo'){$ElId='0';}else{$ElId=$this->tipoModalCampus;}//TipoModalCampus trae ccam_id
+        if($this->tipoModalCampus=='Nuevo'){$ElId=cat_campus::count()+1;}else{$ElId=$this->tipoModalCampus;}//TipoModalCampus trae ccam_id
         ##### Valida
         $this->validate([
             'jardinCampus'=>'required|not_in:Nvo',
             'NombreCompletoCampus'=>'required',
             'NombreCortoCampus'=>'required',
             'SiglasCampus'=>'required|unique:cat_campus,ccam_siglas,'.$ElId.',ccam_id',
+            'EstadoCampus'=>'required',
+            'MunicipioCampus'=>'required',
         ]);
         ##### Prepara variables
         if($this->CampusInactivo==TRUE){$act='0';}else{$act='1';}
@@ -63,6 +70,8 @@ class CampusYjardinesController extends Component
             'ccam_siglas'=>$this->SiglasCampus,
             'ccam_name'=>$this->NombreCortoCampus,
             'ccam_nombre'=>$this->NombreCompletoCampus,
+            'ccam_edo'=>$this->EstadoCampus,
+            'ccam_mpio'=>$this->MunicipioCampus,
             'ccam_direccion'=>$this->DireccionCampus,
         ]);
         ##### Cierra modal
@@ -135,16 +144,30 @@ class CampusYjardinesController extends Component
     ###############################################
 
     public function render() {
+        ################################# Revisa permisos
+        if(in_array('admin',session('rol'))){
+            $this->edit=TRUE;
+        }else{
+            $this->edit=FALSE;
+        }
+
         $campus=cat_campus::join('cat_jardines','ccam_cjarid','=','cjar_id')
             ->orderBy('ccam_name','asc')
             ->get();
 
         $jardines=cat_jardines::all();
 
+        if($this->EstadoCampus != ''){
+            $municipios=municipios::where('cmun_edoname',$this->EstadoCampus)->get();
+        }else{
+            $municipios=collect();
+        }
+
         return view('livewire.admin.campus-yjardines-controller',[
             'campus'=>$campus,
             'jardines'=>$jardines,
             'estados'=>estados::all(),
+            'municipios'=>$municipios,
         ]);
     }
 }

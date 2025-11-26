@@ -19,6 +19,8 @@ return new class extends Migration
                 $table->string('ccam_siglas')->unique(); ##### Siglas del campus
                 $table->string('ccam_name');  ##### Nombre corto del campus (ej: Jardín ó Canteras)
                 $table->string('ccam_nombre');  ##### Nombre completo del campus (ej: Jardín Etnobotánico ó Parque de Canteras en Archivo)
+                $table->string('ccam_edo')->nullable(); ##### Estado en el que se encuentra
+                $table->string('ccam_mpio')->nullable(); ##### Municipio en el que se encuentra
                 $table->string('ccam_direccion')->nullable();  ##### Dirección del jardín
                 $table->timestamps();
             });

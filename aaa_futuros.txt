@@ -1,0 +1,25 @@
+----------------------------------------------------------
+Completar bitacora-controller:
+- función de asignación de bitácora existente a ejemplar sin
+  bitácora a partir de id de ejemplar y a partir de id de bitácora.
+- En Id=0, incluir acción de modales para Nombre científico,
+  Nombre común, Alias de ejemplar y Usos
+  para que desde el rol de admin-colviva puede ingresar el
+  estos valores (que corresponden a otro rol)
+----------------------------------------------------------
+Módulo de ver bitácora2: con otros datos de la bitácora
+----------------------------------------------------------
+Módulo de asignación de bitácora.
+Módulo de administración que muestre todos los ejemplares
+que están asignados a la bit_id='0', es decir,
+que aún no tienen bitácora.
+----------------------------------------------------------
+Módulo Buscador de bitácoras.
+Módulo que permita buscar bitácoras por si ID o por
+número de id del ejemplar-dueño de la bitárora o por especie.
+----------------------------------------------------------
+Módulo de depuración de imágenes.
+Módulo que lea todos los archivos existentes en carpeta /public/img
+y luego revise cuál de ellas NO ESTÁ en la tabla imágenes,
+para eliminarlas
+----------------------------------------------------------

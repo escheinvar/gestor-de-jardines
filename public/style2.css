@@ -33,7 +33,7 @@ a:link:visited:hover:active.nolink{
     transition: all 0.2s linear;
 }
 .paginador .boton{
-    border-radius: 50%;
+    /* border-radius: 50%; */
 }
 .paginador .boton:hover,
 .paginador .pagina:hover {
@@ -78,11 +78,21 @@ a:link:visited:hover:active.nolink{
     font-weight: bold;
     /* margin: 48px -3px; */
 }
+.paginador  .paginaActiva{
+    background-color: #87796d !important;
+    color: #CDC6B9;
+    text-align: center;
+    vertical-align: middle;
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    /* margin: 48px -3px; */
+}
 
 
 
-
-/* ------------ Formularios ---------*/
+/* ------------------------------------------*/
+/* ------------ INICIA Formularios ---------*/
 .form-select {
     --bs-form-select-bg-img: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
     /* display: block; */
@@ -248,7 +258,13 @@ margin-left: -1.5em;
     color: #919C1B;
 }
 
+[disabled]{
+    background-color: #efebe8 !important;
+    /* border:0px solid #efebe8; */
+}
 
+/* ------------ TERMINA Formularios ---------*/
+/* ------------------------------------------*/
 
 
 /* ------------ Botón de audio ---------*/
@@ -278,7 +294,11 @@ error, red {
     border: 3px solid #CD7B34;
     font-family: 'Roboto Condensed', sans-serif;
 }
-
+.error2{
+    /* background-color: #CD7B34; */
+    border: 2px dashed #CD7B34;
+    font-family: 'Roboto Condensed', sans-serif;
+}
 .etiqueta{
     font-size:10px;
     border:1px solid #87796d;
@@ -303,11 +323,11 @@ error, red {
     margin-top:0px;
     padding:15px;
     color:#87796d;
-    width:100%;
+    /* width:100%; */
 }
 
 tr.inact{
-        text-decoration: line-through;
+    text-decoration: line-through;
     color:gray;
     font-weight: 50;
 }
@@ -331,6 +351,136 @@ nota{
   text-overflow: ellipsis; /* Displays an ellipsis (...) to indicate truncated text */
   display:inherit;
   height:15px;
+}
+
+/* ----------- LEAFLET MAPS -------------- --*/
+#map {
+    /* height: 180px; */
+    height:540px;
+    border:1px solid black;
+}
+
+.regresar{
+    padding-bottom:20px;
+    color:#87796d;
+}
+.regresar:hover {
+    color:#919C1B;
+}
+.regresar::before{
+    content: "<--";
+}
+
+/* ######### INICIA IMAGEN ########## */
+imagen {
+    border:1px dotted #CDC6B9;
+    /* background-color: #CDC6B9; */
+    display:inline-block;
+    padding:10px;
+    vertical-align: top;
+}
+
+.imagen {
+  display: flex;
+  font-size: 80%;
+  color:gray;
+}
+
+.imagen img {
+  margin: 0px;
+  padding:0px;
+  max-width:100%;
+  height: auto;
+  max-height: 200px;
+}
+
+imagen titulo{
+  margin: 0; /* Elimina el margen predeterminado del párrafo */
+  writing-mode:horizontal-tb;
+  vertical-align: bottom;
+  text-align: left;
+  font-weight:600;
+  width: 100%;
+  padding-left:15px;
+  display:inline-block;
+}
+
+.imagen fecha {
+  margin: 0; /* Elimina el margen predeterminado del párrafo */
+  /* writing-mode:sideways-lr; */
+  transform: rotate(180deg);
+  writing-mode: vertical-lr;
+  vertical-align: bottom;
+  font-weight:400;
+  color:#CDC6B9;
+}
+
+.imagen autor {
+  margin: 0px; /* Elimina el margen predeterminado del párrafo */
+  padding:0px;
+  /* writing-mode:sideways-rl; */
+  transform: rotate(180deg);
+  writing-mode: vertical-lr;
+  vertical-align: top;
+  font-weight:400;
+  color:#CDC6B9;
+}
+
+imagen explica{
+    font-size: 80%;
+    line-height:110%;
+    text-align: justify;
+    font-weight:500;
+    color:gray;
+    margin:0px;
+    /* padding:0px; */
+    margin-left: 15px;
+    margin-right: 20px;
+    margin-top: 7px;
+    display:inline-block;
+
+}
+.truncarTexto{
+    width: 85%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+/* ######### TERMINA IMAGEN ########## */
+
+
+
+/* ######### INICIA BOTÓN DE AGREGAR ####### */
+select.agregar,input.agregar{
+    width:90%;
+    display:inline-block;
+}
+i.agregar{
+    display:inline-block;
+    color:#CDC6B9;
+    margin-left:5px;
+    margin-right: 0px;
+    cursor:pointer;
+}
+/* ######### TERMINA BOTÓN DE AGREGAR ####### */
+
+hr.titulo{
+    height:10px;
+    background-color:#64383E;
+    border:1px solid #64383E;
+    margin-top: 40px;
+    margin-bottom: 7px;
+}
+
+T{
+    border-top:1px solid black;
+    margin:0;
+    padding:0;
+}
+bajo{
+    border-bottom:1px solid black;
+    margin:0;
+    padding:0;
 }
 
 colores{

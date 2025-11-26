@@ -9,7 +9,7 @@
     <title>@yield('title')</title>
 
     <!--META DESCRIPCIÓN-->
-    <meta name="description" content=@yield('meta-description')>
+    <meta name="description" content="@yield('meta-description')">
 
     <!--FAVICON-->
     <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
@@ -44,6 +44,7 @@
 
     <!--- JQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+
 
     <!-- HOJA DE ESTILOS  y JS -->
     <link rel="stylesheet" href="/style.css">
@@ -84,6 +85,19 @@
                             <!-- -------------------------------------------------------------------------------- -->
                             <!-- -------------------- INICIA MENÚ SISTEMA --------------------------------------- -->
                             @if(Auth::user())
+                                <!-- -------------------------------------------------------------------------------- -->
+                                <!-- -------------------- INICIA MENÚ no PÚBLICO --------------------------------------- -->
+                                <li class="nav-item">
+                                    <a class="nav-link @if(request()->path() == 'ejemplares') active @endif" href="/ejemplares">
+                                        Ejemplares
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @if(request()->path() == 'bibliografía') active @endif" href="/bibliografía">
+                                        Bibliografía
+                                    </a>
+                                </li>
+
                                 <li class="nav-item">
                                     <a class="nav-link @if(request()->path() == 'home') active @endif" href="/home">
                                         Home
@@ -91,38 +105,35 @@
                                 </li>
 
                                 <!--dropdown 1-->
-                                @if(in_array('admin',session('rol')))
+                                @if(in_array('admin',session('rol')) or in_array('admin-campus',session('rol')))
                                     <li class="nav-item dropdown">
                                         <a class="nav-link dropdown-toggle @if(in_array(request()->path(),['recorridos','mapa'])) active @endif" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                             Admin
                                         </a>
                                         <ul class="dropdown-menu">
-                                            <li><a class="dropdown-item @if(request()->path() == 'usuarios') active @endif" href="/usuarios">Usuarios</a></li>
-                                            <li><a class="dropdown-item @if(request()->path() == 'campus') active @endif" href="/campus">Campus y Jardines</a></li>
-                                            {{-- <li><a class="dropdown-item @if(request()->path() == 'elclavo/busca') active @endif" href="/elclavo/busca">Clavo</a></li> --}}
+                                            <li><a class="dropdown-item @if(request()->path() == 'usuarios') active @endif" href="/usuarios">Catálogo usuarios</a></li>
+                                            <li><a class="dropdown-item @if(request()->path() == 'campus') active @endif" href="/campus">Catálogo campus y jardines</a></li>
+                                            <li><a class="dropdown-item @if(request()->path() == 'camellones') active @endif" href="/camellones">Catálogo camellones</a></li>
+
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li><a class="dropdown-item @if(request()->path() == 'imagAdmin') active @endif" href="/imagAdmin">Catálogo imagenes</a></li>
+                                            <li><a class="dropdown-item @if(request()->path() == 'autsAdmin') active @endif" href="/autsAdmin">Catálogo autoridades</a></li>
+
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li><a class="dropdown-item @if(request()->path() == 'cat_bitacoras') active @endif" href="/cat_bitacoras">Catálogo de bitácoras</a></li>
+                                            <li><a class="dropdown-item @if(request()->path() == 'cat_nombres_científicos') active @endif" href="/cat_nombres_científicos">Catálogo nombres científicos</a></li>
                                         </ul>
                                     </li>
                                 @endif
 
-                                {{-- <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle @if(in_array(request()->path(),['recorridos','mapa'])) active @endif" href="#" role="button" data-bs-toggle="dropdown"
-                                        aria-expanded="false">
-                                        Cédulas
+                                 <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle @if(in_array(request()->path(),['api_manual','nosotros'])) active @endif" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Ayuda
                                     </a>
-                                    @if(in_array('cedulas',session('rol')) or in_array('traduce',session('rol')))
-                                        <ul class="dropdown-menu">
-                                            <li><a class="dropdown-item @if(request()->path() == 'catCedulas') active @endif" href="/catCedulas">Catálogo de Cédulas</a></li>
-                                            <li><a class="dropdown-item @if(request()->path() == 'especies') active @endif" href="/especies">Especies del jardín</a></li>
-                                            <li><a class="dropdown-item @if(request()->path() == 'especiesixmx') active @endif" href="/especiesixmx">Especies de IxMx</a></li>
-                                        </ul>
-                                    @endif
-                                </li> --}}
-
-                                <li class="nav-item">
-                                    <a class="nav-link @if(request()->path() == '') active @endif" href="#">
-                                        ?
-                                    </a>
-
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item @if(request()->path() == 'api_manual') active @endif" href="/api_manual">Manual de API</a></li>
+                                        <li><a class="dropdown-item @if(request()->path() == 'nosotros') active @endif" href="/nosotros">Sobre el Sistema</a></li>
+                                    </ul>
                                 </li>
 
                                 <!---->
@@ -137,25 +148,20 @@
                             @else
                                 <!-- -------------------------------------------------------------------------------- -->
                                 <!-- -------------------- INICIA MENÚ PÚBLICO --------------------------------------- -->
+
+
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle @if(in_array(request()->path(),['api_manual','nosotros'])) active @endif" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Ayuda
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item @if(request()->path() == 'api_manual') active @endif" href="/api_manual">Manual de API</a></li>
+                                        <li><a class="dropdown-item @if(request()->path() == 'nosotros') active @endif" href="/nosotros">Sobre el Sistema</a></li>
+                                    </ul>
+                                </li>
                                 <li class="nav-item">
                                     <a class="nav-link @if(request()->path() == 'ingreso') active @endif" href="/ingreso">
                                         Ingresar
-                                    </a>
-                                </li>
-
-                                {{-- <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle @if(in_array(request()->path(),['recorridos','mapa'])) active @endif" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Admin
-                                    </a>
-                                    <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item @if(request()->path() == 'usuarios') active @endif" href="/usuarios">Usuarios y roles</a></li>
-                                        <li><a class="dropdown-item @if(request()->path() == 'catalogo/campus') active @endif" href="/catalogo/campus">Catálogo de Jardines y Campus</a></li>
-                                    </ul>
-                                </li> --}}
-
-                                <li class="nav-item">
-                                    <a class="nav-link @if(request()->path() == '') active @endif" href="#">
-                                        ?
                                     </a>
                                 </li>
                                 <!-- -------------------- TERMINA MENÚ PÚBLICO --------------------------------------- -->
@@ -247,8 +253,6 @@
     <!-- -------------------------------- TERMINA BARRA DE SISTEMA --------------------------------------------- -->
     <!-- ------------------------------------------------------------------------------------------------------ -->
 
-
-
     <!-- ------------------------------------------------------------------------------------------------------ -->
     <!-- ----------------------------------- INICIA ZONA DE CONTENIDO  ---------------------------------------- -->
     <div class="p-5" style="background-color:#efebe8;">
@@ -272,7 +276,6 @@
     <footer>
         <div class="container-fluid ">
             <div class="row justify-content-around p-5">
-
                 <!--Primera columna-->
                 <div class="col-sm-12 col-xl-12 col-xxl-3 mb-4 botones">
                     <div class="row pb-3">
@@ -306,7 +309,6 @@
                             <a href="mailto:etnobotanico@infinitummail.com" target="_blank">
                                 <img src="/imagenes/icono-correo.png" alt="icono correo">
                             </a>
-
                         </div>
                     </div>
                 </div>
@@ -361,7 +363,6 @@
                         </div>
                     </a>
                 </div>
-
             </div>
             <div style="width: 100%; background-color:white; ">
                 <center>
@@ -384,47 +385,13 @@
     <!--CDN JQUERY-->
     <script src="https://code.jquery.com/jquery-3.7.0.js"
         integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM=" crossorigin="anonymous"></script>
-    <!--owl carousel-->
-    {{-- <script src="/owlcarousel/owl.carousel.js"></script> --}}
-    <script>
-        // $(document).ready(function () {
-        //     $(".owl-carousel").owlCarousel({
-        //         loop: true,
-        //         margin: 10,
-        //         dotsEach: 1,
-        //         // nav:true
-        //         autoplay: true,
-        //         autoplayTimeout: 8000,
-        //         autoplaySpeed: 5000,
-        //         responsive: {
-        //             0: {
-        //                 items: 1
-        //             },
-        //             576: {
-        //                 items: 1
-        //             },
-        //             992: {
-        //                 items: 1
-        //             }
-        //         }
 
-        //     });
-        // });
-    </script>
 
-    <!--fancybox-->
-    {{-- <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
-    <script>
-        Fancybox.bind("[data-fancybox]", {
-            // Your custom options
-        });
-    </script> --}}
+
 
     @yield('scripts')
     <!-- ------------------------------------- TERMINA ZONA DE SCRIPTS  ---------------------------------------- -->
     <!-- ------------------------------------------------------------------------------------------------------ -->
-
-
 </body>
 
 </html>

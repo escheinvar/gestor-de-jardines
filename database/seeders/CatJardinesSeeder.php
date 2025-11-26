@@ -64,6 +64,8 @@ class CatJardinesSeeder extends Seeder
                 'ccam_siglas'=>'JebOax',
                 'ccam_name'=>'Santo Domingo',
                 'ccam_nombre'=>'Santo Domingo',
+                'ccam_edo'=>'Oaxaca',
+                'ccam_mpio'=>'Oaxaca de Juárez',
                 'ccam_direccion'=>'Av. Reforma 501, esquina Constitución, Col. Centro, 68000 Oaxaca de Juárez, México.',
             ],[
                 'ccam_id'=>'2',
@@ -72,6 +74,8 @@ class CatJardinesSeeder extends Seeder
                 'ccam_siglas'=>'JebOax-Cant',
                 'ccam_name'=>'Canteras',
                 'ccam_nombre'=>'Canteras',
+                'ccam_edo'=>'Oaxaca',
+                'ccam_mpio'=>'Santa Lucía del Camino',
                 'ccam_direccion'=>'',
             ],[
                 'ccam_id'=>'3',
@@ -80,6 +84,8 @@ class CatJardinesSeeder extends Seeder
                 'ccam_siglas'=>'JM',
                 'ccam_name'=>'Presa',
                 'ccam_nombre'=>'Presa',
+                'ccam_edo'=>'Oaxaca',
+                'ccam_mpio'=>'Santiago Matatlán',
                 'ccam_direccion'=>'',
             ],[
                 'ccam_id'=>'4',
@@ -88,6 +94,8 @@ class CatJardinesSeeder extends Seeder
                 'ccam_siglas'=>'Ixmx JebOax',
                 'ccam_name'=>'IxMx JebOax',
                 'ccam_nombre'=>'Investigadores por México en el Jardín Etnobiológico de Oaxaca',
+                'ccam_edo'=>'Oaxaca',
+                'ccam_mpio'=>'Oaxaca de Juárez',
                 'ccam_direccion'=>'Av. Reforma 501, esquina Constitución, Col. Centro, 68000 Oaxaca de Juárez, México.',
             ]
         ];

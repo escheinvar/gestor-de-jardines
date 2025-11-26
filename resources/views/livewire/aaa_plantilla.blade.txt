@@ -9,6 +9,8 @@
 <!-- silenciar cintillo-ubica if required -->
 @section('cintillo-ubica') -> {{ request()->path() }} @endsection
 @section('cintillo') &nbsp; @endsection
+<!-- silenciar MenuEjemplar -->
+@section('MenuEjemplar') &nbsp; @endsection
 
 <!-- ----------------------------------------------------------- -->
 <!-- ------------ INICIA CONTENIDO PRINCIPAL ------------------- -->

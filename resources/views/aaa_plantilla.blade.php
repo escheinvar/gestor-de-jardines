@@ -9,7 +9,7 @@
 <!-- silenciar cintillo-ubica if required -->
 @section('cintillo-ubica') -> {{ request()->path() }} @endsection
 @section('cintillo') &nbsp; @endsection
-
+@section('MenuEjemplar') &nbsp; @endsection
 <!-- ----------------------------------------------------------- -->
 <!-- ------------ INICIA CONTENIDO PRINCIPAL ------------------- -->
 @section('main-Nolivewire')

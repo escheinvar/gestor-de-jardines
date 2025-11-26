@@ -12,7 +12,7 @@ if(!function_exists('EnviaMensajeAbuzon')){
     ###### Función que recibe variables y envía mensaje a buzón de sistema.
     ###### to=id usr al que se envía el mensaje, from=Id usr del remitente
     /* ############################ Ejemplo (8 variables)
-    var_dump(EnviaMensajeAbuzon(
+    EnviaMensajeAbuzon(
       'to',         ### to: id usr del destinatario
       'from',       ### from: id usr del remitente
       'asunto',     ### asunto: texto del asunto
@@ -21,7 +21,7 @@ if(!function_exists('EnviaMensajeAbuzon')){
       'comp',       ### comp: nombre del componente desde el que se genera el mensaje
       'ifReply'     ### if_reply: msj_id del mensaje al que se responde (o vacío para mensajes nuevos)
       ['1','2'],    ### array de mails a enviar ó vacío ''
-    ));
+    );
     */ ############################## Fin del ejemplo
     function EnviaMensajeAbuzon($to,$from,$asunto,$mensaje,$notas,$comp,$ifReply,$mails){
         #dd(['1_to*'=>$to,'2_from*'=>$from,'3_asunto*'=>$asunto,'4_mensaje*'=>$mensaje,'5_notas'=>$notas,'6_comp*'=>$comp,'7_ifReply'=>$ifReply,      '8_mails'=>$mails]);

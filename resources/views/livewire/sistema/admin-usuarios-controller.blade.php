@@ -14,7 +14,12 @@
 <!-- ------------ INICIA CONTENIDO PRINCIPAL ------------------- -->
 <div>
     <h2>Administración de usuarios</h2>
-        <!-- ------------------------------------------------------------------------------------ -->
+    <div style="font-size: 80%;color:grey;">
+        Este catálogo es administrado por el rol <b>Admin</b>
+        @if($edit=='0') <error style="font-size: 90%;"> No autorizado</error> @else <span style="font-size:90%;color:green;"> Autorizado </span>@endif <br>
+        {{-- @if($idEjem > 0) de {{ $ejemplar->ejm_ccamsiglas }} @endif --}}
+    </div>
+    <!-- ------------------------------------------------------------------------------------ -->
     <!-- -------------------------------- BUSCAR USUARIO ------------------------------------- -->
     <!-- ------------------------------------------------------------------------------------ -->
     <div class="row">
