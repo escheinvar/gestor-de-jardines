@@ -56,7 +56,9 @@
                 <a href="/ejem_bitacora/0">
                     <label class="form-lagel">&nbsp;</label><br>
                     <button type="buton" class="btn btn ">
-                        <i class="bi bi-plus-square-fill agregar" style=""> Nuevo ejemplar</i>
+                        @if($edit=='1')
+                            <i class="bi bi-plus-square-fill agregar" style=""> Nuevo ejemplar</i>
+                        @endif
                     </button>
                 </a>
             @endif

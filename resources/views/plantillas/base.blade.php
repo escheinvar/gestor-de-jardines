@@ -88,6 +88,12 @@
                                 <!-- -------------------------------------------------------------------------------- -->
                                 <!-- -------------------- INICIA MENÚ no PÚBLICO --------------------------------------- -->
                                 <li class="nav-item">
+                                    <a class="nav-link @if(request()->path() == 'home') active @endif" href="/home">
+                                        Home
+                                    </a>
+                                </li>
+
+                                <li class="nav-item">
                                     <a class="nav-link @if(request()->path() == 'ejemplares') active @endif" href="/ejemplares">
                                         Ejemplares
                                     </a>
@@ -98,11 +104,7 @@
                                     </a>
                                 </li>
 
-                                <li class="nav-item">
-                                    <a class="nav-link @if(request()->path() == 'home') active @endif" href="/home">
-                                        Home
-                                    </a>
-                                </li>
+
 
                                 <!--dropdown 1-->
                                 @if(in_array('admin',session('rol')) or in_array('admin-campus',session('rol')))

@@ -16,8 +16,8 @@ return new class extends Migration
                 ######### Ojo: esta tabla tiene el campo scn_edo y además, cada que cambie,
                 #########      debe afectar a la tabla ejemplares
                 $table->id('scn_id');
-                $table->foreignId('scn_ejmid')->constrained('ejemplares','ejm_id')->onDelete('cascade');
-                $table->foreignId('scn_spid')->constrained('especies','sp_id')->onDelete('cascade');
+                $table->foreignId('scn_ejmid')->constrained('ejemplares','ejm_id');
+                $table->foreignId('scn_spid')->constrained('especies','sp_id');
                 $table->enum('scn_act',['0','1'])->default('1');  ##### Binario de inactivación temporal lógica
                 $table->enum('scn_del',['0','1'])->default('0');  ##### Binario de borrado lógico
                 $table->integer('scn_edo')->default('0');         ##### Estado del nombre: 0:sin validar, 1=valida técnico, 2=valida autoridad
@@ -28,7 +28,7 @@ return new class extends Migration
                 $table->string('scn_ssp')->nullable();##### Texto con la categoría y nombre subespecífico (ej: subsp. bla ó var. ble)
                 $table->string('scn_name')->nullable();          ##### Texto con el nombre científico completo: Genero, especie ssp
 
-                $table->foreignId('scn_colid')->constrained('cat_autoridades','aut_id')->onDelete('cascade')->nullable(); ##### ID de la autoridad que identificó
+                $table->foreignId('scn_colid')->constrained('cat_autoridades','aut_id')->nullable(); ##### ID de la autoridad que identificó
                 $table->date('scn_fecha_determina')->nullable(); ##### Fecha en la que la autoridad determina
                 $table->integer('scn_usrid'); ##### ID del usuario que registra
                 $table->timestamps();

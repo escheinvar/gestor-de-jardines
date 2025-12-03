@@ -452,13 +452,13 @@ imagen explica{
 
 /* ######### INICIA BOTÓN DE AGREGAR ####### */
 select.agregar,input.agregar{
-    width:90%;
+    width:85%;
     display:inline-block;
 }
 i.agregar{
     display:inline-block;
     color:#CDC6B9;
-    margin-left:5px;
+    margin-left:3px;
     margin-right: 0px;
     cursor:pointer;
 }

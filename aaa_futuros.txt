@@ -1,4 +1,12 @@
 ----------------------------------------------------------
+Completar bibliografia-controller (catálogo bibliográfico)
+- crear búsquedas de bibliografía por autor, titulo, año, revista/editorial
+- crear paginción de tabla
+- ordenar tabla por click
+----------------------------------------------------------
+Completar modal-bibliografia
+- Que cuando haya cargado un pdf o archivo, que lo muestre.
+----------------------------------------------------------
 Completar bitacora-controller:
 - función de asignación de bitácora existente a ejemplar sin
   bitácora a partir de id de ejemplar y a partir de id de bitácora.
@@ -22,4 +30,7 @@ Módulo de depuración de imágenes.
 Módulo que lea todos los archivos existentes en carpeta /public/img
 y luego revise cuál de ellas NO ESTÁ en la tabla imágenes,
 para eliminarlas
+----------------------------------------------------------
+Módulo de buzón
+- Agregar botón para marcar o desmarcar todos los mensajes
 ----------------------------------------------------------

@@ -32,6 +32,8 @@ class DatabaseSeeder extends Seeder
             CatConceptosSeeder::class,
             BitacoraSeeder::class,
             #CatEspeciesSeeder::class,
+            CatLenguasSeeder::class,
+
         ]);
 
     }

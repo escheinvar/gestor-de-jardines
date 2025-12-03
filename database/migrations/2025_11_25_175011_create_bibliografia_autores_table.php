@@ -18,7 +18,9 @@ return new class extends Migration
                 $table->foreignId('bibaut_bibid')->constrained('bibliografias','bib_id')->onDelete('cascade');
                 $table->string('bibaut_nombre')->nullable(); ##### Nombre del autor
                 $table->string('bibaut_ap')->nullable(); ##### Apellido(s) del autor
-                $table->string('bibaut_orcid')->nullable(); ##### Orcid ID
+                $table->string('bibaut_orcid')->nullable(); ##### Orcid ID (Identificador universal de autores científicos)
+                $table->string('bibaut_isni')->nullable(); ##### ISNI (Identificador universal de autores)
+                $table->enum('bibaut_tipo',['autor','editor'])->default('autor'); ###### Indica si los datos son de un autor o de un editor de libro
                 $table->timestamps();
             });
         }

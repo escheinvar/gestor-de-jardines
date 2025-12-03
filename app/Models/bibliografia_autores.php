@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class bibliografia_autores extends Model
 {
@@ -20,5 +21,12 @@ class bibliografia_autores extends Model
         'bibaut_nombre',
         'bibaut_ap',
         'bibaut_orcid',
+        'bibaut_isni',
+        'bibaut_tipo',
     ];
+
+    public function bibliografia(): BelongsTo{
+        return $this->belongsTo(bibliografia::class);
+    }
+
 }
