@@ -150,7 +150,7 @@ class ModalAsignaEspecieController extends Component
         $this->dispatch('cierraModalDeNombreCientifico');
         $this->dispatch('AvisoExitoAsignaSp', msj:'La especie fue asignada al ejemplar correctamente');
         $this->borrarTodo();
-        return redirect('/ejem_nombres/'.$this->idEjem);
+        return redirect('/ejem_nombres/'.$this->idEjem);        #return redirect()->back();
     }
 
     public function abreModalParaNuevaEspecie(){

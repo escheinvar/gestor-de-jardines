@@ -85,7 +85,12 @@ class CatConceptosSeeder extends Seeder
              ['con_tema'=>'tipo-publicacion', 'con_txt'=>'capítulo de libro',       'con_explica'=>'Cíta de un capítulo de libro'],
              ['con_tema'=>'tipo-publicacion', 'con_txt'=>'tesis',                   'con_explica'=>'Cíta de una tesis profesional'],
              ['con_tema'=>'tipo-publicacion', 'con_txt'=>'comunicación personal',   'con_explica'=>'Cíta por comunicacion personal'],
-            //  ['con_tema'=>'', 'con_txt'=>'', 'con_explica'=>''],
+
+             ['con_tema'=>'tipo-crecimiento', 'con_txt'=>'individual distinguible', 'con_explica'=>'Módulo de ubicación, tipo de crecimeinto del ejemplar'],
+             ['con_tema'=>'tipo-crecimiento', 'con_txt'=>'individual en colonia',   'con_explica'=>'Módulo de ubicación, tipo de crecimeinto del ejemplar'],
+             ['con_tema'=>'tipo-crecimiento', 'con_txt'=>'colonial',                'con_explica'=>'Módulo de ubicación, tipo de crecimeinto del ejemplar'],
+             ['con_tema'=>'tipo-crecimiento', 'con_txt'=>'indistinguible',          'con_explica'=>'Módulo de ubicación, tipo de crecimeinto del ejemplar'],
+
             //  ['con_tema'=>'', 'con_txt'=>'', 'con_explica'=>''],
             //  ['con_tema'=>'', 'con_txt'=>'', 'con_explica'=>''],
             //  ['con_tema'=>'', 'con_txt'=>'', 'con_explica'=>''],

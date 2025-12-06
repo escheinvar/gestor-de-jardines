@@ -19,6 +19,8 @@ return new class extends Migration
                 $table->string('bib_ccamsiglas');
                 $table->foreign('bib_ccamsiglas')->references('ccam_siglas')->on('cat_campus')->constrined('cat_campus','ccam_siglas'); ##### Siglas del campus propietario
                 $table->string('bib_tipo');             ##### Tipo de publicación según el catálogo cat_conceptos "tipo-publicacion"
+
+                $table->string('bib_autores')->nullable(); ##### Resumen de autores (solo como referencia)
                 $table->integer('bib_anio')->nullable();##### Año de la publicación
                 $table->string('bib_titulo')->nullable(); ##### Título del artículo o título del capítulo
                 $table->string('bib_nombre')->nullable(); ##### Nombre de la revista o título del libro

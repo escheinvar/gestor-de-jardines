@@ -26,7 +26,9 @@ class ModalBibliografiaController extends Component
     public $bibmodal_tipoTesis, $bibmodal_pags, $bibmodal_lengua, $bibmodal_doi, $bibmodal_editorial, $bibmodal_isbn, $bibmodal_issn;
     public $bibmodal_ocupa, $bibmodal_edad, $bibmodal_Edo, $bibmodal_mpio, $bibmodal_localidad, $bibmodal_tags, $bibmodal_notasPub, $bibmodal_notasUbica;
     public $bibmodal_url, $bibmodal_priv, $bibmodal_pdf, $bibmodal_archivo;
-
+    #####################################################
+    ##### Notas: los autores y editores viajan como array (no como colección) ya que no hay colección
+    #####        cuando se inicia un nuevo registro.
     #[On('abreModalDeBibliogfafia')]
     public function recibeValoresDeFuera($data){
         $this->bibId=$data['bibId'];
@@ -152,7 +154,7 @@ class ModalBibliografiaController extends Component
     public function cerrarModal(){
         $this->BorrarTodo();
         $this->dispatch('cierraModalDeBibliogfafia');
-        redirect('/bibliografía');
+        redirect()->back();
     }
 
     public function BorrarTodo(){
@@ -279,15 +281,39 @@ class ModalBibliografiaController extends Component
                 'bibmodal_anio'=>'required',
                 'bibmodal_lengua'=>'required',
             ]);
+            $this->bibmodal_titulo="com. pers.";
         }
 
         #######################################
+        ##### Genera campo de autores
+        $totalAutores=count($this->bibmodal_autores); $contar='0'; $autores='';
+        foreach($this->bibmodal_autores as $a){
+            $contar++;  $ape=$a['bibaut_ap']; $nom=substr($a['bibaut_nombre'],0,1);
+            if($totalAutores == '1'){
+                $autores=$ape." ".$nom;
+            }elseif($totalAutores == '2'){
+                if($contar == '1'){$une=' y ';}else{$une='';}
+                $autores=$autores.$ape." ".$nom.".".$une;
+
+            }elseif($totalAutores ==' 3'){
+                if($contar == '1'){$une=', ';}elseif($contar=='2'){$une=' y ';}else{$une='';}
+                $autores=$autores.$ape." ".$nom.".".$une;
+
+            }else{
+                if($contar <='2'){
+                    $autores=$autores.$a['bibaut_ap']." ".substr($a['bibaut_nombre'],0,1).', ';
+                }elseif($contar=='3'){
+                    $autores=$autores.'et al.';
+                }
+            }
+        }
         ##### Genera datos
         $data=[
             'bib_act'=>'1',
             'bib_del'=>'0',
             'bib_ccamsiglas'=>$this->bibmodal_campus,
             'bib_tipo'=>$this->bibmodal_tipo,
+            'bib_autores'=>$autores,
             'bib_anio'=>$this->bibmodal_anio,
             'bib_titulo'=>$this->bibmodal_titulo,
             'bib_nombre'=>$this->bibmodal_nombrePub,
@@ -342,8 +368,9 @@ class ModalBibliografiaController extends Component
             bibliografia::where('bib_id',$data['bib_id'])->update(['bib_pdf'=>$ruta.$nombre]);
         }
         ###### MANDA AVISSO
+        $this->dispatch('AvisoExito', msj:'Registro bibligráficos generado con éxito');
+        redirect()->back();
         $this->cerrarModal();
-        $this->dispatch('AvisoExito', $msj='Registro bibligráficos generado con éxito');
     }
 
 

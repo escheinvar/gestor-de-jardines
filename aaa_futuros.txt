@@ -1,3 +1,5 @@
+OJO: Verificar que sólo se pueda editar la bitácora cuando sea la
+del propietario
 ----------------------------------------------------------
 Completar bibliografia-controller (catálogo bibliográfico)
 - crear búsquedas de bibliografía por autor, titulo, año, revista/editorial
@@ -33,4 +35,9 @@ para eliminarlas
 ----------------------------------------------------------
 Módulo de buzón
 - Agregar botón para marcar o desmarcar todos los mensajes
+----------------------------------------------------------
+Nuevo módulo de herbario
+- Crear módulo que permita guardar en base de datos, además
+de la foto, todos los datos de la ficha del ejemplar de herbario
+para luego poder hacer búsquedas en el herbario.
 ----------------------------------------------------------

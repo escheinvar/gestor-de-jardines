@@ -9,17 +9,11 @@
 @endsection
 <div>
     @include('plantillas.MenuDeEjemplar')
-    <div style="font-size: 80%;color:grey;">
-        Bitácora: Sección administrada por <b>admin-colviva</b>
-        @if($idEjem > 0) de {{ $ejemplar->ejm_ccamsiglas }} @endif
-        @if($edit_adcolviva=='0') <error style="font-size: 90%;"> No autorizado</error> @else <span style="font-size:90%;color:green;"> Autorizado </span>@endif <br>
-    </div>
-
     <!------------------------------------------------------------------------------------------- -->
     <!-- -------------------- INICIA DATOS GENERALES DEL EJEMPLAR ------------------------------- -->
     {{-- usa variables $idEjem con id del ejemplar desde URL y $ejemplar --}}
     <div class="row my-3" style="">
-        <div class="col-sm-5 col-md-4" style="vertical-align: top;">
+        {{-- <div class="col-sm-5 col-md-4" style="vertical-align: top;">
             <div style="font-size: 150%;">
                 @if($idEjem=='0')
                     <b>Nuevo ejemplar</b>
@@ -60,7 +54,16 @@
                 <b>ID de Padre</b>: @if($ejemplar->ejm_padreid != '') <a href="/ejem_bitacora/{{ $ejemplar->ejm_padreid }}">Ejm. {{ $ejemplar->ejm_padreid }} </a> @endif <br>
                 <b>ID de Lote</b>: @if($ejemplar->ejm_loteid != '') <a href="/lote/{{ $ejemplar->ejem_loteid }}">Ejm. {{ $ejemplar->ejm_loteid }} </a> @endif <br>
             </div>
-        @endif
+        @endif --}}
+    </div>
+
+
+
+    <!-- aviso de privilegios -->
+    <div style="font-size: 80%;color:grey;">
+        Bitácora: Sección administrada por <b>admin-colviva</b>
+        @if($idEjem > 0) de {{ $ejemplar->ejm_ccamsiglas }} @endif
+        @if($edit_adcolviva=='0') <error style="font-size: 90%;"> No autorizado</error> @else <span style="font-size:90%;color:green;"> Autorizado </span>@endif <br>
     </div>
     <!-- -------------------- TERMINA DATOS GENERALES DEL EJEMPLAR ------------------------------- -->
     <!------------------------------------------------------------------------------------------- -->
@@ -201,15 +204,22 @@
             </div>
 
             @if($edit_adcolviva=='1')
-                <!-- -------- Nombre científico sólo si es edit_adcolviva y sólo si el tipo de nombre es 0 o no hay nombre y el idEjem no es 0 (nombre requiere idEjem) -------------- -->
-                @if($edit_adcolviva=='1' AND (is_null($ejemplar_ScName) OR $ejemplar_ScName->scn_edo =='0') AND $idEjem != '0')
-                    <div class="col-sm-6 col-md-4 form-group">
+                <div class="col-sm-6 col-md-4 form-group">
+                    <!-- nombre común -->
+                    <button wire:click="abreModalDeNombreComun()" class="btn">
+                        <i wire:click="" class="bi bi-plus-square-fill agregar" style=""></i>  Nombre común
+                    </button>
+                    <!-- nombre científico: sólo si es edit_adcolviva y sólo si el tipo de nombre es 0 o no hay nombre y el idEjem no es 0 (nombre requiere idEjem)-->
+                    @if( (is_null($ejemplar_ScName) OR $ejemplar_ScName->scn_edo =='0') AND $idEjem != '0')
                         @if($ejemplar_ScName != '')<b>Nombre científico</b>: {{ $ejemplar_ScName->scn_name }} @endif<br>
                         <button wire:click="abreModalDeNombreCientifico()" class="btn">
                             <i wire:click="" class="bi bi-plus-square-fill agregar" style=""></i>  @if($ejemplar_ScName != '')Cambiar @endif Nombre científico
                         </button>
-                    </div>
-                @endif
+                    @endif
+                </div>
+
+
+
             @endif
             @if($idEjem=='0')
                 <div class="col-sm-6 col-md-4 form-group">
@@ -381,8 +391,9 @@
 
 
 
-    <livewire:coleccion.modal-autoridades-controller>
-    <livewire:coleccion.modal-asigna-especie-controller>
+    <livewire:coleccion.modal-autoridades-controller />
+    <livewire:coleccion.modal-asigna-especie-controller />
+    <livewire:coleccion.modal-nombres-comunes-controller />
 
     <script>
         Livewire.on('AvisoExito',()=>{

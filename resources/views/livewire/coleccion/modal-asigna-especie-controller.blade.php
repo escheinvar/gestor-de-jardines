@@ -70,7 +70,7 @@
                         @else
                             <div class="col-12 form-group">
                                 <!-- -------------------- Selector Especie de catálogo ------------------------- -->
-                                <label for="modcient_especieSelected" class="form-label">Especie e infraespecie (catálogo)<red>*</red></label>
+                                <label for="modcient_especieSelected" class="form-label">Especie e infraespecie (catálogo)<red>*</red></label><br>
                                 <select  wire:model.live="modcient_especieSelected" id="modcient_especieSelected" class="@error('modcient_especieSelected') is-invalid @enderror form-select">
                                     @if($modcient_especies->count() > 0)
                                         <option value="">Selecciona una especie del catálogo</option>

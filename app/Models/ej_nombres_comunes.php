@@ -19,19 +19,20 @@ class ej_nombres_comunes extends Model
         'con_act',
         'con_del',
         'con_origen',
-        'con_edo',
+        // 'con_edo',
         'con_nombre',
         'con_clencode',
         'con_clencode',
         'con_bibid',
 
-        'con_estado',
-        'con_mpio',
+        'con_ubica',
+        // 'con_estado',
+        // 'con_mpio',
         'con_notas',
 
-        'con_audio1',
-        'con_audio2',
-        'con_img1',
-        'con_img2',
+        'con_file1',
+        'con_file2',
+        'con_file3',
+        'con_file4',
     ];
 }

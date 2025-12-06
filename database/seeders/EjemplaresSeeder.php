@@ -2,18 +2,22 @@
 
 namespace Database\Seeders;
 
+use App\Models\bibliografia;
 use App\Models\bitacora1;
 use App\Models\cat_autoridades;
 use App\Models\cat_campus;
 use App\Models\cat_conceptos;
 use App\Models\ej_nombres_cientificos;
+use App\Models\ej_nombres_comunes;
 use App\Models\ejemplares;
 use App\Models\especies;
 use App\Models\imagenes;
+use App\Models\municipios;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Faker\Factory;
 
-class EjemplaresBitacoraSeeder extends Seeder
+class EjemplaresSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -22,7 +26,8 @@ class EjemplaresBitacoraSeeder extends Seeder
     {
         ###################################################################
         ##### Para ejecutar: php artisan db:seed --class=EjemplaresBitacoraSeeder
-        ##### Afecta 4 tablas: ejemplares, ej_bitacora1, imagenes, ej_nombres_cientificos
+        ##### Afecta 5 tablas: ejemplares, ej_bitacora1, imagenes,
+        #####                  ej_nombres_cientificos, ej_nombres_comunes
         ##### (si se requiere, truncar las cuatro con cascada )
         ###################################################################
         $cantidad=10; ########### Indica la cantidad de ejemplares a ejecutar
@@ -59,7 +64,6 @@ class EjemplaresBitacoraSeeder extends Seeder
 
             ########################################################
             ############################ crea datos en ej_bitacora1
-
             $bitacora=bitacora1::create([
                 'bit_id'=>bitacora1::max('bit_id')+1,
                 'bit_ejmid_prop'=>'0',
@@ -157,6 +161,33 @@ class EjemplaresBitacoraSeeder extends Seeder
                 'scn_fecha_determina'=>fake()->date(),
                 'scn_usrid'=>'2',
             ]);
+
+            ########################################################
+            ############# Asigna Nombres comunes
+            $faker = Factory::create('es_ES');
+            $CantDeNombres=$faker->numberBetween(0,4);
+
+
+            $num='0';
+            while($num < $CantDeNombres){
+                $num++;
+                $citaSiOno=$faker->numberBetween(0,1);
+                if($citaSiOno=='1'){
+                    $biblio=bibliografia::inRandomOrder()->select('bib_id')->first()->bib_id;
+                }else{
+                    $biblio=null;
+                }
+
+                $nombreComun=ej_nombres_comunes::create([
+                    'con_ejmid'=>$ejemplar->ejm_id,
+                    'con_origen'=>$faker->numberBetween(0,1),
+                    'con_nombre'=>$faker->sentence($nbWords = 1, $variableNbWords = true),
+                    'con_clencode'=>'spa',
+                    // 'con_estado'=>'Oaxaca',
+                    'con_ubica'=>'Oaxaca, '.municipios::where('cmun_edoname','Oaxaca')->inRandomOrder()->select('cmun_mpioname')->first()->cmun_mpioname.';',
+                    'con_bibid'=>$biblio,
+                ]);
+            }
         }
 
     }

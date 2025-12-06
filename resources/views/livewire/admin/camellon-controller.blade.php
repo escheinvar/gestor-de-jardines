@@ -83,7 +83,7 @@
                 <!-- Jardin -->
                 <div class="col-sm-12 col-md-6 form-group">
                     <label class="form-label" for="jardin">Jardín al que pertenece<red>*</red></label>
-                    <input wire:model="jardin" id="jardin" type="text" class="form-control" disabled>
+                    <input wire:model="jardin" id="jardin" type="text" class="form-control" disabled >
                     @error('jardin')<error>{{ $message }}</error>@enderror
                     <div class="form-text"></div>
                 </div>

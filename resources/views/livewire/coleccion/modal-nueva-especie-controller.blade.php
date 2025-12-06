@@ -161,9 +161,7 @@
                 </div>
 
                 <div class="modal-footer">
-
                     <button class="btn btn-primary" wire:click="Guardar()">Guardar</button>
-
                     <button wire:click="borrarTodo()" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                 </div>
             </div>
@@ -171,23 +169,23 @@
     </div>
 
 
-        <script>
-            Livewire.on('abreModalDeNuevaEspecie',()=>{
-                $('#ModalDeNuevaEspecie').modal('show'); // Abre modal
-                // console.log('va1');
-                // @this.set('autId',autId, live=true);
+    <script>
+        Livewire.on('abreModalDeNuevaEspecie',()=>{
+            $('#ModalDeNuevaEspecie').modal('show'); // Abre modal
+            // console.log('va1');
+            // @this.set('autId',autId, live=true);
 
-            })
-            Livewire.on('cierraModalDeNuevaEspecie',()=>{
-                $('#ModalDeNuevaEspecie').modal('hide');
-                // console.log('va2');
-            })
-            // Livewire.on('AvisoExitoAutoridades',()=>{
-            //     alert(event.detail.msj);
-            //     # console.log(event.detail.msj);
-            // })
+        })
+        Livewire.on('cierraModalDeNuevaEspecie',()=>{
+            $('#ModalDeNuevaEspecie').modal('hide');
+            // console.log('va2');
+        })
+        // Livewire.on('AvisoExitoAutoridades',()=>{
+        //     alert(event.detail.msj);
+        //     # console.log(event.detail.msj);
+        // })
 
-        </script>
+    </script>
 
 
     <!---------------------- TERMINA MODAL DE NUEVA ESPECIE --------------------------------------- -->

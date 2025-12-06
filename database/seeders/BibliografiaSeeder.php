@@ -21,7 +21,7 @@ class BibliografiaSeeder extends Seeder
         require_once 'vendor/autoload.php';
 
         $numero='3';
-        $faker = Factory::create('es_ES');
+        $faker = Factory::create('es_mx');
         $tipos=cat_conceptos::where('con_tema','tipo-publicacion')->select('con_txt')->get();
 
         foreach ($tipos as $tipo){
@@ -48,16 +48,19 @@ class BibliografiaSeeder extends Seeder
                 ]);
                 ###### Crea autor
                 $numAuts=$faker->numberBetween(1,4);
-                $num2='0';
+                $num2='0'; $autortxt='';
                 while($num2 < $numAuts){
                     $num2++;
+                    $ape=$faker->lastName();
                     bibliografia_autores::create([
                         'bibaut_bibid'=>$bib->bib_id,
                         'bibaut_nombre'=>$faker->firstName(),
-                        'bibaut_ap'=>$faker->lastName(),
+                        'bibaut_ap'=>$ape,
                         'bibaut_tipo'=>'autor',
                     ]);
+                    if($num2=='1'){$autortxt=$ape;}else{$autortxt=$autortxt.", ".$ape;}
                 }
+                bibliografia::where('bib_id',$bib->bib_id)->update(['bib_autores'=>$autortxt]);
                 ####### Crea editor
                 if($bib->bib_tipo=='capítulo de libro'){
                     $numAuts=$faker->numberBetween(1,4);

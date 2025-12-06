@@ -51,11 +51,11 @@
         </div>
         --}}
 
-        <div class="col-2">
+        <div class="col-3>
             @if($edit=='1')
                 <a href="/ejem_bitacora/0">
                     <label class="form-lagel">&nbsp;</label><br>
-                    <button type="buton" class="btn btn ">
+                    <button type="buton" class="btn btn-primary">
                         @if($edit=='1')
                             <i class="bi bi-plus-square-fill agregar" style=""> Nuevo ejemplar</i>
                         @endif

@@ -21,6 +21,7 @@ class bibliografia extends Model
         'bib_del',
         'bib_ccamsiglas',
         'bib_tipo',
+        'bib_autores',
         'bib_anio',
         'bib_titulo',
         'bib_nombre',

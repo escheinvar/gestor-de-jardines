@@ -15,6 +15,7 @@
         "vite": "^7.0.4"
     },
     "dependencies": {
-        "bootstrap": "^5.3.8"
+        "bootstrap": "^5.3.8",
+        "select2": "^4.1.0-rc.0"
     }
 }

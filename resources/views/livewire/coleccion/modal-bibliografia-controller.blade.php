@@ -355,7 +355,7 @@
                         <!-- --------- Notas sobre la publicación /informante--------- -->
                         @if($bibmodal_tipo != '')
                             <div class="col-6 form-group">
-                                <label for="bibmodal_notasPub" class="form-label">@if($bibmodal_tipo=='comunicación personal') Notas sobre el informante @else Notas de la publicación @endif</label>
+                                <label for="bibmodal_notasPub" class="form-label">@if($bibmodal_tipo=='comunicación personal') Notas sobre el informante y el informado @else Notas de la publicación @endif</label>
                                 <textarea wire:model="bibmodal_notasPub" id="bibmodal_notasPub" type="text" class="@error('bibmodal_notasPub') is-invalid @enderror form-control"></textarea>
                                 <div class="form-text"></div>
                                 @error('bibmodal_notasPub')<error>{{ $message }}</error>@enderror

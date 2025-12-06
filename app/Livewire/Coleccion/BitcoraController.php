@@ -7,6 +7,7 @@ use App\Models\cat_autoridades;
 use App\Models\cat_campus;
 use App\Models\cat_conceptos;
 use App\Models\ej_nombres_cientificos;
+use App\Models\ej_nombres_comunes;
 use App\Models\ejemplares;
 use App\Models\estados;
 use App\Models\imagenes;
@@ -27,10 +28,8 @@ class BitcoraController extends Component
     #######################################################################
 
     public $idEjem;                      ##### Variables recibidas desde URL (Id del ejemplar)
-    public $MenuDeEjemplares='bitacora'; ##### Variable solicitadas por front-end para mostrar "Bictacora de ingreso" como activo
-    public $edit_adcolviva;                        ##### Variable solicitadas por front-end para entrar en modo edición
-    public $ejemplar,$CampusAutorizados; ##### Colección con datos del ejemplar
-    public $ejemplar_ScName;             ##### Colección con datos del ejemplar
+    public $MenuDeEjemplares='bitacora', $ejemplar, $ejemplar_ScName, $ejemplar_CoName;  ##### Variables solicitadas por la plantilla del menú del ejemplar
+    public $edit_adcolviva, $CampusAutorizados;   ##### Variable solicitadas por front-end para entrar en modo edición
     public $bitacoraPendiente;           ##### Flag que indica si el ejemplar tiene (1) o no (0) la bitácora pendiente.
     public $idEjmVincula, $campus, $colectadate, $etiqueta_colecta, $origen, $origen_explica,$forma_colecta, $campusEjem;
     public $autid, $alias, $autoridadescolecta;
@@ -66,18 +65,13 @@ class BitcoraController extends Component
             }
             $this->idEjem=$id;
             $this->bitacoraPendiente='0';
-            ####################################################################
-            ##################################### Carga los datos del ejemplar
+            #######################################################
+            ########################## Carga los datos del ejemplar
             $ejemplar=ejemplares::where('ejm_id',$id)
                 ->join('ej_bitacora1','ejm_bitid','=','bit_id')
                 ->where('ejm_act','1')
                 ->where('ejm_del','0')
                 ->where('bit_del','0')
-                ->first();
-            // $this->ejemplar=$ejemplar;
-            $this->ejemplar_ScName=ej_nombres_cientificos::where('scn_ejmid',$this->idEjem)
-                ->where('scn_act','1')
-                ->where('scn_del','0')
                 ->first();
 
             $this->idEjmVincula='';
@@ -166,12 +160,10 @@ class BitcoraController extends Component
 
     }
 
-
     public function AbrirModalAutoridades($par1){
         $data=['autId'=>$par1];
         $this->dispatch('abreModalDeAutoridades',$data);
     }
-
 
     public function GuardarCambios($idGuardar){
         ##### Valida formulario
@@ -217,7 +209,6 @@ class BitcoraController extends Component
         // ver que si mande el id
 
     }
-
 
     public function CrearBitacora(){
         ##### Valida formulario
@@ -276,7 +267,6 @@ class BitcoraController extends Component
         redirect('/ejem_bitacora/'.$ejemplar->ejm_id);
     }
 
-
     public function AbreModalObjeto($par1,$par2, $par3, $par4, $par5){
         ##### $par1=[0,img_id]     $par2=alguno de cimg_modulo,
         ##### $par3=alguno de cimg_tipod
@@ -292,15 +282,33 @@ class BitcoraController extends Component
         $this->dispatch('abreModalDeNombreCientifico',$this->idEjem);
     }
 
+    public function abreModalDeNombreComun(){
+        $datos=['ejId'=>$this->idEjem,'conId'=>'0'];
+        $this->dispatch('abreModalDeNombreComun',$datos);
+    }
+
 
     public function render() {
-        $ejemplar=ejemplares::where('ejm_id',$this->idEjem)
+        #############################################################
+        ###### Carga los datos para la plantilla del menú de ejemplar
+        $this->ejemplar=ejemplares::where('ejm_id',$this->idEjem)
             ->join('ej_bitacora1','ejm_bitid','=','bit_id')
             ->where('ejm_act','1')
             ->where('ejm_del','0')
             ->where('bit_del','0')
             ->first();
-        $this->ejemplar=$ejemplar;
+
+        $this->ejemplar_ScName=ej_nombres_cientificos::where('scn_ejmid',$this->idEjem)
+            ->where('scn_act','1')
+            ->where('scn_del','0')
+            ->first();
+        $this->ejemplar_CoName=ej_nombres_comunes::where('con_ejmid',$this->idEjem)
+            ->where('con_act','1')
+            ->where('con_del','0')
+            ->orderBy('con_origen','desc')
+            ->orderBy('con_bibid','asc')
+            ->take(3)
+            ->get();
 
         ##################### Asigna permisos de edición
         $this->edit_adcolviva='0'; #### Inicia sin permiso

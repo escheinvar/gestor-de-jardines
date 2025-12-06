@@ -12,7 +12,7 @@
     <h2>Catálogo bibliográfico</h2>
     <div>
         @if($edit=='1')
-            <button wire:click="AbrirModalBibliografia('0')" class="btn btn-primary my-4" style="float: right;">
+            <button wire:click="AbrirModalBibliografia('0')" class="btn btn-primary btn-sm my-4" style="float: right;">
                 <i class="bi bi-plus-square"></i> Nuevo registro
             </button>
         @endif
@@ -39,21 +39,7 @@
 
                             <td>
                                 <!-- Autores -->
-                                <?php $contar='0'; ?>
-                                @foreach($b->autores as $aut)
-                                    <?php $contar++; ?>
-                                    @if($b->autores->count()=='1') {{ $aut->bibaut_ap }} {{ substr($aut->bibaut_nombre,0,1) }}.
-                                    @elseif($b->autores->count()=='2') {{ $aut->bibaut_ap }} {{ substr($aut->bibaut_nombre,0,1) }}.@if($contar == '1') y  @endif
-                                    @elseif($b->autores->count()=='3') {{ $aut->bibaut_ap }} {{ substr($aut->bibaut_nombre,0,1) }}.@if($contar <= '1'),@elseif($contar=='2') y @endif
-                                    @else
-                                        @if($contar <='3')
-                                            {{ $aut->bibaut_ap }} {{ substr($aut->bibaut_nombre,0,1) }},
-                                        @elseif($contar=='4')
-                                            <i> et al.</i>
-                                        @endif
-                                    @endif
-                                @endforeach
-                                {{-- {{ $b->autores }} --}}
+                                {{ $b->bib_autores }}
                             </td>
 
                             <td>
