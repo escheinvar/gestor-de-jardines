@@ -62,7 +62,7 @@ $this->ejemplar_ubica = ej_ubicaciones::where('sig_ejmid',$this->idEjem)
     <ul class="nav nav-tabs">
         @if($idEjem > '0')
             <li class="nav-item">
-                <a class="nav-link nolink  @if($MenuDeEjemplares == 'fichainicio') active @endif" href="#" style="border:1px solid #CDC6B9;">Inicio</a>
+                <a class="nav-link nolink  @if($MenuDeEjemplares == 'inicio') active @endif" href="/ejem_inicio/{{ $idEjem }}" style="border:1px solid #CDC6B9;">Inicio</a>
             </li>
             {{-- <li class="nav-item dropdown" >
                 <a class="nav-link dropdown-toggle nolink @if($MenuDeEjemplares == 'bitacora') active @endif" data-bs-toggle="dropdown" href="" role="button" aria-expanded="false" style="border:1px solid #CDC6B9;">Bitácora</a>
@@ -110,7 +110,7 @@ $this->ejemplar_ubica = ej_ubicaciones::where('sig_ejmid',$this->idEjem)
     <!-- -------------------------------------------------------------------------------------------------------------------------- -->
     <!-- ---------------------------------------------- INICIA DATOS GENERALES DEL EJEMPLAR ...---------------------------------------- -->
     <!-- ------------------------------------------------------------------------------------------------------------------------------ -->
-    @if($idEjem > '0')
+    @if($idEjem > '0' and $MenuDeEjemplares != 'inicio')
         <div class="row my-1" style="">
             <div class="col-sm-6 col-md-3" style="vertical-align: top;">
                 <div style="font-size: 150%;">

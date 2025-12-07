@@ -88,7 +88,7 @@
                                 {{ $e->ejm_ccamsiglas }}
                             </td>
                             <td>
-                                <a href="/ejem_bitacora/{{ $e->ejm_id }}">
+                                <a href="/ejem_inicio/{{ $e->ejm_id }}">
                                     ID {{ $e->ejm_id }}
                                 </a>
                             </td>
