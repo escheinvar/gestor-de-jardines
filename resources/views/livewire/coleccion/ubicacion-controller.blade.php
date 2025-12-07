@@ -25,39 +25,9 @@
     <!------------------------------------------------------------------------------------------- -->
     <!------------------------------------------------------------------------------------------- -->
     <div>
-        <!-- -------- Acciones ---------------- -->
-        @if($edit_adcolviva=='1')
-            <div class="row">
-                <div class="col-2 col-md-1" style="font-size:70%;center">
-                    <center>
-                        <a href="#" class="nolink">
-                            <img src="" style="width:50px;height:50px;border:1px solid black;" class="mx-2">
-                            Mover
-                        </a>
-                    </center>
-                </div>
-                <div class="col-2 col-md-1" style="font-size:70%;center">
-                    <center>
-                        <a href="#" class="nolink">
-                            <img src="" style="width:50px;height:50px;border:1px solid black;" class="mx-2">
-                            Retirar
-                        </a>
-                    </center>
-                </div>
-                <div class="col-2 col-md-1" style="font-size:70%;center">
-                    <center>
-                        <a href="#" class="nolink">
-                            <img src="" style="width:50px;height:50px;border:1px solid black;" class="mx-2">
-                            Transferir
-                        </a>
-                    </center>
-                </div>
-            </div>
-        @endif
-
-        <!-- -------- MAPA ----------------- -->
+        <!-- -------- MAPA Y CUESTIONARIO ----------------- -->
         <div class="row">
-            <!-- Mapa  -->
+            <!-- MAPA  -->
             <div class="col-sm-12 @if($edit_adcolviva=='1')col-md-8 @endif p-3">
                 <div wire:ignore>
                     <div id="map"></div>
@@ -81,7 +51,7 @@
                         <!-- Camellón -->
                         <div class="col-12 form-group">
                             <label for="camellon">Camellón<red>*</red></label>
-                            <select wire:model="camellon" wire:change="MuestraCamellon()" type="text" class="@error('camellon') is-invalid @enderror form-select">
+                            <select wire:model="camellon" wire:change="MuestraCamellon()" type="text" class="@error('camellon') is-invalid @enderror form-select" @if($MovimientoActivo=='0') disabled @endif>
                                 <option value="">Selecciona el camellón</option>
                                 @foreach ($camellones as $c)
                                     <option value="{{ $c->cam_id }}">{{ $c->cam_camellon }}</option>
@@ -96,7 +66,9 @@
                             <div class="row">
                                 <!-- botón de coordenadas -->
                                 <div class="col-4 form-group" style="vertical-align: top;"><br>
-                                    <button wire:click="SeleccionaCoords()" class="btn {{ $color1 }}">Capturar<br>coordenadas<br>en mapa</button>
+                                    <button wire:click="SeleccionaCoords()" class="btn {{ $color1 }}" @if($MovimientoActivo=='0') disabled @endif>
+                                        Capturar<br>coordenadas<br>en mapa
+                                    </button>
 
                                 </div>
                                 <div class="col-8 form-group">
@@ -104,14 +76,14 @@
                                         <!-- latitud -->
                                         <div class="col-12 form-group">
                                             <label for="latitud">Latitud (X)<red>*</red></label>
-                                            <input wire:model="latitud" type="text" class="@error('latitud') is-invalid @enderror form-control">
+                                            <input wire:model="latitud" type="text" class="@error('latitud') is-invalid @enderror form-control" @if($MovimientoActivo=='0') readonly @endif>
                                             <div class="form-text"></div>
                                             @error('latitud')<error>{{ $message }}</error>@enderror
                                         </div>
                                         <!-- longitud -->
                                         <div class="col-12 form-group">
                                             <label for="longitud">Longitud (Y)<red>*</red></label>
-                                            <input wire:model="longitud" type="text" class="@error('longitud') is-invalid @enderror form-control">
+                                            <input wire:model="longitud" type="text" class="@error('longitud') is-invalid @enderror form-control" @if($MovimientoActivo=='0') readonly @endif>
                                             <div class="form-text"></div>
                                             @error('longitud')<error>{{ $message }}</error>@enderror
                                         </div>
@@ -143,7 +115,7 @@
                         <!-- Tipo de crecimiento -->
                         <div class="col-6 form-group">
                             <label for="tipocrecim"><br>Tipo de crecimiento<red>*</red></label>
-                            <select wire:model.live="tipocrecim" type="text" class="@error('tipocrecim') is-invalid @enderror form-select">
+                            <select wire:model.live="tipocrecim" type="text" class="@error('tipocrecim') is-invalid @enderror form-select"  @if($MovimientoActivo=='0') disabled @endif>
                                 <option value="">Indica uno</option>
                                 @foreach ($tiposcrecimiento as $t)
                                     <option value="{{ $t->con_txt }}">{{ $t->con_txt }}</option>
@@ -185,8 +157,8 @@
                         <!--  ícono -->
                         <div class="col-10 form-group">
                             <label for="icono">Ícono<red></red></label>
-                            <select wire:model="icono" type="text" class="@error('icono') is-invalid @enderror form-select">
-                                <option value="">Selecciona un ícono</option>
+                            <select wire:model.live="icono" type="text" class="@error('icono') is-invalid @enderror form-select">
+                                {{-- <option value="">Selecciona un ícono</option> --}}
                                 @foreach ($iconos as $i)
                                     <option value="{{ $i->icon_name }}">{{ $i->icon_name }}</option>
                                 @endforeach
@@ -195,7 +167,9 @@
                             @error('icono')<error>{{ $message }}</error>@enderror
                         </div>
                         <div class="col-2">
-                            <img src="">
+                            @if($icono != '')
+                                <img src="{{ $iconos->where('icon_name',$icono)->value('icon_file') }}" style="width:60px;">
+                            @endif
                         </div>
 
                         <div class="col-12 form-group my-3">
@@ -203,9 +177,67 @@
                             @if($errors->count()>0)<error>Hay {{ $errors->count() }} errores</error> @endif
                         </div>
                     </div>
+
                 </div>
             @endif
         </div>
+
+        <!-- -------- Acciones ---------------- -->
+        @if($edit_adcolviva=='1')
+            <div class="row">
+                <div class="col-3 col-md-1" style="font-size:70%;center">
+                    <center>
+                        <button wire:click="ActivarDesactivarMovimientos()" class="btn btn-sm @if($MovimientoActivo=='1') btn-danger @else btn-secondary @endif" style="width:100px;">
+                            <img src="/iconos/IconoMoverPlanta.png" style="width:50px;height:50px;border:0x solid black;" class="mx-2">
+                            @if($MovimientoActivo=='0')Mover @else Moviendo @endif
+                        </button>
+                    </center>
+                </div>
+                <div class="col-3 col-md-1" style="font-size:70%;center">
+                    <center>
+                        <a href="#retirar" class="nolink">
+                            <button wire:click="VerNoVerBaja()" class="btn btn-sm @if($verBaja=='0') btn-secondary @else btn-danger @endif" style="width:100px;">
+                                <img src="/iconos/IconoPlantaMuerta.png" style="width:50px;height:50px;border:0px solid black;" class="mx-2">
+                                Retirar
+                            </button>
+                        </a>
+                    </center>
+                </div>
+
+            </div>
+
+            <div class="row" style="@if($verBaja=='0') display:none; @else display:block; @endif" id="sale_retiraejemplar">
+                <div class="col-12 my-4">
+                    <a name="retirar">
+                        <h3>Retirar ejemplar</h3>
+                    </a>
+                    <p>Hola <b>{{ Auth::user()->nombre }} {{ Auth::user()->apellido }}</b>, estás por retirar a este ejemplar de la colección de este campus. Al retirar un ejemplar, éste ya no estará visible y se almacenará en los datos históricos de la colección.</p>
+                    <div class="col-6 form-group">
+                        <label for="razonBaja" class="form-label">En dos o tres palabras, indica la causa de la baja del ejemplar<red>*</red></label>
+                        <input  wire:model="razonBaja" id="razonBaja" class="@error('razonBaja') is-invalid @enderror form-control" type="text" >
+                        <div class="form-text"></div>
+                        @error('razonBaja')<error>{{ $message }}</error>@enderror
+                    </div>
+                    <div class="col-6 form-group">
+                        <label for="fechaBaja" class="form-label">Indica la fecha de la baja<red>*</red></label>
+                        <input  wire:model="fechaBaja" id="fechaBaja" class="@error('fechaBaja') is-invalid @enderror form-control" type="date" >
+                        <div class="form-text"></div>
+                        @error('fechaBaja')<error>{{ $message }}</error>@enderror
+                    </div>
+                    <div class="col-12 form-group">
+                        <label for="explicaBaja" class="form-label">Explica ampliamente, la causa o razones de la baja<red>*</red></label>
+                        <textarea wire:model="explicaBaja" id="explicaBaja" class="@error('explicaBaja') is-invalid @enderror form-control"></textarea>
+                        <div class="form-text"></div>
+                        @error('explicaBaja')<error>{{ $message }}</error>@enderror
+                    </div>
+                    <div class="col-12 m-4">
+                        <button wire:click="DarDeBaja()" wire:confirm="El ejemplar será dado de baja y no será visible en el sistema. ¿Quieres continuar?" class="btn btn-primary btn-sm">Dar de baja de la colección</button>
+                        <button wire:click="VerNoVerBaja()" class="btn btn-secondary btn-sm">Cancelar</button>
+                    </div>
+                </div>
+
+            </div>
+        @endif
     </div>
 
 
@@ -236,12 +268,11 @@
         /* ---- Función accesoria de Abre Mapa de Camellones para poner etiquetas --- */
         function onEachFeature(feature,layer){
             // console.log('a',feature );
+            //----- Agrega etiqueta a cada polígono -------//
             if (feature.properties) {
-                // let popupContent = "Camellón: <b>" + feature.properties.SisGesJarCamellon + "</b>"; // Assuming a 'name' property
-                // popupContent += "<br><a href='/camellon/" + feature.properties.SisGesJarId + "'><i class='bi bi-pencil-square'></i>Editar</a>";
-                // layer.bindPopup(popupContent);
-                layer;
-                // console.log('onEch');
+                let popupContent = "Camellón: <b>" + feature.properties.SisGesJarCamellon + "</b>"; // Assuming a 'name' property
+                popupContent += "<br><a href='/camellon/" + feature.properties.SisGesJarId + "'><i class='bi bi-pencil-square'></i>Editar</a>";
+                layer.bindPopup(popupContent);
             }
         }
 
@@ -259,50 +290,103 @@
                     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                 }).addTo(map);
             }
-            ///// Recibe array de camellones
-            event.mapas.forEach(function(mapita) {
-                // console.log("va3:",mapita.cam_id);
-                ///// convierte texto recibido en geoJson
-                var geojsonFeature =JSON.parse(mapita.cam_mapa)
-                ///// Detecta color
-                if(event.DestacaId != 'null'){
-                    if(mapita.cam_id == event.DestacaId){
-                        var color=mapita.cam_color;
-                        var opacidad=1.0;
-                        var linea=1;
+            //////////////////////////////////////////////
+            /////////// Recibe array de camellones y los pinta
+            if(event.mapas){
+                event.mapas.forEach(function(mapita) {
+                    // console.log("va3:",mapita.cam_id);
+                    ///// convierte texto recibido en geoJson
+                    var geojsonFeature =JSON.parse(mapita.cam_mapa)
+                    ///// Detecta color
+                    if(event.DestacaId != 'null'){
+                        if(mapita.cam_id == event.DestacaId){
+                            var color=mapita.cam_color;
+                            var opacidad=1.0;
+                            var linea=1;
+                        }else{
+                            var color='#A8A8A8';
+                            var opacidad=0.25;
+                            var linea=0;
+                        }
                     }else{
-                        var color='#A8A8A8';
-                        var opacidad=0.25;
-                        var linea=0;
+                        var color=mapita.cam_color;
+                        var opacidad=0.15;
+                        var linea=1;
                     }
-                }else{
-                    var color=mapita.cam_color;
-                    var opacidad=0.15;
-                    var linea=1;
-                }
-                ///// Plotea el Json del polígono
-                L.geoJSON(geojsonFeature,{
-                    onEachFeature: onEachFeature, //ejecuta función  onEachFeature,
-                    style:{
-                        "color":color,
-                        "weight": linea,
-                        "opacity": opacidad
-                    },
-                }).addTo(map);
 
-                //--------- CAPTURA COORDENADAS --------------//
-                Livewire.on('CapturaCoordenadas', (event) => {
-                    map.on('click', function(e){
-                        var coord = e.latlng;
-                        var lat = coord.lat;
-                        var lng = coord.lng;
-                        @this.set('latitud',lat);
-                        @this.set('longitud',lng)
-                        L.marker(coord).addTo(map)
-                        console.log("Clic en " + lat + " latitud y " + lng + "longitud");
+                    ///// Agrega etiqueta a cada polígono.
+                    L.geoJSON(geojsonFeature,{
+                        // onEachFeature: onEachFeature, //ejecuta función  ParaCadaPoligono, que agrega nombre
+                        style:{
+                            "color":color,
+                            "weight": linea,
+                            "opacity": opacidad
+                        },
+                    }).addTo(map);
+
+                    //--------------------------------------------//
+                    //--------- CAPTURA COORDENADAS --------------//
+                    Livewire.on('CapturaCoordenadas', (event) => {
+                        map.on('click', function(e){
+                            var coord = e.latlng;
+                            var lat = coord.lat;
+                            var lng = coord.lng;
+                            @this.set('latitud',lat);  //Envia var a laravel
+                            @this.set('longitud',lng)  //Envia var a laravel
+                            //-- Si hay punto previo, lo borra
+                            if(typeof NuevoCirculo != 'undefined'){
+                                map.removeLayer(NuevoCirculo);
+                            }
+                            //-- Pinta el nuevo punto
+                            NuevoCirculo = L.circle(coord,{
+                                color:'blue',
+                                fillColor: 'transparent',
+                                fillOpacity: 1,
+                                radius:0.3
+                            }).addTo(map)
+
+                            // console.log("Clic en " + lat + " latitud y " + lng + "longitud");
+                        });
                     });
                 });
-            });
+            }
+
+            //////////////////////////////////////////////
+            /////// Recibe array de ubicaciones (puntos) y los pinta
+            if(event.Ubicaciones){
+                event.Ubicaciones.forEach(function(ubica){
+                    //-- verifica que haya ícono --/
+                    if(ubica.icon_file){
+                        IconArch = ubica.icon_file;
+                    }else{
+                        IconArch = '/iconos/PuntoRojo.png';
+                    }
+                    console.log('icon',IconArch);
+                    //-- Si es igual a DestacaUbicaId... --//
+                    if(event.DestacaUbicaId == ubica.sig_id){
+                        var MiColor='red';
+                        var MiSize=0.5;
+                        var ElIcono = L.icon({
+                            iconUrl: ubica.icon_file,
+                            iconSize:     [25, 25], // size of the icon
+                            // iconAnchor:   [22, 94], // point of the icon which will correspond to marker's location
+                            // popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+                        });
+                        L.marker([ubica.sig_x, ubica.sig_y],{icon:ElIcono}).addTo(map);
+                    }else{
+                        var MiColor='green';
+                        var MiSize=0.1;
+                        /////Plotea punto
+                        L.circle([ubica.sig_x, ubica.sig_y],{
+                            color: MiColor,
+                            fillColor: MiColor,
+                            fillOpacity: 1,
+                            radius: MiSize,
+                        }).addTo(map);
+                    }
+                });
+            }
+
         });
 
         /* ------------ Cierra Mapa de Leaflet ---------- */

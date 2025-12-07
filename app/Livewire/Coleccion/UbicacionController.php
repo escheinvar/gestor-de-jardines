@@ -22,8 +22,10 @@ class UbicacionController extends Component
     public $idEjem;                      ##### Variables recibidas desde URL (Id del ejemplar)
     public $MenuDeEjemplares='ubicacion', $ejemplar, $ejemplar_ScName, $ejemplar_CoName, $ejemplar_ubica;  ##### Variables solicitadas por la plantilla del menú del ejemplar
     public $edit_curcient, $edit_adcolviva, $CampusAutorizados;     ##### Variable solicitadas por front-end para entrar en modo edición
+    public $MovimientoActivo; #### Flag que permite(1) o no (0) mover datos
     public $campus, $camellon, $latitud, $longitud, $restriccion, $notas, $tipocrecim, $colonias, $cantidad, $icono;
     public $temp, $color1;
+    public $verBaja, $razonBaja, $fechaBaja, $explicaBaja;
 
     public function mount($id){
         ######################################################
@@ -85,15 +87,20 @@ class UbicacionController extends Component
                 $this->restriccion = $ubica->sig_restriccion;
                 $this->notas = $ubica->sig_notas;
                 $this->tipocrecim = $ubica->sig_tipocrecim;
-                $this->colonias = ej_conteos::where('cant_ejmid',$this->idEjem)->where('cant_act','1')->where('cant_del','0')->orderBy('cant_fecha')->first()->value('cant_cols');
-                $this->cantidad = ej_conteos::where('cant_ejmid',$this->idEjem)->where('cant_act','1')->where('cant_del','0')->orderBy('cant_fecha')->first()->value('cant_inds');
+                $conteo=ej_conteos::where('cant_ejmid',$this->idEjem)->where('cant_act','1')->where('cant_del','0')->first();
+                $this->colonias = $conteo->cant_cols;
+                $this->cantidad = $conteo->cant_inds;
                 $this->icono = $ubica->sig_icono;
             }else{
                 $this->HayUbica='0';
+                $this->icono='PuntoVerde';
             }
             ########################### Monta valores iniciales
             $this->campus=$this->ejemplar->ejm_ccamsiglas;
             $this->restriccion='0';
+            $this->MovimientoActivo='0';
+            $this->verBaja='0';
+
             #######################################################
             ############################### Monta el mapa
             $CampusIdDelEjemplar=ejemplares::where('ejm_id',$this->idEjem)
@@ -102,25 +109,29 @@ class UbicacionController extends Component
             $camellones=cat_camellones::where('cam_ccamid',$CampusIdDelEjemplar)->get();
 
             // dd($CampusIdDelEjemplar,$camellones);
+
             if($this->HayUbica=='0'){
-                $this->MapaCamellones($camellones,'0',null);
+                $this->MapaCamellones($camellones,'0',null,'','');
             }elseif($this->HayUbica=='1'){
-                $this->MapaCamellones($camellones,'0',$this->ubica->sig_camid);
+                $Ubicaciones=ej_ubicaciones::leftJoin('cat_iconos','sig_icono','=','icon_name')
+                    ->where('sig_camid',$this->ubica->sig_camid)
+                    ->where('sig_act','1')->where('sig_del','0')
+                    ->get()->toArray();
+                $this->MapaCamellones($camellones,'0',$this->ubica->sig_camid, $Ubicaciones, $ubica->sig_id);
             }
             $this->color1="btn-secondary";
         }
     }
 
-    public function MapaCamellones($datos,$streetMap,$DestacaId){
-        ##### Esta función requiere $datos, con la seleccion de cat_camellon a mapear
+    public function MapaCamellones($datos,$streetMap,$DestacaId, $Ubicaciones,$DestacaUbicaId){
+        ##### Esta función requiere que se definan las siguientes variables:
+        ##### $datos =cat_camellon::get() con la seleccion de camellones a mapear or ''
         ##### $streetMap=1 como binario 0, 1 indicando si aparece fondo de StreeMap (1) o no (0)
-        ##### $DestacaId contiene null ó cam_id. Cuando null, muestra todo $datos, pero cuando
-        ##### es igial a cam_id, muestra $datos en gris y destaca y centra cam_id
-        // $streetMap='1';
-        // $datos=cat_camellones::join('cat_campus','cam_ccamid','=','ccam_id')
-        //     ->where('ccam_siglas',$this->CampusSelected)
-        //     ->get();
-        // $DestacaId=30;
+        ##### $DestacaId contiene null ó cam_id. Cuando null, muestra todo $datos,
+        #####                     pero cuando cam_id, muestra $datos en gris y destaca y centra cam_id
+        ##### $Ubicaciones= ej_ubicaciones::join('cat_iconos','sig_icono','=','icon_name')->get() con
+        #####               el listado de puntos a mostrar ó ''
+        ##### $DestacaUbicaId=sig_id; con el id del registro a destacar ó ''
 
         ###### Calcula X y Y inicial (para visualizar el mapa)
         if($DestacaId==null){
@@ -157,9 +168,8 @@ class UbicacionController extends Component
         $this->temp=$zoom."-".$max;
         ##### Pasa lista de camellones a array y lo manda a java
         $mapas=$datos->toArray();
-
         $this->dispatch('CierraMapa');
-        $this->dispatch('IniciaMapaCamellones', zoom:$zoom, streetmap:$streetMap, mapas:$mapas, x:$x, y:$y, DestacaId:$DestacaId);
+        $this->dispatch('IniciaMapaCamellones', zoom:$zoom, streetmap:$streetMap, mapas:$mapas, x:$x, y:$y, DestacaId:$DestacaId, Ubicaciones:$Ubicaciones, DestacaUbicaId:$DestacaUbicaId);
     }
 
     public function SeleccionaCoords(){
@@ -167,7 +177,7 @@ class UbicacionController extends Component
         $this->dispatch('CapturaCoordenadas');
     }
 
-    public function GuardaUbicacion(){
+    public  function GuardaUbicacion(){
         $this->validate([
             'campus'=>'required',
             'camellon'=>'required',
@@ -243,8 +253,47 @@ class UbicacionController extends Component
         ############################### Monta el mapa
         $CampusIdDelEjemplar=cat_campus::where('ccam_siglas',$this->ejemplar->ejm_ccamsiglas)->value('ccam_id');
         $camellones=cat_camellones::where('cam_ccamid',$CampusIdDelEjemplar)->get();
+        $Ubicaciones=ej_ubicaciones::where('sig_camid',$this->camellon)->where('sig_act','1')->where('sig_del','0')->get()->toArray();
+        ##### Cambia color del ícono
         $this->color1="btn-secondary";
-        $this->MapaCamellones($camellones,'0',$this->camellon);
+        ##### Ejecuta mapa
+        $this->MapaCamellones($camellones,'0',$this->camellon,$Ubicaciones,'');
+    }
+
+    public function ActivarDesactivarMovimientos(){
+        if($this->MovimientoActivo=='0'){
+            $this->MovimientoActivo='1';
+        }else{
+            $this->MovimientoActivo='0';
+        }
+    }
+
+    public function VerNoVerBaja(){
+        if($this->verBaja=='0'){
+            $this->verBaja='1';
+        }else{
+            $this->verBaja='0';
+        }
+    }
+
+    public function DarDeBaja(){
+        $this->validate([
+            'razonBaja'=>'required',
+            'fechaBaja'=>'required',
+            'explicaBaja'=>'required',
+        ]);
+
+        ejemplares::where('ejm_id',$this->idEjem)->update([
+            'ejm_del'=>'1',
+            'ejm_ripdate'=>$this->fechaBaja,
+            'ejm_ripcausa'=>$this->razonBaja.": ".$this->explicaBaja,
+        ]);
+        $this->razonBaja='';
+        $this->fechaBaja='';
+        $this->explicaBaja='';
+        $this->verBaja='0';
+        $this->dispatch('AvisoExito', msj:'El ejemplar fue dado de baja definitiva de la colección.');
+        redirect('/ejemplares');
     }
 
     public function render() {

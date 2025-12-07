@@ -43,3 +43,9 @@ para luego poder hacer búsquedas en el herbario.
 ----------------------------------------------------------
 Catálogo de íconos
 Catálogo que permita incorporar nuevos íconos a los mapas
+----------------------------------------------------------
+Crear modal de bajas
+crear modal con: razón de baja (preferentemente de catálogo con
+opcion de agregar otro), fecha de baja y explicación de baja.
+Para sustituir la opción "Mover" de ubicacion_controller (que ahora
+está embebido en la página)
