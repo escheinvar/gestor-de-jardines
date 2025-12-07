@@ -1,6 +1,6 @@
 {{--
 Para mostrar, se requiere invocar la plantilla desde el view :    @ include('plantillas.MenuDeEjemplar'),
-Y desde el controlador que invoca al view, se deben definir cinco variables:
+Y desde el controlador que invoca al view, se deben definir y mandar a $this, seis variables:
 
 $this->idEjem='#'  ##### donde se indica el número del ejemplar
 
@@ -25,7 +25,10 @@ $this->ejemplar_CoName=ej_nombres_comunes::where('con_ejmid',$this->idEjem)
     ->orderBy('con_bibid','asc')
     ->take(3)
     ->get();
-
+$this->ejemplar_ubica = ej_ubicaciones::where('sig_ejmid',$this->idEjem)
+    ->where('sig_act','1')
+    ->where('sig_del','0')
+    ->first();
 --}}
 
 <div class="p-2" style="background-color:#efebe8;" wire:ignore>
@@ -142,9 +145,7 @@ $this->ejemplar_CoName=ej_nombres_comunes::where('con_ejmid',$this->idEjem)
                 </div>
                 <div>
                     <b>Nombre común</b>:
-                    @if($ejemplar_CoName=='')
-                        <error> --Sin definir--</error>
-                    @else
+                    @if($ejemplar_CoName->count() > 0)
                         @foreach ($ejemplar_CoName as $c)
                             {{ $c->con_nombre }}
                             <span style="font-size: 60%;">
@@ -157,14 +158,20 @@ $this->ejemplar_CoName=ej_nombres_comunes::where('con_ejmid',$this->idEjem)
                                 @endif
                             </span>
                         @endforeach
+                    @else
+                        <error> --Sin definir--</error>
                     @endif
                 </div>
                 <div>
                     <b>Campus</b>:  {{ $ejemplar->ejm_ccamsiglas}}
                 </div>
                 <div>
-                    <b>Ubicación</b>: <error> --Sin definir--</error>
-                    ({{ $ejemplar->ejm_edo_ubica }})
+                    <b>Ubicación</b>:
+                    @if(isset($ejemplar_ubica))
+                        {{ $ejemplar_ubica->sig_camcamellon }}
+                    @else
+                        <error> --Sin definir--</error>
+                    @endif
                 </div>
             </div>
             <div class="col-sm-5 col-md-4">

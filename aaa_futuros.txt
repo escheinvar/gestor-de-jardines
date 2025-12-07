@@ -41,3 +41,5 @@ Nuevo módulo de herbario
 de la foto, todos los datos de la ficha del ejemplar de herbario
 para luego poder hacer búsquedas en el herbario.
 ----------------------------------------------------------
+Catálogo de íconos
+Catálogo que permita incorporar nuevos íconos a los mapas

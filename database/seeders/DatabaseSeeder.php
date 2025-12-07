@@ -33,7 +33,8 @@ class DatabaseSeeder extends Seeder
             BitacoraSeeder::class,
             #CatEspeciesSeeder::class,
             CatLenguasSeeder::class,
-
+            CatIconosSeeder::class,
+            CatColecEjempsSeeder::class,
         ]);
 
     }
