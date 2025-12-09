@@ -112,7 +112,9 @@
         })
         Livewire.on('cierraModalDeAutoridades',()=>{
             $('#ModalDeAutoridades').modal('hide');
-            // console.log('va2');
+            if(event.detail.reload == '1'){
+                window.location.reload();
+            }
         })
         Livewire.on('AvisoExitoAutoridades',()=>{
             alert(event.detail.msj);

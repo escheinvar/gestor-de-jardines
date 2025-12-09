@@ -35,6 +35,7 @@ class DatabaseSeeder extends Seeder
             CatLenguasSeeder::class,
             CatIconosSeeder::class,
             CatColecEjempsSeeder::class,
+            CatTipoExpedienteSeeder::class,
         ]);
 
     }

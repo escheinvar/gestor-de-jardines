@@ -87,7 +87,7 @@ $this->ejemplar_ubica = ej_ubicaciones::where('sig_ejmid',$this->idEjem)
                 <a class="nav-link nolink  @if($MenuDeEjemplares == 'ubicacion') active @endif" href="/ejem_ubica/{{ $idEjem }}"  style="border:1px solid #CDC6B9;">Ubicación</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link nolink  @if($MenuDeEjemplares == 'expediente') active @endif" href="#"  style="border:1px solid #CDC6B9;">Expediente</a>
+                <a class="nav-link nolink  @if($MenuDeEjemplares == 'expediente') active @endif" href="/ejem_expediente/{{ $idEjem }}"  style="border:1px solid #CDC6B9;">Expediente</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link nolink  @if($MenuDeEjemplares == 'usos') active @endif" href="#"  style="border:1px solid #CDC6B9;">Usos</a>

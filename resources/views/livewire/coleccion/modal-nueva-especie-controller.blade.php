@@ -178,9 +178,11 @@
         })
         Livewire.on('cierraModalDeNuevaEspecie',()=>{
             $('#ModalDeNuevaEspecie').modal('hide');
-            // console.log('va2');
+            if(event.detail.reload == '1'){
+                window.location.reload();
+            }
         })
-        // Livewire.on('AvisoExitoAutoridades',()=>{
+        // Livewire.on('AvisoExitoNvaEspecie',()=>{
         //     alert(event.detail.msj);
         //     # console.log(event.detail.msj);
         // })

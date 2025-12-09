@@ -11,83 +11,123 @@
     @include('plantillas.MenuDeEjemplar')
 
     <div class="row">
-        <div class="col-12">
-            <h2>Ejemplar ID {{ $idEjem }}</h2>
-
-            <h3>Nombre científico:
-                @if($ejemplar_ScName)
-                    {{ $ejemplar_ScName->scn_name }}
-                @else
-                    <error> -- no definido --</error>
-                @endif
-            </h3>
-
-            <h3>
-                Nombres comunes:
-                @if($ejemplar_CoName)
-                    {{ implode(', ',$ejemplar_CoName->pluck('con_nombre')->toArray()) }}</h3>
-                @else
-                    <error> -- no definido --</error>
-                @endif
-            </h3>
-        </div>
-    </div>
-
-    <div class="row">
-        <?php $imags=$Imagenes; ?>
-        @include('plantillas.imagenes')
-    </div>
-
-    <div class="row">
-        <div class="col-12 col-md-6">
-            <!-- nombre del jardín -->
-            <div>
-                <h4>
+        <!-- ------------------------------------------------------------ -->
+        <!-- ----------------- COLUMNA IZQUIERDA ------------------------ -->
+        <div class="col-12 col-md-7">
+            <div class="row">
+                <!-- nombre del jardín -->
+                <div class="col-12">
                     <img src="/avatar/jardines/{{ $JardinData->cjar_logo }}" style="width:50px;">
                     {{ $JardinData->cjar_nombre }}
-                </h4>
-            </div>
-            <!-- campus-->
-            <div>
-                <h4>Campus: {{ $JardinData->ccam_nombre }} ({{ $JardinData->ccam_siglas }})</h4>
-            </div>
-
-            <!-- ubicación -->
-            <div>
-                @if($ejemplar_ubica)
-                    <h4>Camellón: {{ $ejemplar_ubica->sig_camcamellon }}</h4>
-                @else
-                    <h4><error>-- Falta ubicar --</error></h4>
-                @endif
-            </div>
-
-            <!-- bitácora -->
-            <div>
-                @if($ejemplar->ejm_bitid > '0')
-                    <h4>Bitácora: {{ $ejemplar->ejm_bitid }}</h4>
-                @else
-                    <h4><error>Falta bitácora</error>
-                @endif
-            </div>
-
-            <!-- alias -->
-            @if($alias)
-                <div>
-                    <h4>Alias:</h4>
-                        @foreach ($alias as $a)
-                            <li>{{ $a->alias_nombre }}</li>
-                        @endforeach
                 </div>
-            @endif
-        </div>
-        @if($ejemplar_ubica)
-            <div class="col-12 col-md-4">
-                <div id="map" style="width:180px;"></div>
             </div>
-        @endif
+
+            <!-- campus -->
+            <div class="row py-1">
+                <div class="col-3">Campus: </div>
+                <div class="col-8">{{ $JardinData->ccam_nombre }}  ({{ $JardinData->ccam_siglas }})</div>
+            </div>
+
+            <!-- ID ejemplar-->
+            <div class="row py-1">
+                <div class="col-3">Id de ejemplar:</div>
+                <div class="col-8">{{ $idEjem }}</div>
+            </div>
+
+            <!-- Nombre científico -->
+            <div class="row py-1">
+                <div class="col-3">Nombre científico</div>
+                <div class="col-8">
+                    @if($ejemplar_ScName) {{ $ejemplar_ScName->scn_name }}
+                    @else<error> -- no definido --</error>
+                    @endif
+                </div>
+            </div>
+
+            <!--Nombres comunes: -->
+            <div class="row py-1">
+                <div class="col-3">Nombres comunes:</div>
+                <div class="col-8">
+                    @if($ejemplar_CoName){{ implode(', ',$ejemplar_CoName->pluck('con_nombre')->toArray()) }}
+                    @else<error> -- no definido --</error>
+                    @endif
+                </div>
+            </div>
+
+            <!-- Imágenes -->
+            <div class="row py-1">
+                <div class="col-12">
+                    <center>
+                        <?php $imags=$Imagenes; ?>
+                        @include('plantillas.imagenes')
+                    </center>
+                </div>
+            </div>
+
+            <!-- Alias -->
+            <div class="row py-1">
+                <div class="col-3">Alias del ejemplar:</div>
+                <div class="col-8">
+                    @if($alias)
+                        @foreach ($alias as $a)
+                            {{ $a->alias_nombre }} {{ $alias->count() }}
+                        @endforeach
+                    @endif
+                </div>
+            </div>
+
+
+
+            <!-- Camellón -->
+            <div class="row py-1">
+                <div class="col-3">Camellón</div>
+                <div class="col-8">
+                    @if($ejemplar_ubica){{ $ejemplar_ubica->sig_camcamellon }}
+                    @else<error>-- Falta ubicar --</error>
+                    @endif
+                </div>
+            </div>
+
+            <!-- Bitácora -->
+            <div class="row py-1">
+                <div class="col-3">Bitácora</div>
+                <div class="col-8">
+                    @if($ejemplar->ejm_bitid > '0'){{ $ejemplar->ejm_bitid }}
+                    @else <error>Falta bitácora</error>
+                    @endif
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ------------------------------------------------------------ -->
+        <!-- ----------------- COLUMNA DERECHA ------------------------ -->
+        <div class="col-12 col-md-5">
+            <!-- ACCIONES -->
+            <div class="row">
+                <div class="col-12 form-group py-2">
+                    <label class="form-label">Reportar:</label><br>
+                    <button class="btn btn-success btn-sm">Flor</button>
+                    <button class="btn btn-success btn-sm">Polinizador</button>
+                    <button class="btn btn-success btn-sm">Nombre</button>
+                    <button class="btn btn-success btn-sm">Fruto</button>
+                    <button class="btn btn-success btn-sm">Uso</button>
+                </div>
+            </div>
+            <div class="row">
+                @if($ejemplar_ubica)
+                    <div class="col-12">
+                        <div id="map" style="width:180px;"></div>
+                    </div>
+                @endif
+            </div>
+        </div>
     </div>
+
+    <!-- ------------------------------------------------------------ -->
+    <!-- ----------------- FILA FINAL DE ABAJO ---------------------- -->
     <div class="row">
-        <div class="col-2">
+        <div class="col-12 form-group py-2">
             <button>Reubicar</button>
             <button>Dar de baja</button>
             <button>Cosechar semilla</button>
@@ -104,7 +144,7 @@
 
 
     <script>
-        Livewire.on('AvisoExito',()=>{
+        Livewire.on('AvisoExitoInicio',()=>{
             alert(event.detail.msj);
             //  console.log(event.detail.msj);
         })

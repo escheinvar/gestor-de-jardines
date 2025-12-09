@@ -6,6 +6,7 @@ use App\Models\bitacora1;
 use App\Models\cat_autoridades;
 use App\Models\cat_campus;
 use App\Models\cat_conceptos;
+use App\Models\ej_alias;
 use App\Models\ej_nombres_cientificos;
 use App\Models\ej_nombres_comunes;
 use App\Models\ejemplares;
@@ -32,13 +33,13 @@ class BitcoraController extends Component
     public $edit_adcolviva, $CampusAutorizados;   ##### Variable solicitadas por front-end para entrar en modo edición
     public $bitacoraPendiente;           ##### Flag que indica si el ejemplar tiene (1) o no (0) la bitácora pendiente.
     public $idEjmVincula, $campus, $colectadate, $etiqueta_colecta, $origen, $origen_explica,$forma_colecta, $campusEjem;
-    public $autid, $alias, $autoridadescolecta;
+    public $autid, $autoridadescolecta;
     public $edo, $mpio, $localidad, $paraje, $x, $y, $altitud, $obs_colecta, $TipoDeVinculacion;
+    // public $img_colecta_ejemplar, $img_colecta_paisaje;
 
     public function mount($id){
         ######################################################
-        ####################### Validaciones de permisos y URL
-
+        ############################### Validacion de permisos
         ##### Genera array de campus permitidos para el usuario
         $this->CampusAutorizados=usr_roles::where('rol_del','0')
             ->where('rol_act','1')
@@ -49,16 +50,15 @@ class BitcoraController extends Component
         if(in_array('todos',$this->CampusAutorizados)){
             $this->CampusAutorizados=cat_campus::where('ccam_act','1')->pluck('ccam_siglas')->toArray();
         }
-
+        ######################################################
+        ################################### Validaciones de URL
         ##### Revisa que el id sea sólo numérico
         if( !preg_match('/^\d+$/',$id)){
             return redirect()->route('error',["Error en el número de ejemplar"]);
         }
-
         ##### Confirma id correcto y carga datos
         if($id == '0'){
             $this->idEjem='0';
-
         }else{
             if(ejemplares::where('ejm_id',$id)->where('ejm_act','1')->where('ejm_del','0')->count() != '1'){
                 return redirect()->route('error',["El número de ejemplar no existe"]);
@@ -83,7 +83,6 @@ class BitcoraController extends Component
             $this->origen_explica = $ejemplar->bit_origen_explica;
             $this->forma_colecta = $ejemplar->bit_forma_colecta;
             $this->autid = $ejemplar->bit_autid;
-            $this->alias = $ejemplar->bit_alias;
             $this->edo = $ejemplar->bit_edo;
             $this->mpio = $ejemplar->bit_mpio;
             $this->localidad = $ejemplar->bit_localidad;
@@ -102,7 +101,6 @@ class BitcoraController extends Component
             }
         }
     }
-
 
     public function ActivarNuevaBitacora($tipo){
         ###### Genera un id de bitácora temporal para activar el ingreso de datos
@@ -124,7 +122,7 @@ class BitcoraController extends Component
                 'ejm_bitid'=>$bit->bit_id,
             ]);
             ##### Emite alerta de éxito
-            $this->dispatch('AvisoExito', msj:'Se registró generó correctamente la nueva bitácora');
+            $this->dispatch('AvisoExitoBitacora', msj:'Se registró generó correctamente la nueva bitácora');
             ##### Redirecciona al nuevo ejemplar
             redirect('/ejem_bitacora/'.$this->idEjem);
 
@@ -150,7 +148,7 @@ class BitcoraController extends Component
                 'ejm_bitid'=>$ganon,
             ]);
             ##### Emite alerta de éxito
-            $this->dispatch('AvisoExito', msj:'Se vinculó al ejemplar correctamente a la bitácora');
+            $this->dispatch('AvisoExitoBitacora', msj:'Se vinculó al ejemplar correctamente a la bitácora');
             ##### Redirecciona al nuevo ejemplar
             redirect('/ejem_bitacora/'.$this->idEjem);
 
@@ -195,11 +193,10 @@ class BitcoraController extends Component
             'bit_altitud'=>$this->altitud,
             'bit_obs_colecta'=>$this->obs_colecta,
             'bit_usrid'=>Auth::user()->id,
-            'bit_alias'=>$this->alias,
         ]);
 
         ##### Emite alerta de éxito
-        $this->dispatch('AvisoExito', msj:'La bitácora se actualizó correctamente');
+        $this->dispatch('AvisoExitoBitacora', msj:'La bitácora se actualizó correctamente');
         ##### Redirecciona al nuevo ejemplar
         redirect('/ejem_bitacora/'.$idGuardar);
 
@@ -241,7 +238,6 @@ class BitcoraController extends Component
             'bit_altitud'=>$this->altitud,
             'bit_obs_colecta'=>$this->obs_colecta,
             'bit_usrid'=>Auth::user()->id,
-            'bit_alias'=>$this->alias,
         ]);
 
         ##### Guarda ejemplar en base de datos
@@ -262,7 +258,7 @@ class BitcoraController extends Component
             'bit_ejmid_prop'=>$ejemplar->ejm_id,
         ]);
         ##### Emite alerta de éxito
-        $this->dispatch('AvisoExito', msj:'Se registró correctamente el nuevo ejemplar con id '.$ejemplar->ejm_id.' y bajo la bitácora id '.$bit->bit_id);
+        $this->dispatch('AvisoExitoBitacora', msj:'Se registró correctamente el nuevo ejemplar con id '.$ejemplar->ejm_id.' y bajo la bitácora id '.$bit->bit_id);
         ##### Redirecciona al nuevo ejemplar
         redirect('/ejem_bitacora/'.$ejemplar->ejm_id);
     }
@@ -287,6 +283,15 @@ class BitcoraController extends Component
         $this->dispatch('abreModalDeNombreComun',$datos);
     }
 
+    public function abreModalAlias(){
+        $data=['ejmId'=>$this->idEjem, 'tipo'=>'bitácora']; ##### ejmId=número Id del ejemplar; tipo=['ejemplar','bitácora','ubicación','otro']
+        $this->dispatch('abreModalDeAlias',$data);
+    }
+
+    public function BorrarAlias($id){
+        ej_alias::where('alias_id',$id)->update(['alias_del'=>'1']);
+        redirect('/ejem_bitacora/'.$this->idEjem);
+    }
 
     public function render() {
         #############################################################
@@ -338,15 +343,23 @@ class BitcoraController extends Component
         $this->autoridadescolecta=cat_autoridades::where('aut_tipo','colecta')->where('aut_id','!=','0')->get();
         $estados=estados::select('cedo_nombre')->get();
         $municipios=municipios::where('cmun_edoname',$this->edo)->select('cmun_mpioname')->get();
+
         $img_colecta_ejemplar=imagenes::where('img_ejmid',$this->idEjem)
-            ->where('img_act','1')
-            ->where('img_del','0')
-            ->where('img_cimgtipo','colecta_ejemplar')
-            ->get();
+                ->where('img_act','1')
+                ->where('img_del','0')
+                ->where('img_cimgtipo','colecta_ejemplar')
+                ->get();
         $img_colecta_paisaje=imagenes::where('img_ejmid',$this->idEjem)
-            ->where('img_act','1')
-            ->where('img_del','0')
-            ->where('img_cimgtipo','colecta_paisaje')
+                ->where('img_act','1')
+                ->where('img_del','0')
+                ->where('img_cimgtipo','colecta_paisaje')
+                ->get();
+
+        ######## Carga alias:
+        $alias=ej_alias::where('alias_ejmid',$this->idEjem)
+            ->where('alias_tipo','bitácora')
+            ->where('alias_act','1')
+            ->where('alias_del','0')
             ->get();
 
         ##### Manda a front
@@ -358,6 +371,7 @@ class BitcoraController extends Component
             'municipios'=>$municipios,
             'img_colecta_ejemplar'=>$img_colecta_ejemplar,
             'img_colecta_paisaje'=>$img_colecta_paisaje,
+            'alias'=>$alias,
         ]);
     }
 }

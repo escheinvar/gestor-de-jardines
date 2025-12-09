@@ -154,7 +154,9 @@
         })
         Livewire.on('cierraModalDeNombreCientifico',()=>{
             $('#ModalDeAsignaNombreCientifico').modal('hide');
-            // console.log('va2');
+            if(event.detail.reload == '1'){
+                window.location.reload();
+            }
         })
         Livewire.on('AvisoExitoAsignaSp',()=>{
             alert(event.detail.msj);

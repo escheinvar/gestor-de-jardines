@@ -9,56 +9,6 @@
 @endsection
 <div>
     @include('plantillas.MenuDeEjemplar')
-    <!------------------------------------------------------------------------------------------- -->
-    <!-- -------------------- INICIA DATOS GENERALES DEL EJEMPLAR ------------------------------- -->
-    {{-- usa variables $idEjem con id del ejemplar desde URL y $ejemplar --}}
-    <div class="row my-3" style="">
-        {{-- <div class="col-sm-5 col-md-4" style="vertical-align: top;">
-            <div style="font-size: 150%;">
-                @if($idEjem=='0')
-                    <b>Nuevo ejemplar</b>
-                    <div class="form-text" style="font-size:60%;"> Para ingresar un nuevo ejemplar, primero guarda los datos de la bitácora
-                        y una vez el sistema te haya asignado número de bitácora, entonces ingresa los nombres e imágenes
-                    </div>
-                @else
-                    <b>ID de ejemplar:</b> {{ $idEjem }}
-                @endif
-
-                @if($idEjem > '0')
-                    <div class="@if($ejemplar->ejm_bitid =='0') error2 @endif">
-                            @if($ejemplar->ejm_bitid=='0')
-                                <b>Bitácora pendiente</b>
-                            @else
-                                <b>ID de bitácora</b>:  {{ $ejemplar->ejm_bitid }}
-                            @endif
-                    </div>
-                @endif
-            </div>
-        </div>
-        @if($idEjem >'0')
-            <div class="col-sm-5 col-md-4">
-                <b>Nombre científico</b>:
-                    @if(is_null($ejemplar_ScName))<span class="error2"> --Sin definir--</span>
-                    @else {{ $ejemplar_ScName->scn_name }} ({{ $ejemplar_ScName->scn_edo }})
-                    @endif<br>
-                <b>Nombre común</b>: -- ({{ $ejemplar->ejm_edo_name }})<br>
-                <b>Campus</b>:  {{ $ejemplar->ejm_ccamsiglas}}
-                <b>Ubicación</b>: -- ({{ $ejemplar->ejm_edo_ubica }})<br>
-            </div>
-            <div class="col-sm-5 col-md-4">
-                <b>Dueño de bitacora</b>:
-                    @if($ejemplar->bit_ejmid_prop == $idEjem )  Este ejemplar (Ejm. ID {{ $idEjem }})
-                    @else  @if($ejemplar->bit_ejmid_prop > '0') <a href="/ejem_bitacora/{{ $ejemplar->bit_ejmid_prop }}">Ejm. ID {{ $ejemplar->bit_ejmid_prop }}</a> @else Sin Bitácora @endif
-                    @endif <br>
-                <b>ID de Madre</b>: @if($ejemplar->ejm_madreid != '') <a href="/ejem_bitacora/{{ $ejemplar->ejm_madreid }}"> Ejm. {{ $ejemplar->ejm_madreid }} </a> @endif <br>
-                <b>ID de Padre</b>: @if($ejemplar->ejm_padreid != '') <a href="/ejem_bitacora/{{ $ejemplar->ejm_padreid }}">Ejm. {{ $ejemplar->ejm_padreid }} </a> @endif <br>
-                <b>ID de Lote</b>: @if($ejemplar->ejm_loteid != '') <a href="/lote/{{ $ejemplar->ejem_loteid }}">Ejm. {{ $ejemplar->ejm_loteid }} </a> @endif <br>
-            </div>
-        @endif --}}
-    </div>
-
-
-
     <!-- aviso de privilegios -->
     <div style="font-size: 80%;color:grey;">
         Bitácora: Sección administrada por <b>admin-colviva</b>
@@ -195,13 +145,7 @@
                 @error('autid')<error>{{ $message }}</error>@enderror
             </div>
 
-            <!-- Explica forma de colecta -->
-            <div class="col-sm-12 col-md-4 form-group">
-                <label for="alias" class="form-label">Alias de la bitácora</label>
-                <input wire:model="alias" id="alias" class="@error('alias') is-invalid @enderror form-control" type="text" >
-                <div class="form-text">Otros nombres con los que se identifica la bitácora (separados por punto y coma)</div>
-                @error('alias')<error>{{ $message }}</error>@enderror
-            </div>
+
 
             @if($edit_adcolviva=='1')
                 <div class="col-sm-6 col-md-4 form-group">
@@ -217,9 +161,6 @@
                         </button>
                     @endif
                 </div>
-
-
-
             @endif
             @if($idEjem=='0')
                 <div class="col-sm-6 col-md-4 form-group">
@@ -228,6 +169,22 @@
                     <button class="btn"><i wire:click="" class="bi bi-plus-square-fill agregar" style=""></i> Usos</button>
                 </div>
             @endif
+            <!-- Alias de bitácora  -->
+            <div class="col-sm-12 col-md-4 form-group">
+                <i wire:click="abreModalAlias('{{ $idEjem }}', 'bitácora')" class="bi bi-plus-square-fill agregar"></i>
+                <label for="alias" class="form-label">Alias de la bitácora</label><br>
+                @if($alias->count() > '0')
+                    @foreach($alias as $a)
+                        <li>
+                            {{ $a->alias_nombre }}
+                            <i wire:click="BorrarAlias('{{ $a->alias_id }}')" wire:confirm="Estás por eliminar definitivamente este nombre. ¿Quieres continuar?" class="bi bi-trash agregar"></i>
+                        </li>
+                    @endforeach
+                @else
+                    -- ninguno --
+                @endif
+                @error('alias')<error>{{ $message }}</error>@enderror
+            </div>
         </div>
         <!-- -------------------- IMÁGENES DE SITIO DE COLECTA --------------------- -->
         <div class="row">
@@ -394,9 +351,10 @@
     <livewire:coleccion.modal-autoridades-controller />
     <livewire:coleccion.modal-asigna-especie-controller />
     <livewire:coleccion.modal-nombres-comunes-controller />
+    <livewire:coleccion.ModalAliasController />
 
     <script>
-        Livewire.on('AvisoExito',()=>{
+        Livewire.on('AvisoExitoBitacora',()=>{
             alert(event.detail.msj);
             // console.log(event.detail.msj);
         })

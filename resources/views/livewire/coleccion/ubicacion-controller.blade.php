@@ -258,7 +258,7 @@
 
 
     <script>
-        Livewire.on('AvisoExito',()=>{
+        Livewire.on('AvisoExitoUbicacion',()=>{
             alert(event.detail.msj);
             //  console.log(event.detail.msj);
         })

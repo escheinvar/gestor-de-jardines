@@ -19,6 +19,7 @@ class ej_alias extends Model
         'alias_del',
         'alias_ejmid',
         'alias_bitid',
+        'alias_tipo',
         'alias_nombre',
         'alias_explica',
         'alias_usrid',

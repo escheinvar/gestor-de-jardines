@@ -15,6 +15,7 @@ use App\Livewire\Admin\CatNombresCientificosController;
 use App\Livewire\Coleccion\BibliografiaController;
 use App\Livewire\Coleccion\BitcoraController;
 use App\Livewire\Coleccion\EjemplaresController;
+use App\Livewire\Coleccion\ExpedienteController;
 use App\Livewire\Coleccion\InicioController;
 use App\Livewire\Coleccion\ModalImagenController;
 use App\Livewire\Coleccion\NombresController;
@@ -84,6 +85,7 @@ Route::middleware([UsuarioAutenticadoConRolMiddleware::class])->group(function()
     Route::get('/ejem_bitacora/{id}', BitcoraController::class)->name('bitacora');
     Route::get('/ejem_nombres/{id}', NombresController::class)->name('nombres');
     Route::get('/ejem_ubica/{id}', UbicacionController::class)->name('ubicaciones');
+    Route::get('/ejem_expediente/{id}', ExpedienteController::class)->name('expediente');
 
     /* ----------------------- biblioteca --------------------------------------------*/
     Route::get('/bibliografía', BibliografiaController::class)->name('bibliografía');

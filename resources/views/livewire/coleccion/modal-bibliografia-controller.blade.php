@@ -432,9 +432,11 @@
             })
             Livewire.on('cierraModalDeBibliogfafia',()=>{
                 $('#ModalDeBibliografia').modal('hide');
-                // console.log('va2');
+                if(event.detail.reload == '1'){
+                    window.location.reload();
+                }
             })
-            Livewire.on('AvisoExito',()=>{
+            Livewire.on('AvisoExitoBiblio',()=>{
                 alert(event.detail.msj);
                 // console.log(event.detail.msj);
             })

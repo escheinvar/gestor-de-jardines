@@ -368,7 +368,7 @@ class ModalBibliografiaController extends Component
             bibliografia::where('bib_id',$data['bib_id'])->update(['bib_pdf'=>$ruta.$nombre]);
         }
         ###### MANDA AVISSO
-        $this->dispatch('AvisoExito', msj:'Registro bibligráficos generado con éxito');
+        $this->dispatch('AvisoExitoBiblio', msj:'Registro bibligráficos generado con éxito');
         redirect()->back();
         $this->cerrarModal();
     }

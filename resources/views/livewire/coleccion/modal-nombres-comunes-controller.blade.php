@@ -251,7 +251,7 @@
             // console.log(event.detail.reload);
         })
 
-        Livewire.on('AvisoExito',()=>{
+        Livewire.on('AvisoExitoNomCom',()=>{
             alert(event.detail.msj);
             //  console.log(event.detail.msj);
         })

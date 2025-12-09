@@ -84,16 +84,9 @@ class NombresController extends Component
         $this->dispatch('abreModalDeNombreComun',$data);
     }
 
-    public function AgregaAlias(){
-        $this->validate(['nuevoAlias'=>'required']);
-        ej_alias::create([
-            'alias_ejmid'=>$this->idEjem,
-            'alias_bitid'=>null,
-            'alias_nombre'=>$this->nuevoAlias,
-            'alias_explica'=>'',
-            'alias_usrid'=>Auth::user()->id,
-        ]);
-        $this->nuevoAlias='';
+    public function AbrirModalAlias (){
+        $data=['ejmId'=>$this->idEjem, 'tipo'=>'ubicacion'];
+        $this->dispatch('abreModalDeAlias', $data);
     }
 
     public function BorrarAlias($id){

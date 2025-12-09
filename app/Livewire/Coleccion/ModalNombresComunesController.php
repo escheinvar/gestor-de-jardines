@@ -166,7 +166,7 @@ class ModalNombresComunesController extends Component
         $this->modnomcom_file2 = ej_nombres_comunes::where('con_id',$this->conId)->value('con_file2');
         $this->modnomcom_file3 = ej_nombres_comunes::where('con_id',$this->conId)->value('con_file3');
         $this->modnomcom_file4 = ej_nombres_comunes::where('con_id',$this->conId)->value('con_file4');
-        // $this->dispatch('AvisoExito',msj:'Archivo guardado exitosamente');
+        // $this->dispatch('AvisoExitoNomCom',msj:'Archivo guardado exitosamente');
     }
 
     public function BorrarNombre(){

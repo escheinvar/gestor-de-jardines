@@ -17,6 +17,7 @@ return new class extends Migration
             $table->enum('alias_del',['0','1'])->default('0');  ##### Binario de borrado lógico
             $table->integer('alias_ejmid')->nullable(); ##### Id del ejemplar
             $table->integer('alias_bitid')->nullable(); ##### Id de la bitácora
+            $table->string('alias_tipo'); ##### Indica el tipo de alias (de nombre, de bitácora, de ubicación)
             $table->string('alias_nombre'); ###### Texto con el nombre
             $table->longText('alias_explica')->nullable(); #### texto con explicación
             $table->integer('alias_usrid'); #### Id del usuario que lo ingresó

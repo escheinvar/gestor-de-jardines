@@ -141,6 +141,13 @@ class ModalImagenController extends Component
         $this->borrarTodo();
     }
 
+    public function borrarTodo(){
+        $this->reset('NvoArch','media','modulo','tipo1','tipo2','titulo','ubica','explica','autor','fecha','lat','lon');
+        $this->resetErrorBag();
+        $this->dispatch('cierraModalDeImagen',reload:1);
+        redirect()->back();
+    }
+
     public function GuardarObjeto(){
         $this->validate([
             // 'NvoArch'=>'required',
@@ -187,14 +194,10 @@ class ModalImagenController extends Component
             'img_del'=>'1',
         ]);
         $this->borrarTodo();
-        $this->dispatch('alertaBorrado');
+        $this->dispatch('alertaBorradoImagen');
     }
 
-    public function borrarTodo(){
-        $this->reset('NvoArch','media','modulo','tipo1','tipo2','titulo','ubica','explica','autor','fecha','lat','lon');
-        $this->resetErrorBag();
-        $this->dispatch('cierraModalDeImagen');
-    }
+
 
 
     public function render() {

@@ -241,9 +241,12 @@
         Livewire.on('cierraModalDeImagen',()=>{
             // console.log('va2');
             $('#ModalDeImagen').modal('hide');
+            if(event.detail.reload == '1'){
+                window.location.reload();
+            }
         })
 
-        Livewire.on('alertaBorrado',()=>{
+        Livewire.on('alertaBorradoImagen',()=>{
             // console.log('va3');
             alert('Se eliminó el objeto correctamente')
         })

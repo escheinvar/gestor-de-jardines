@@ -300,7 +300,8 @@
     <div>
         <hr class="titulo">
         <a name="alias">
-            <H3>Otros nombres del ejemplar</H3>
+            <i class="bi bi-plus-square PaClick" wire:click="AbrirModalAlias()" style="margin-right:5px;"></i>
+            <H3 style="display: inline-block;">Otros nombres o identificadores asignados al ejemplar</H3><br>
         </a>
         <div class="row">
             <div class="col-12">
@@ -317,19 +318,6 @@
                         @endforeach
                     </ul>
                 @endif
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-sm-12 col-md-4 form-group">
-                <label for="nuevoAlias" class="form-label">Nuevo alias del ejemplar:</label>
-                <input wire:model="nuevoAlias" type="text" id="nuevoAlias" class="@error('nuevoAlias') is-invalid @enderror form-control">
-                <div class="form-text">Indica todas las etiquetas, clavos y nombres que ha tenido este ejemplar</div>
-                @error('nuevoAlias')<error>{{ $message }}</error>@enderror
-            </div>
-            <div class="col-sm-12 col-md-4 form-group">
-                <label class="form-label"> &nbsp; </label><br>
-                <button wire:click="AgregaAlias()" class="btn btn-primary btn-sm"> <i class="bi bi-plus-square"></i> Agregar alias</button>
             </div>
         </div>
     </div>
@@ -360,6 +348,7 @@
     <livewire:coleccion.modal-asigna-especie-controller />
     <livewire:coleccion.modal-bibliografia-controller />
     <livewire:coleccion.modal-nombres-comunes-controller />
+    <livewire:coleccion.ModalAliasController />
 </div>
 
 

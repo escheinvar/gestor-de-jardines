@@ -244,7 +244,7 @@ class UbicacionController extends Component
         ]);
 
         ##### Redirecciona
-        $this->dispatch('AvisoExito',msj:'Se guardaron los datos exitosamente');
+        $this->dispatch('AvisoExitoUbicacion',msj:'Se guardaron los datos exitosamente');
         return redirect('ejem_ubica/'.$this->idEjem);
     }
 
@@ -292,7 +292,7 @@ class UbicacionController extends Component
         $this->fechaBaja='';
         $this->explicaBaja='';
         $this->verBaja='0';
-        $this->dispatch('AvisoExito', msj:'El ejemplar fue dado de baja definitiva de la colección.');
+        $this->dispatch('AvisoExitoUbicacion', msj:'El ejemplar fue dado de baja definitiva de la colección.');
         redirect('/ejemplares');
     }
 
