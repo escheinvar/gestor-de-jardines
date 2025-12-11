@@ -1,5 +1,6 @@
-OJO: Verificar que sólo se pueda editar la bitácora cuando sea la
+BUG: OJO: Verificar que sólo se pueda editar la bitácora cuando sea la
 del propietario
+
 ----------------------------------------------------------
 Completar bibliografia-controller (catálogo bibliográfico)
 - crear búsquedas de bibliografía por autor, titulo, año, revista/editorial

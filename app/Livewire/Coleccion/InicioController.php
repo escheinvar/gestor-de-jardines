@@ -74,37 +74,55 @@ class InicioController extends Component
 
         ######################################### Ejecuta mapa
         if($this->ejemplar_ubica){
-            $datos=cat_camellones::where('cam_ccamid',$this->ejemplar_ubica->sig_camid)->get();
-            $Ubicaciones=ej_ubicaciones::where('sig_camid',$this->ejemplar_ubica->sig_camid)->join('cat_iconos','sig_icono','=','icon_name')->get()->toArray();
+            $campusId=cat_campus::where('ccam_siglas',$this->ejemplar->ejm_ccamsiglas)->value('ccam_id');
+            $camellones=cat_camellones::where('cam_ccamid',$campusId)->get();
+            $Ubicaciones=ej_ubicaciones::where('sig_camid',$this->ejemplar_ubica->sig_camid)->join('cat_iconos','sig_icono','=','icon_name')->get();
             $DestacaUbicaId= $this->ejemplar_ubica->sig_id;
-            // dd($this->ejemplar_ubica,$Ubicaciones);
-
-            $this->MapaCamellones($datos,'0',$this->ejemplar_ubica->sig_camid, $Ubicaciones,$DestacaUbicaId);
+            $this->MapaCamellones($camellones,'0',$this->ejemplar_ubica->sig_camid,  $Ubicaciones, $DestacaUbicaId,'1');
         }
     }
 
-    public function MapaCamellones($datos,$streetMap,$DestacaId, $Ubicaciones,$DestacaUbicaId){
-        ##### Esta función requiere que se definan las siguientes variables:
-        ##### $datos =cat_camellon::get() con la seleccion de camellones a mapear or ''
-        ##### $streetMap=1 como binario 0, 1 indicando si aparece fondo de StreeMap (1) o no (0)
-        ##### $DestacaId contiene null ó cam_id. Cuando null, muestra todo $datos,
-        #####                     pero cuando cam_id, muestra $datos en gris y destaca y centra cam_id
-        ##### $Ubicaciones= ej_ubicaciones::join('cat_iconos','sig_icono','=','icon_name')->get() con
-        #####               el listado de puntos a mostrar ó ''
-        ##### $DestacaUbicaId=sig_id; con el id del registro a destacar ó ''
 
+
+    public function MapaCamellones($camellones, $streetMap, $DestacaCamId, $Ejemplares, $DestacaEjemId, $etiquetas){
+        ##### Esta función requiere que se definan las siguientes variables:
+        ##### $camellones = cat_camellon::get() ó 'null' con la seleccion de camellones a mapear (si es 'null', solo muestra los ejemplares)
+        ##### $streetMap='1' ó '0' Indica si se muestra fondo de StreeMap (1) o no (0)
+        ##### $DestacaCamId= 'null' ó cam_id. Cuando cam_id, destaca y centra el camellón indicado.
+        ##### $Ejemplares= 'null' o ej_ubicaciones::join('cat_iconos','sig_icono','=','icon_name')->get()
+        #####               con el listado de puntos a mostrar (y sus íconos). Si no hay join de íconos,
+        #####               solo muestra camellones
+        ##### $DestacaEjemId= 'null' o sig_id; con el id del registro a destacar
+        ##### $etiquetas='1' ó '0' Indica si semuestran popups con datos de ejemplares y camellones
+
+        ##### Quita camellones sin coordenadas:
         ###### Calcula X y Y inicial (para visualizar el mapa)
-        if($DestacaId==null){
-            $centrar=$datos;
+        if($camellones != 'null'){
+            if($DestacaCamId=='null'){
+                $centrar=$camellones;
+            }else{
+                $centrar=$camellones->where('cam_id',$DestacaCamId);
+            }
+            $xmin = $centrar->min('cam_xmin');
+            $ymin = $centrar->min('cam_ymin');
+            $xmax = $centrar->max('cam_xmax');
+            $ymax = $centrar->max('cam_ymax');
+
         }else{
-            $centrar=$datos->where('cam_id',$DestacaId);
+            if($DestacaEjemId=='null'){
+                $centrar=$Ejemplares;
+            }else{
+                $centrar=$Ejemplares->where('sig_id',$DestacaEjemId);
+            }
+            $xmin = $centrar->min('sig_x');
+            $ymin = $centrar->min('sig_y');
+            $xmax = $centrar->max('sig_x');
+            $ymax = $centrar->max('sig_y');
         }
-        $xmin = $centrar->min('cam_xmin');
-        $ymin = $centrar->min('cam_ymin');
-        $xmax = $centrar->max('cam_xmax');
-        $ymax = $centrar->max('cam_ymax');
         $x= ($xmax+$xmin)/2;
         $y= ($ymax+$ymin)/2;
+
+        // dd('coords:',$xmin,$xmax,$ymin,$ymax,  $x,$y);
         ######## Calcula zoom
         $difx= $xmax - $xmin;
         $dify= $ymax - $ymin;
@@ -125,19 +143,21 @@ class InicioController extends Component
         }else{
             $zoom=16;  ### Vista lejana de una colonia
         }
-        $this->temp=$zoom."-".$max;
-        ##### Pasa lista de camellones a array y lo manda a java
-        $mapas=$datos->toArray();
-        $this->dispatch('CierraMapa');
-        $this->dispatch('IniciaMapaCamellones', zoom:$zoom, streetmap:$streetMap, mapas:$mapas, x:$x, y:$y, DestacaId:$DestacaId, Ubicaciones:$Ubicaciones, DestacaUbicaId:$DestacaUbicaId);
+        // $this->temp=$zoom."-".$max;
 
-        #######################################################
-        ############# Carga Alias
-        $this->alias=ej_alias::where('alias_ejmid',$this->idEjem)
-            ->where('alias_del','0')
-            ->where('alias_act','1')
-            ->get();
+        ##### Pasa lista de camellones a array y lo manda a java
+        if($camellones != 'null'){
+            $camellones=$camellones->toArray();
+        }else{
+            $camellones='null';
+        }
+        $this->dispatch('CierraMapa');
+
+        ##### Para capturar coordenadas, se requiere etiquetas=null
+        $this->dispatch('IniciaMapaCamellones', etiquetas:$etiquetas, camellones:$camellones, DestacaCamId:$DestacaCamId, streetmap:$streetMap, zoom:$zoom, x:$x, y:$y,  Ejemplares:$Ejemplares, DestacaEjemId:$DestacaEjemId);
     }
+
+
 
 
     public function render(){

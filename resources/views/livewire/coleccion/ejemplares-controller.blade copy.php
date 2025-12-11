@@ -28,17 +28,14 @@
         <!-- Camellón -->
         <div class="col-sm-12 col-md-4 form-group">
             <label for="camellon" class="form-label">Camellón</label>
-            <select wire:model="camellon" wire:change="BuscaEnCamellon()" id="camellon" class="@error('camellon') is-invalid @enderror form-select">
+            <select wire:model="camellon" id="camellon" class="@error('camellon') is-invalid @enderror form-select">
                 @if($campus != '')
                     <option value="">Indica un camellón</option>
                     @foreach ($camellones as $c)
-                    <option value="{{ $c->cam_camellon }}">
-                        {{ $c->cam_camellon }}
-                        @if($c->cam_mapa =='')[** NO GEOGRÁFICO**]@endif
-                    </option>
+                        <option value="{{ $c->cam_camellon }}">{{ $c->cam_camellon }}</option>
                     @endforeach
-                    <option value="Ninguno">Sin asignación a camellón</option>
-
+                    <option value="todos">Todos</option>
+                    <option value="nulos">Ninguno</option>
                 @else
                     <option value="">Indica un campus primero</option>
                 @endif
@@ -47,13 +44,24 @@
             @error('camellon')<error>{{ $message }}</error>@enderror
         </div>
 
-        <!-- Familia, Género /sp -->
+        {{--
+        <!-- -->
         <div class="col-sm-12 col-md-4 form-group">
-            <label for="" class="form-label">Familia, Género o especie:</label>
-            <input wire:model="" id="" class="@error('') is-invalid @enderror form-control" disabled>
+            <label for="" class="form-label"></label>
+            <input wire:model="" id="" class="@error('') is-invalid @enderror form-control" type="text">
             <div class="form-text"></div>
             @error('')<error>{{ $message }}</error>@enderror
         </div>
+        <!-- -->
+        <div class="col-sm-12 col-md-4 form-group">
+            <label for="" class="form-label"></label>
+            <select wire:model="" id="" class="@error('') is-invalid @enderror form-select">
+                <option value=""></option>
+            </select>
+            <div class="form-text"></div>
+            @error('')<error>{{ $message }}</error>@enderror
+        </div>
+        --}}
 
         <div class="col-3">
             @if($edit=='1')
@@ -72,10 +80,10 @@
     <!-- ------------------------------------------------------------------------- -->
     <!-- --------------------------- MAPA Y TABLA -------------------------------- -->
     {{-- @if($campus != '' and $camellones->count() > '0') --}}
-        <div class="row" >
+        <div class="row">
             <!-- ------------------------------------------------------------------------- -->
             <!-- ----------------------- BÚSQUEDA EN MAPA -------------------------------- -->
-            <div class="col-sm-12 col-md-6" wire:ignore>
+            <div class="col-sm-12 col-md-6">
                 <div id="map"></div>
             </div>
 
@@ -90,42 +98,18 @@
                     <div class="table-responsive-sm">
                         <table class="table table-striped">
                             <thead>
-                                <tr>
-                                    <th>Id</th>
-                                    <th>Campus</th>
-                                    <th>Camellón</th>
-                                    <th>Familia</th>
-                                    <th>Nombre cientifico</th>
-                                    <th>Faltantes</th>
                             </thead>
                             <tbody>
                                 @foreach ($ejemplares as $e)
                                     <tr>
                                         <td>
+                                            {{ $e->ejm_ccamsiglas }}
+                                        </td>
+                                        <td>
                                             <a href="/ejem_inicio/{{ $e->ejm_id }}">
                                                 ID {{ $e->ejm_id }}
                                             </a>
                                         </td>
-                                        <td>
-                                            {{ $e->ejm_ccamsiglas }}
-                                        </td>
-                                        <td>
-                                            {{ $e->sig_camcamellon }}
-                                        </td>
-                                        <td>
-                                            {{ $e->scn_familia }}
-                                        </td>
-                                        <td>
-                                            {{ $e->scn_name }}
-                                        </td>
-                                        <td>
-                                            <div style="font-size: 70%;">
-                                                @if($e->ejm_bitid=='0') <div><i class="bi bi-journals" style="color:rgb(55, 0, 255);">Bitacora</i></div> @endif
-                                                @if($e->sig_camcamellon =='') <div><i class="bi bi-geo-alt-fill" style="color:red;">Ubicar</i></div> @endif
-                                                @if($e->scn_name=='')<div><i class="bi bi-tag-fill" style="color:rgb(201, 16, 185);">Sc. name</i> </div>@endif
-                                            </div>
-                                        </td>
-
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -146,26 +130,13 @@
     ////////////////////////////////////////////////////////////////
     ////--------------- SCRIPTS DE LEAFLET ---------------------////
     ////////////////////////////////////////////////////////////////
-    ///// $this->MapaCamellones($camellones, $streetMap, $DestacaCamId, $Ejemplares, $DestacaEjemId, $etiquetas)
-    /////
-    ///// Esta función requiere que se definan las siguientes variables:
-    ///// $camellones = cat_camellon::get() ó 'null' con la seleccion de camellones a mapear (si es 'null', solo muestra los ejemplares)
-    ///// $streetMap='1' ó '0' Indica si se muestra fondo de StreeMap (1) o no (0)
-    ///// $DestacaCamId= 'null' ó cam_id. Cuando cam_id, destaca y centra el camellón indicado.
-    ///// $Ejemplares= 'null' o ej_ubicaciones::join('cat_iconos','sig_icono','=','icon_name')->get()
-    /////               con el listado de puntos a mostrar (y sus íconos). Si no hay join de íconos,
-    /////               solo muestra camellones
-    ///// $DestacaEjemId= 'null' o sig_id; con el id del registro a destacar
-    ///// $etiquetas='1' ó '0' Indica si semuestran popups con datos de ejemplares y camellones
-
-
     /* ---- Función accesoria de Abre Mapa de Camellones para poner etiquetas --- */
     function onEachFeature(feature,layer){
-        // console.log(feature.properties.SisGesJarCamellon)
+        // console.log('va3:',feature );
         //----- Agrega etiqueta a cada polígono -------//
         if (feature.properties) {
-            let popupContent = "Camellón: <b>" + feature.properties.SisGesJarCamellon + "</b>";
-            // popupContent += "<br><a href='/camellon/" + feature.properties.SisGesJarId + "'><i class='bi bi-pencil-square'></i>Editar</a>";
+            let popupContent = "Camellón: <b>" + feature.properties.SisGesJarCamellon + "</b>"; // Assuming a 'name' property
+            popupContent += "<br><a href='/camellon/" + feature.properties.SisGesJarId + "'><i class='bi bi-pencil-square'></i>Editar</a>";
             layer.bindPopup(popupContent);
         }
     }
@@ -174,6 +145,7 @@
     /* -------------- Abre Mapa de Camellones en LeafLet --------------------------- */
     /* -------------- Recibe instrucciones de MapaCamellones() --------------------- */
     Livewire.on('IniciaMapaCamellones', (event) => {
+        // console.log('va1:',event.captura)
         ///// Genera espacio de mapa
         var map = L.map('map',{maxZoom:24}).setView([event.y, event.x], event.zoom  );
         ///// Envía fondo de streetMap
@@ -185,13 +157,14 @@
         }
         //////////////////////////////////////////////
         /////////// Recibe array de camellones y los pinta
-        if(event.camellones != 'null'){
-            event.camellones.forEach(function(mapita) {
+        if(event.mapas != 'null'){
+            event.mapas.forEach(function(mapita) {
+                console.log("va1:",mapita.cam_id);
                 ///// convierte texto recibido en geoJson
                 var geojsonFeature =JSON.parse(mapita.cam_mapa)
                 ///// Detecta color
-                if(event.DestacaCamId != 'null'){
-                    if(mapita.cam_id == event.DestacaCamId){
+                if(event.DestacaId != 'null'){
+                    if(mapita.cam_id == event.DestacaId){
                         var color=mapita.cam_color;
                         var opacidad=1.0;
                         var linea=1;
@@ -207,40 +180,24 @@
                 }
 
                 ///// Agrega etiqueta a cada polígono.
-                if(event.etiquetas =='1'){
-                    // console.log('camellon')
-                    L.geoJSON(geojsonFeature,{
-                        onEachFeature: onEachFeature, //ejecuta función  ParaCadaPoligono, que agrega nombre
-                        style:{
-                            "color":color,
-                            "weight": linea,
-                            "opacity": opacidad
-                        },
-                    }).addTo(map);
-                ///// Agrega los polígonos (sin etiqueta)
-                }else{
-                    L.geoJSON(geojsonFeature,{
-                        style:{
-                            "color":color,
-                            "weight": linea,
-                            "opacity": opacidad
-                        },
-                    }).addTo(map);
-                }
+                L.geoJSON(geojsonFeature,{
+                    onEachFeature: onEachFeature, //ejecuta función  ParaCadaPoligono, que agrega nombre
+                    style:{
+                        "color":color,
+                        "weight": linea,
+                        "opacity": opacidad
+                    },
+                }).addTo(map);
 
-                //// --------------------------------------------------------////
-                //// --------------- CAPTURA COORDENADAS --------------------////
-                //// ---- requiere $this->dispatch('CapturaCoordenadas') desde
-                //// ---- el controlador ------------------------------------
+                //// --------------------------------------------////
+                //// --------- CAPTURA COORDENADAS --------------////
                 Livewire.on('CapturaCoordenadas', (event) => {
                     map.on('click', function(e){
                         var coord = e.latlng;
                         var lat = coord.lat;
                         var lng = coord.lng;
-
                         @this.set('latitud',lat);  //Envia var a laravel
                         @this.set('longitud',lng)  //Envia var a laravel
-
                         //-- Si hay punto previo, lo borra
                         if(typeof NuevoCirculo != 'undefined'){
                             map.removeLayer(NuevoCirculo);
@@ -252,57 +209,46 @@
                             fillOpacity: 1,
                             radius:0.3
                         }).addTo(map)
-                        console.log("Clic en " + lat + " latitud y " + lng + "longitud");
+
+                        // console.log("Clic en " + lat + " latitud y " + lng + "longitud");
                     });
                 });
             });
         }
 
         //////////////////////////////////////////////
-        /////// Recibe array de ejemplares (puntos) y los pinta
-        if(event.Ejemplares != 'null'){
-            event.Ejemplares.forEach(function(ubica){
+        /////// Recibe array de ubicaciones (puntos) y los pinta
+        if(event.Ubicaciones != 'null'){
+            event.Ubicaciones.forEach(function(ubica){
                 //-- verifica que haya ícono --/
-                // console.log('for2',ubica)
+                console.log('for2',ubica)
                 if(ubica.icon_file){
+                    console.log('si')
                     IconArch = ubica.icon_file;
                 }else{
+                    console.log('no')
                     IconArch = '/iconos/PuntoRojo.png';
                 }
 
-                //-- Si es igual a DestacaEjemId... --//
-                if(event.DestacaEjemId == ubica.sig_id){
+                //-- Si es igual a DestacaUbicaId... --//
+                if(event.DestacaUbicaId == ubica.sig_id){
                     var MiColor='red';
                     var MiSize=0.5;
                     var ElIcono = L.icon({
                         iconUrl: IconArch,
                         iconSize:     [25, 25], // size of the icon
                     });
-                    var marcador = L.marker([ubica.sig_y, ubica.sig_x],{
-                        icon:ElIcono
-                    });
-                    if(event.etiquetas=='1'){
-                        marcador.bindPopup(
-                            "Ejemplar <b>"+ ubica.sig_ejmid + "</b><br><a href='/ejem_inicio/" + ubica.sig_ejmid + "'><i class='bi bi-eye'></i>Ver</a>"
-                        );
-                    }
-                    marcador.addTo(map);
+                    L.marker([ubica.sig_y, ubica.sig_x],{icon:ElIcono}).addTo(map);
                 }else{
                     var MiColor='green';
                     var MiSize=0.1;
                     /////Plotea punto
-                    var marcador = L.circle([ubica.sig_y, ubica.sig_x],{
+                    L.circle([ubica.sig_y, ubica.sig_x],{
                         color: MiColor,
                         fillColor: MiColor,
                         fillOpacity: 1,
                         radius: MiSize,
-                    });
-                    if(event.etiquetas=='1'){
-                        marcador.bindPopup(
-                            "Ejemplar <b>"+ ubica.sig_ejmid + "</b><br><a href='/ejem_inicio/" + ubica.sig_ejmid + "'><i class='bi bi-eye'></i>Ver</a>"
-                        );
-                    }
-                    marcador.addTo(map);
+                    }).addTo(map);
                 }
             });
         }

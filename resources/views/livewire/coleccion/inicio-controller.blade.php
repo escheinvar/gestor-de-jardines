@@ -141,8 +141,6 @@
 
 
 
-
-
     <script>
         Livewire.on('AvisoExitoInicio',()=>{
             alert(event.detail.msj);
@@ -151,13 +149,26 @@
         ////////////////////////////////////////////////////////////////
         ////--------------- SCRIPTS DE LEAFLET ---------------------////
         ////////////////////////////////////////////////////////////////
+        ///// $this->MapaCamellones($camellones, $streetMap, $DestacaCamId, $Ejemplares, $DestacaEjemId, $etiquetas)
+        /////
+        ///// Esta función requiere que se definan las siguientes variables:
+        ///// $camellones = cat_camellon::get() ó 'null' con la seleccion de camellones a mapear (si es 'null', solo muestra los ejemplares)
+        ///// $streetMap='1' ó '0' Indica si se muestra fondo de StreeMap (1) o no (0)
+        ///// $DestacaCamId= 'null' ó cam_id. Cuando cam_id, destaca y centra el camellón indicado.
+        ///// $Ejemplares= 'null' o ej_ubicaciones::join('cat_iconos','sig_icono','=','icon_name')->get()
+        /////               con el listado de puntos a mostrar (y sus íconos). Si no hay join de íconos,
+        /////               solo muestra camellones
+        ///// $DestacaEjemId= 'null' o sig_id; con el id del registro a destacar
+        ///// $etiquetas='1' ó '0' Indica si semuestran popups con datos de ejemplares y camellones
+
+
         /* ---- Función accesoria de Abre Mapa de Camellones para poner etiquetas --- */
         function onEachFeature(feature,layer){
-            // console.log('a',feature );
+            // console.log(feature.properties.SisGesJarCamellon)
             //----- Agrega etiqueta a cada polígono -------//
             if (feature.properties) {
-                let popupContent = "Camellón: <b>" + feature.properties.SisGesJarCamellon + "</b>"; // Assuming a 'name' property
-                popupContent += "<br><a href='/camellon/" + feature.properties.SisGesJarId + "'><i class='bi bi-pencil-square'></i>Editar</a>";
+                let popupContent = "Camellón: <b>" + feature.properties.SisGesJarCamellon + "</b>";
+                // popupContent += "<br><a href='/camellon/" + feature.properties.SisGesJarId + "'><i class='bi bi-pencil-square'></i>Editar</a>";
                 layer.bindPopup(popupContent);
             }
         }
@@ -166,7 +177,6 @@
         /* -------------- Abre Mapa de Camellones en LeafLet --------------------------- */
         /* -------------- Recibe instrucciones de MapaCamellones() --------------------- */
         Livewire.on('IniciaMapaCamellones', (event) => {
-            // console.log('b',event.captura)
             ///// Genera espacio de mapa
             var map = L.map('map',{maxZoom:24}).setView([event.y, event.x], event.zoom  );
             ///// Envía fondo de streetMap
@@ -178,14 +188,13 @@
             }
             //////////////////////////////////////////////
             /////////// Recibe array de camellones y los pinta
-            if(event.mapas){
-                event.mapas.forEach(function(mapita) {
-                    // console.log("va3:",mapita.cam_id);
+            if(event.camellones != 'null'){
+                event.camellones.forEach(function(mapita) {
                     ///// convierte texto recibido en geoJson
                     var geojsonFeature =JSON.parse(mapita.cam_mapa)
                     ///// Detecta color
-                    if(event.DestacaId != 'null'){
-                        if(mapita.cam_id == event.DestacaId){
+                    if(event.DestacaCamId != 'null'){
+                        if(mapita.cam_id == event.DestacaCamId){
                             var color=mapita.cam_color;
                             var opacidad=1.0;
                             var linea=1;
@@ -201,24 +210,40 @@
                     }
 
                     ///// Agrega etiqueta a cada polígono.
-                    L.geoJSON(geojsonFeature,{
-                        // onEachFeature: onEachFeature, //ejecuta función  ParaCadaPoligono, que agrega nombre
-                        style:{
-                            "color":color,
-                            "weight": linea,
-                            "opacity": opacidad
-                        },
-                    }).addTo(map);
+                    if(event.etiquetas =='1'){
+                        // console.log('camellon')
+                        L.geoJSON(geojsonFeature,{
+                            onEachFeature: onEachFeature, //ejecuta función  ParaCadaPoligono, que agrega nombre
+                            style:{
+                                "color":color,
+                                "weight": linea,
+                                "opacity": opacidad
+                            },
+                        }).addTo(map);
+                    ///// Agrega los polígonos (sin etiqueta)
+                    }else{
+                        L.geoJSON(geojsonFeature,{
+                            style:{
+                                "color":color,
+                                "weight": linea,
+                                "opacity": opacidad
+                            },
+                        }).addTo(map);
+                    }
 
-                    //--------------------------------------------//
-                    //--------- CAPTURA COORDENADAS --------------//
+                    //// --------------------------------------------------------////
+                    //// --------------- CAPTURA COORDENADAS --------------------////
+                    //// ---- requiere $this->dispatch('CapturaCoordenadas') desde
+                    //// ---- el controlador ------------------------------------
                     Livewire.on('CapturaCoordenadas', (event) => {
                         map.on('click', function(e){
                             var coord = e.latlng;
                             var lat = coord.lat;
                             var lng = coord.lng;
+
                             @this.set('latitud',lat);  //Envia var a laravel
                             @this.set('longitud',lng)  //Envia var a laravel
+
                             //-- Si hay punto previo, lo borra
                             if(typeof NuevoCirculo != 'undefined'){
                                 map.removeLayer(NuevoCirculo);
@@ -230,45 +255,57 @@
                                 fillOpacity: 1,
                                 radius:0.3
                             }).addTo(map)
-
-                            // console.log("Clic en " + lat + " latitud y " + lng + "longitud");
+                            console.log("Clic en " + lat + " latitud y " + lng + "longitud");
                         });
                     });
                 });
             }
 
             //////////////////////////////////////////////
-            /////// Recibe array de ubicaciones (puntos) y los pinta
-            if(event.Ubicaciones){
-                event.Ubicaciones.forEach(function(ubica){
+            /////// Recibe array de ejemplares (puntos) y los pinta
+            if(event.Ejemplares != 'null'){
+                event.Ejemplares.forEach(function(ubica){
                     //-- verifica que haya ícono --/
+                    // console.log('for2',ubica)
                     if(ubica.icon_file){
                         IconArch = ubica.icon_file;
                     }else{
                         IconArch = '/iconos/PuntoRojo.png';
                     }
-                    console.log('icon',IconArch);
-                    //-- Si es igual a DestacaUbicaId... --//
-                    if(event.DestacaUbicaId == ubica.sig_id){
+
+                    //-- Si es igual a DestacaEjemId... --//
+                    if(event.DestacaEjemId == ubica.sig_id){
                         var MiColor='red';
                         var MiSize=0.5;
                         var ElIcono = L.icon({
-                            iconUrl: ubica.icon_file,
+                            iconUrl: IconArch,
                             iconSize:     [25, 25], // size of the icon
-                            // iconAnchor:   [22, 94], // point of the icon which will correspond to marker's location
-                            // popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
                         });
-                        L.marker([ubica.sig_x, ubica.sig_y],{icon:ElIcono}).addTo(map);
+                        var marcador = L.marker([ubica.sig_y, ubica.sig_x],{
+                            icon:ElIcono
+                        });
+                        if(event.etiquetas=='1'){
+                            marcador.bindPopup(
+                                "Ejemplar <b>"+ ubica.sig_ejmid + "</b><br><a href='/ejem_inicio/" + ubica.sig_ejmid + "'><i class='bi bi-eye'></i>Ver</a>"
+                            );
+                        }
+                        marcador.addTo(map);
                     }else{
                         var MiColor='green';
                         var MiSize=0.1;
                         /////Plotea punto
-                        L.circle([ubica.sig_x, ubica.sig_y],{
+                        var marcador = L.circle([ubica.sig_y, ubica.sig_x],{
                             color: MiColor,
                             fillColor: MiColor,
                             fillOpacity: 1,
                             radius: MiSize,
-                        }).addTo(map);
+                        });
+                        if(event.etiquetas=='1'){
+                            marcador.bindPopup(
+                                "Ejemplar <b>"+ ubica.sig_ejmid + "</b><br><a href='/ejem_inicio/" + ubica.sig_ejmid + "'><i class='bi bi-eye'></i>Ver</a>"
+                            );
+                        }
+                        marcador.addTo(map);
                     }
                 });
             }
@@ -279,7 +316,5 @@
         Livewire.on('CierraMapa', (event) => {
             $("#map").replaceWith(`<div id="map">`)
         });
-
-
     </script>
 </div>

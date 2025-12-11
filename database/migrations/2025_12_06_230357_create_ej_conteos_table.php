@@ -18,9 +18,9 @@ return new class extends Migration
             $table->enum('cant_act',['0','1'])->default('1');  ##### Binario de inactivación temporal lógica
             $table->enum('cant_del',['0','1'])->default('0');  ##### Binario de borrado lógico
 
-            $table->string('cant_tipo'); ##### algún tipo-crecimiento de tabla cat_conceptos: (incividual distinguible, individual en colonia, colonial, indistinguible)
-            $table->integer('cant_cols')->default('1')->nullable(); ##### Número de colonias
-            $table->decimal('cant_inds',5,2)->nullable();   #### Número de individuos o área en todas las colonias
+            $table->string('cant_tipo')->nullable(); ##### algún tipo-crecimiento de tabla cat_conceptos: (incividual distinguible, individual en colonia, colonial, indistinguible)
+            $table->integer('cant_inds')->default('0'); #### Número de individuos o área en todas las colonias (0 para incontable)
+            $table->decimal('cant_cols',5,2)->default('1');   ##### Extensión del ejemplar a nivel de piso en metros cuadrados
             $table->date('cant_fecha'); ##### Fecha de toma de dato
             $table->integer('cant_usrid'); ##### Id del usuario que registra
             $table->timestamps();
