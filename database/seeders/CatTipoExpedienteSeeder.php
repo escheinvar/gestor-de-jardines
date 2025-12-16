@@ -16,6 +16,7 @@ class CatTipoExpedienteSeeder extends Seeder
 
 
         $events=[
+            ['cexp_name'=>'sistema',        'cexp_alarma'=>'0', 'cexp_asunto'=>'',                                  'cexp_txt1'=>'', 'cexp_txt2'=>'','cexp_explica'=>'' ],
             ['cexp_name'=>'flor',           'cexp_alarma'=>'1', 'cexp_asunto'=>'Alerta de floración',               'cexp_txt1'=>'', 'cexp_txt2'=>'','cexp_explica'=>'' ],
             ['cexp_name'=>'visitante',      'cexp_alarma'=>'1', 'cexp_asunto'=>'Alerta de visitante floral',        'cexp_txt1'=>'', 'cexp_txt2'=>'','cexp_explica'=>'' ],
             ['cexp_name'=>'fruto',          'cexp_alarma'=>'1', 'cexp_asunto'=>'Alerta de presencia de fruto',      'cexp_txt1'=>'', 'cexp_txt2'=>'','cexp_explica'=>'' ],

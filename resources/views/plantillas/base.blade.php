@@ -119,6 +119,7 @@
                                             <li><a class="dropdown-item @if(request()->path() == 'usuarios') active @endif" href="/usuarios">Catálogo usuarios</a></li>
                                             <li><a class="dropdown-item @if(request()->path() == 'campus') active @endif" href="/campus">Catálogo campus y jardines</a></li>
                                             <li><a class="dropdown-item @if(request()->path() == 'camellones') active @endif" href="/camellones">Catálogo camellones</a></li>
+                                            <li><a class="dropdown-item @if(request()->path() == 'gridas') active @endif" href="/gridas">Catálogo de gridas</a></li>
 
                                             <li><hr class="dropdown-divider"></li>
                                             <li><a class="dropdown-item @if(request()->path() == 'imagAdmin') active @endif" href="/imagAdmin">Catálogo imagenes</a></li>
@@ -127,6 +128,7 @@
                                             <li><hr class="dropdown-divider"></li>
                                             <li><a class="dropdown-item @if(request()->path() == 'cat_bitacoras') active @endif" href="/cat_bitacoras">Catálogo de bitácoras</a></li>
                                             <li><a class="dropdown-item @if(request()->path() == 'cat_nombres_científicos') active @endif" href="/cat_nombres_científicos">Catálogo nombres científicos</a></li>
+                                            <li><a class="dropdown-item @if(request()->path() == 'cat_nombres_científicos') active @endif" href="/kobo">Carga desde KoboCollect</a></li>
                                         </ul>
                                     </li>
                                 @endif

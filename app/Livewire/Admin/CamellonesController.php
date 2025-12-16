@@ -18,12 +18,7 @@ class CamellonesController extends Component
         $this->orden='cam_id';
         $this->sent='asc';
         $this->CampusSelected='JebOax';
-        // $this->CampusSelected=usr_roles::where('rol_usrid',Auth::user()->id)
-        //     ->where('rol_crolrol','admin')
-        //     ->where('rol_del','0')
-        //     ->where('rol_act','1')
-        //     ->select('rol_ccamsiglas as campus')
-        //     ->first();
+
     }
 
     public function ordena($campo){

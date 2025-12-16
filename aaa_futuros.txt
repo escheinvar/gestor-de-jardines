@@ -50,3 +50,10 @@ crear modal con: razón de baja (preferentemente de catálogo con
 opcion de agregar otro), fecha de baja y explicación de baja.
 Para sustituir la opción "Mover" de ubicacion_controller (que ahora
 está embebido en la página)
+
+-------------------------------------------------------------
+Crear módulo "Administrador de gridas"
+Un módulo que permita incorporar nuevas gridas a cada jardín y que
+además pueda ver los camellones.
+- sería bueno que al cargar el mapa, calcule las coordenadas extremas
+  (en lugar de tener que ponerlas en la base.)

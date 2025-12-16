@@ -66,7 +66,7 @@ class InicioController extends Component
         $this->JardinData=cat_campus::where('ccam_siglas',$this->ejemplar->ejm_ccamsiglas)
             ->leftJoin('cat_jardines','ccam_cjarid','=','cjar_id')
             ->first();
-        $this->Imagenes=imagenes::whereIn('img_cimgtipo',['ejemplar_ejemplar','ejemplar_ubicacion'])
+        $this->Imagenes=imagenes::whereIn('img_cimgtipo',['ejemplar_portada','ejemplar_ejemplar','ejemplar_ubicación','ejemplar_flor','ejemplar_hoja','ejemplar_fruto'])
             ->where('img_ejmid',$this->idEjem)
             ->where('img_act','1')
             ->where('img_del','0')
@@ -74,11 +74,11 @@ class InicioController extends Component
 
         ######################################### Ejecuta mapa
         if($this->ejemplar_ubica){
+
             $campusId=cat_campus::where('ccam_siglas',$this->ejemplar->ejm_ccamsiglas)->value('ccam_id');
             $camellones=cat_camellones::where('cam_ccamid',$campusId)->get();
             $Ubicaciones=ej_ubicaciones::where('sig_camid',$this->ejemplar_ubica->sig_camid)->join('cat_iconos','sig_icono','=','icon_name')->get();
-            $DestacaUbicaId= $this->ejemplar_ubica->sig_id;
-            $this->MapaCamellones($camellones,'0',$this->ejemplar_ubica->sig_camid,  $Ubicaciones, $DestacaUbicaId,'1');
+            $this->MapaCamellones($camellones,'0',$this->ejemplar_ubica->sig_camid,  $Ubicaciones, $this->ejemplar_ubica->sig_id, '1');
         }
     }
 

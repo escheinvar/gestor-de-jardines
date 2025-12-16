@@ -21,7 +21,7 @@ class ej_conteos extends Model
     'cant_del',
 
     'cant_tipo',
-    'cant_cols',
+    'cant_ext',
     'cant_inds',
     'cant_fecha',
     'cant_usrid',

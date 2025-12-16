@@ -400,6 +400,7 @@ nota{
 }
 
 /* ######### INICIA IMAGEN ########## */
+/* Estilos de clase imagen */
 imagen {
     border:1px dotted #CDC6B9;
     /* background-color: #CDC6B9; */
@@ -523,3 +524,24 @@ colores{
     font-family: 'Roboto Condensed', sans-serif;
     font-family: 'Noto Serif JP', serif;
 }
+
+/* Íconos de ligas a páginas externas */
+img.iconoWWW{
+    width:25px;
+    border:1px solid #87796d;
+    border-radius: 5px;
+    cursor:pointer;
+}
+img.iconoWWW:hover{
+    background-color:#CDC6B9;
+    border: 1px solid #919C1B;
+}
+div.iconoWWW {
+    display:inline-block;
+    font-size: 60%;
+    align-items: center;
+    text-align: center;
+    text-decoration:none;
+    color:inherit;
+}
+

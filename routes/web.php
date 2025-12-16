@@ -12,6 +12,7 @@ use App\Livewire\Admin\CampusYjardinesController;
 use App\Livewire\Admin\CatAutoridadesController;
 use App\Livewire\Admin\CatBitacorasController;
 use App\Livewire\Admin\CatNombresCientificosController;
+use App\Livewire\Admin\GridasController;
 use App\Livewire\Coleccion\BibliografiaController;
 use App\Livewire\Coleccion\BitcoraController;
 use App\Livewire\Coleccion\EjemplaresController;
@@ -21,6 +22,8 @@ use App\Livewire\Coleccion\ModalImagenController;
 use App\Livewire\Coleccion\NombresController;
 use App\Livewire\Coleccion\Prueba;
 use App\Livewire\Coleccion\UbicacionController;
+use App\Livewire\Kobo\CargaArchivo1Controller;
+use App\Livewire\Kobo\LimpiaRegistroController;
 use App\Livewire\Sistema\AdminUsuariosController;
 use App\Livewire\Sistema\BuzonController;
 use App\Livewire\Sistema\HomeConfigController;
@@ -72,6 +75,7 @@ Route::middleware([UsuarioAutenticadoConRolMiddleware::class])->group(function()
     Route::middleware([rolAdminCampusMiddleware::class])->group(function(){
         Route::get('/camellones',CamellonesController::class)->name('camellones');
         Route::get('/camellon/{camID}',CamellonController::class)->name('camellon');
+        Route::get('/gridas',GridasController::class)->name('gridas');
         Route::get('/imagAdmin', AdminImgsController::class)->name('imagAdmin');
         Route::get('/autsAdmin', CatAutoridadesController::class)->name('autsAdmin');
     });
@@ -89,6 +93,10 @@ Route::middleware([UsuarioAutenticadoConRolMiddleware::class])->group(function()
 
     /* ----------------------- biblioteca --------------------------------------------*/
     Route::get('/bibliografía', BibliografiaController::class)->name('bibliografía');
+
+    /* ----------------------- Kobo --------------------------------------------------*/
+    Route::get('/kobo',CargaArchivo1Controller::class)->name('kobo');
+    Route::get('/koboView/{id}',LimpiaRegistroController::class)->name('kobo2');
 });
 
 

@@ -13,11 +13,14 @@ composer require symfony/mailgun-mailer symfony/http-client
 ##### Generé liga para subir archivos a public (php artisan  storage:link)
 ln -s public/ storage/app/private
 
-##### Instalé laravel sanctum y api route
+##### Instalé laravel sanctum y api route (para api rest)
 php artisan install:api
 
 ##### Instalé Laravel jwt para autenticar API
 composer require tymon/jwt-auth
+
+##### Instalé maatwebsite/excel (para abrir archivos xls)
+composer require maatwebsite/excel
 
 
 ##### Generé un helper para enviar mensajes a buzones

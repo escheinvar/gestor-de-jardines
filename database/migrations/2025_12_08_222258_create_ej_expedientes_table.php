@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string('exp_file3')->nullable();  ##### Archivo
             $table->string('exp_file4')->nullable();  ##### Archivo
             $table->string('exp_file5')->nullable();  ##### Archivo
-            $table->longText('exp_logmail');  ##### Correos a los que se envió el equipo
+            $table->longText('exp_logmail')->nullable();  ##### Correos a los que se envió el equipo
             $table->date('exp_fecha'); ##### Fecha en la que se realizó
             $table->dateTime('exp_hora'); ##### Hora en la que se realizó
             $table->integer('exp_usrid'); #### usuario id

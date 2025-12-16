@@ -89,7 +89,7 @@ class UbicacionController extends Component
                 $this->notas = $ubica->sig_notas;
                 // $this->tipocrecim = $ubica->sig_tipocrecim;
                 $conteo=ej_conteos::where('cant_ejmid',$this->idEjem)->where('cant_act','1')->where('cant_del','0')->first();
-                $this->colonias = $conteo->cant_cols;
+                $this->colonias = $conteo->cant_ext;
                 $this->cantidad = $conteo->cant_inds;
                 $this->icono = $ubica->sig_icono;
             }else{
