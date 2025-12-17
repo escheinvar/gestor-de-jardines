@@ -17,12 +17,14 @@
     public function AbreModalObjeto($par1,$par2, $par3, $par4, $par5){
         $data=['ImgId'=>$par1, 'ImgModulo'=>$par2, 'ImgTipo'=>$par3, 'Clase'=>$par4, 'IdClase'=>$par5];
         $this->dispatch('abreModalDeImagen', $data);
-        ######   $data[
-        ######         'ImgId',      (img_id de tabla imagenes) para editar ó 0 para nuevo
-        ######         'ImgModulo',  (cimg_modulo de tabla cat_tipoimgs)
-        ######         'ImgTipo',    (cimg_tipo de tabla cat_tipoimgs)
-        ######         'Clase',      [ej,es] indica si es para ejemplar o para especie
-        ######         'IdClase',    (img_ejmid ó img_spid de tabla imagenes)
+        #####   Donde:
+        #####   $data[
+        #####        'ImgId',      (img_id de tabla imagenes) para editar ó 0 para nuevo
+        #####        'ImgModulo',  (cimg_modulo de tabla cat_tipoimgs)
+        #####        'ImgTipo',    (cimg_tipo de tabla cat_tipoimgs)
+        #####        'Clase',      [ej,es] indica si es para ejemplar o para especie
+        #####        'IdClase',    (img_ejmid ó img_spid de tabla imagenes)
+
     }
 ------------------------------------------------------------------------------ -->
 @if(isset($imags))

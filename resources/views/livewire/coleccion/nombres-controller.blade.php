@@ -28,8 +28,17 @@
     <div>
         <hr class="titulo">
         <a name="nombre científico">
-            <H3>Nombre científico</H3>
+            @if($HayNomCien=='0' AND $edit_curcient=='1')
+                <i class="bi bi-plus-square-fill PaClick agregar" wire:click="abreModalDeNombreCientifico()" style="margin-right:5px;"></i>
+
+            @elseif($HayNomCien=='1' and $edit_curcient=='1')
+                <i wire:click="BorraNombre('{{ $nomcien->scn_id }}')" wire:confirm="Esto eliminará definitivamente el nombre científico y lo podrás remplazar por uno nuevo ¿deseas continuar? " class="bi bi-trash agregar"> </i>
+
+            @endif
+            <H3 style="display: inline-block;">Nombre científico</H3>
         </a>
+        <br>
+
         <!-- aviso de privilegios -->
         <div style="font-size: 80%;color:grey;">
             Nombres: Sección administrada por <b>curador-cientifico</b>
@@ -56,6 +65,7 @@
                         {{ $nomcien->scn_familia }}:
                         <!-- género, especie y subespecífica -->
                         <i><u> {{ $nomcien->scn_genero }}</u> &nbsp; <u>{{ $nomcien->scn_sp }}</u> &nbsp; <u>{{ $nomcien->scn_ssp }}</i></u>
+
                     </span>
                 </div>
                 <div class="col-sm-12 col-md-9 my-4">
@@ -74,28 +84,16 @@
                     <!-- fecha en la que valida -->
                     Fecha de determinación: {{ $nomcien->scn_fecha_determina }}
                 </div>
-                <!-- borrar nombre: solo admin-cientifico ó admin-colviva(pero cuando edo=0) -->
-                <div class="col-sm-12 col-md-3">
-                    @if($edit_curcient=='1')
-                        <button wire:click="BorraNombre('{{ $nomcien->scn_id }}')" wire:confirm="Esto eliminará definitivamente el nombre científico y lo podrás remplazar por uno nuevo ¿deseas continuar? " class="btn btn-primary btn-sm" style="float: right;">
-                            <i class="bi bi-trash"></i>Eliminar nombre
-                        </button>
-                    @endif
-                </div>
             </div>
         <!-- ----------- Cuando NO hay nombre científico, lo muestra ------------------------ -->
         @elseif($HayNomCien=='0')
             <div class="row" style="clear:both;">
                 <div class="col-12 my-3">
                     -- Este ejemplar aún no ha sido identificado -->
+                    @if($alias->where('alias_tipo','nombre científico')->count()>'0')
+                        <br>Sugiere <i>{{ $alias->where('alias_tipo','nombre científico')->value('alias_nombre') }}</i>
+                    @endif
                 </div>
-                @if($edit_curcient=='1')
-                    <div class="col-sm-12 col-md-12 form-group">
-                        <button wire:click="abreModalDeNombreCientifico()" class="btn btn-primary btn-sm" style="float: right;">
-                            <i class="bi bi-plus-circle"></i> Asignar nombre científico
-                        </button>
-                    </div>
-                @endif
             </div>
         @endif
     </div>
@@ -111,7 +109,11 @@
     <div>
         <hr class="titulo">
         <a name="nombres_comunes">
-            <H3>Nombres comunes</H3>
+            @if($edit_curcient=='1')
+                <i class="bi bi-plus-square-fill PaClick agregar" wire:click="AbrirModalNombreComun('{{ $idEjem }}','0')" style="margin-right:5px;"></i>
+            @endif
+            <H3 style="display: inline-block;">Nombres comunes</H3><br>
+
             <!-- aviso de privilegios -->
             <div style="font-size: 80%;color:grey;">
                 Nombres comunes: Sección administrada por <b>curador-cientifico</b>
@@ -178,6 +180,7 @@
                                     <td>
                                         @if($n->con_bibid > '0')
                                             <span wire:click="AbrirModalBibliografia('{{ $n->bib_id }}')" class="PaClick">
+                                                <i class="bi bi-pencil-square PaClick"></i>
                                                 @if($n->bib_tipo == 'comunicación personal')
                                                     <i>Com. pers.</i>
                                                 @else
@@ -280,14 +283,14 @@
                 </div>
             @else
                 -- aún no se registra nombre común --
+                @if($alias->where('alias_tipo','nombre común')->count()>'0')
+                        <br>Sugiere:
+                        @foreach( $alias->where('alias_tipo','nombre común') as $n)
+                            {{ $n->alias_nombre }} &nbsp; |
+                        @endforeach
+                    @endif
             @endif
         </a>
-        <div class="py-3">
-            @if($edit_curcient=='1' OR $edit_adcolviva=='1')
-                <button wire:click="AbrirModalNombreComun('{{ $idEjem }}','0')" class="btn btn-primary btn-sm" style="float: right;">
-                    <i class="bi bi-plus-square"></i> Agregar nombre</button><br>
-            @endif
-        </div>
     </div>
 
 
@@ -300,7 +303,9 @@
     <div>
         <hr class="titulo">
         <a name="alias">
-            <i class="bi bi-plus-square PaClick" wire:click="AbrirModalAlias()" style="margin-right:5px;"></i>
+            @if($edit_curcient=='1')
+                <i class="bi bi-plus-square-fill PaClick agregar" wire:click="AbrirModalAlias()" style="margin-right:5px;"></i>
+            @endif
             <H3 style="display: inline-block;">Otros nombres o identificadores asignados al ejemplar</H3><br>
         </a>
         <div class="row">
@@ -310,10 +315,10 @@
                 @else
                     <ul>
                         @foreach ($alias as $a)
-                            <li>{{ $a->alias_nombre }}
-                                <button wire:click="BorrarAlias({{ $a->alias_id }})" wire:confirm="Vas a eliminar este alias permanentemente. ¿deseas continuar?" class="btn">
-                                    <i class="bi bi-trash"></i>
-                                </button>
+                            <li>{{ $a->alias_nombre }} ({{ $a->alias_tipo }})
+                                @if($edit_curcient=='1')
+                                    <i wire:click="BorrarAlias({{ $a->alias_id }})" wire:confirm="Vas a eliminar este alias permanentemente. ¿deseas continuar?" class="bi bi-trash agregar"></i>
+                                @endif
                             </li>
                         @endforeach
                     </ul>
@@ -331,14 +336,18 @@
     <div>
         <hr class="titulo">
         <a name="herbario">
-            <H3>Herbario</H3>
+            @if($edit_curcient=='1')
+                <i class="bi bi-plus-square-fill PaClick agregar" wire:click="AbreModalObjeto('0','herbario','','ej','{{ $idEjem }}')" style="margin-right:5px;"></i>
+            @endif
+            <H3 style="display: inline-block;">Herbario</H3><br>
         </a>
+
         <?php $imags=$herbario; ?>
 
 
-        <div>
+        {{-- <div>
             <button wire:click="AbreModalObjeto('0','herbario','','ej','{{ $idEjem }}')" class="btn btn-primary btn-sm" style="float: right;"><i class="bi bi-plus-square"></i> Agregar imagen de herbario</button>
-        </div>
+        </div> --}}
         <div style="clear: both;">
             @include('plantillas.imagenes')
         </div>

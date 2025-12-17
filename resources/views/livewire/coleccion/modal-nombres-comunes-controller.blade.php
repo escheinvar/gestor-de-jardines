@@ -44,7 +44,7 @@
                                             {{ $b->bib_titulo }}
                                         </option>
                                     @endforeach
-                                    <option value="nuevo">Nuevo tema</option>
+                                    {{-- <option value="nuevo">Nuevo tema</option> --}}
                                 </select>
                                 <div class="form-text">Buscar por apellido, año o título</div>
                             </span>

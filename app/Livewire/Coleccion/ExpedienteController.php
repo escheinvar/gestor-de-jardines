@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Coleccion;
 
+use App\Models\ej_expediente;
 use App\Models\ejemplares;
 use App\Models\ej_nombres_cientificos;
 use App\Models\ej_nombres_comunes;
@@ -56,6 +57,14 @@ class ExpedienteController extends Component
     }
 
     public function render(){
-        return view('livewire.coleccion.expediente-controller');
+        $expedientes=ej_expediente::where('exp_ejmid',$this->idEjem)
+            ->where('exp_act','1')
+            ->where('exp_del','0')
+            ->orderBy('exp_id')
+            ->get();
+
+        return view('livewire.coleccion.expediente-controller',[
+            'expedientes'=>$expedientes,
+        ]);
     }
 }

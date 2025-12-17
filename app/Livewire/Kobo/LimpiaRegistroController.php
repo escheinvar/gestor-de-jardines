@@ -59,7 +59,7 @@ class LimpiaRegistroController extends Component
             ->where('sig_del','0')
             ->get();
 
-        ##### Carga el camellón y genera el mapa
+        ##### Carga el camellón y genera el mapa [OJO: en ejemplares (ej_ubicaciones), incerto el kobo actual]
         $Confirma=cat_camellones::where('cam_camellon',$this->dato->kobo2_camellon)->first();
         if($Confirma){
             $this->camellon=$this->dato->kobo2_camellon;
@@ -68,15 +68,16 @@ class LimpiaRegistroController extends Component
                 ->where('sig_act','1')
                 ->where('sig_del','0')
                 ->get();
+            ##### incerto el kobo actual en ejemplares con id 0 (inexistente)
             $ejemplares->push(
                 collect([
-                    'sig_ejmid'=>'90000',
-                    'sig_id'=>'90000',
+                    'sig_ejmid'=>'0',
+                    'sig_id'=>'0',
                     'sig_x'=>$this->dato->kobo2_x,
                     'sig_y'=>$this->dato->kobo2_y,
                 ])
             );
-            $this->MapaCamellones($this->camellones,'0', $camId, $ejemplares,'90000','0','null');
+            $this->MapaCamellones($this->camellones,'0', $camId, $ejemplares,'0','0','null');
         }else{
             $this->camellon='';
         }

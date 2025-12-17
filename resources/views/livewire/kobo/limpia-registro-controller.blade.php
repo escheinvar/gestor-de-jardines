@@ -230,7 +230,7 @@
                     <!-- imagen de frutos -->
                     @if($dato->kobo2_fotofrutos)
                         <div style="display:inline-block;">
-                            <b>Hoja</b><br>
+                            <b>Fruto</b><br>
                             <a href="/kobotmp/{{ $dato->kobo2_id }}_fruto.jpg" target="new" class="nolink">
                                 <img src="/kobotmp/{{ $dato->kobo2_id }}_fruto.jpg" style="width:200px;">
                             </a>
@@ -499,7 +499,7 @@
             window.location.reload();
         })
 
-        Livewire.on('IrAKoboInicial',()=>{
+        Livewire.on('redirectTo',()=>{
             window.location.href = event.detail.url
         })
 
@@ -655,52 +655,34 @@
                     kobopoint.bindPopup("<img src='/kobotmp/"+k.kobo2_id+ "_ejemplar.jpg' style='width:150px;'><br>id:"+ k.kobo2_id +"<br>Etiqueta: " + k.kobo2_nombreejemplar + "<br>Nombre cient: "+ k.kobo2_nombrecient +"<br>Nombre común: " + k.kobo2_nombrecom + "<br><a href='/koboView/" + k.kobo2_id + "' ><i class='bi bi-pencil-square'></i> Ver </a> ");
                 })
             }
+
             //////////////////////////////////////////////
             /////// Recibe array de ejemplares (puntos) y los pinta
             if(event.Ejemplares != 'null'){
                 event.Ejemplares.forEach(function(ubica){
-                    //-- verifica que haya ícono --/
-                    // console.log('for2',ubica)
-                    if(ubica.icon_file){
-                        IconArch = ubica.icon_file;
+                    if(event.DestacaEjemId == ubica.sig_id){ ///// si es destaca
+                        icono = '/iconos/PuntoRojo.png';
+                        tamanio = [20,20];
+                        textoPopup="<b>Este ejemplar</b>";
                     }else{
-                        IconArch = '/iconos/PuntoRojo.png';
-                    }
-
-                    //-- Si es igual a DestacaEjemId... --//
-                    if(event.DestacaEjemId == ubica.sig_id){
-                        var MiColor='red';
-                        var MiSize=0.5;
-                        var ElIcono = L.icon({
-                            iconUrl: IconArch,
-                            iconSize: [10, 10], // size of the icon
-                        });
-                        var marcador = L.marker([ubica.sig_y, ubica.sig_x],{
-                            icon:ElIcono
-                        });
-                        // if(event.etiquetas=='1'){
-                            marcador.bindPopup(
-                                "Ejemplar <b> Este ejemplar </b><br><a href='/ejem_inicio/" + ubica.sig_ejmid + "'><i class='bi bi-eye'></i>Ver</a>"
-                            );
-                        // }
-                        marcador.addTo(map);
-                    }else{
-                        var MiColor='green';
-                        var MiSize=0.1;
-                        /////Plotea punto
-                        var marcador = L.circle([ubica.sig_y, ubica.sig_x],{
-                            color: MiColor,
-                            fillColor: MiColor,
-                            fillOpacity: 1,
-                            radius: MiSize,
-                        });
-                        if(event.etiquetas=='1'){
-                            marcador.bindPopup(
-                                "Ejemplar <b>"+ ubica.sig_ejmid + "</b><br><a href='/ejem_inicio/" + ubica.sig_ejmid + "'><i class='bi bi-eye'></i>Ver</a>"
-                            );
+                        if(ubica.sig_icono != null){
+                            icono = ubica.sig_icono; ///// si NO es destaca y sí tiene ícono
+                            tamanio = [20,20];
+                        }else{
+                            icono = '/iconos/PuntoVerde.png'; ///// si NO es destaca y NO tiene ícono
+                            tamanio = [12,12];
                         }
-                        marcador.addTo(map);
+                        textoPopup="<b>Ejemplar de colección</b><br>Ejm Id:"+ ubica.sig_ejmid +"<br><a href='/ejem_inicio/" + ubica.sig_ejmid + "' ><i class='bi bi-pencil-square'></i> Ir a colección </a> ";
                     }
+                    ///// Genera objeto de ícono
+                    iconoDeEjemplar = L.icon({
+                        iconUrl: icono, // Ruta a tu imagen
+                        iconSize: tamanio, // Tamaño del icono
+                    });
+                    //// Lo pinta
+                    EjemplarPoint = L.marker([ubica.sig_y, ubica.sig_x], {icon: iconoDeEjemplar});
+                    EjemplarPoint.addTo(map);
+                    EjemplarPoint.bindPopup(textoPopup);
                 });
             }
 

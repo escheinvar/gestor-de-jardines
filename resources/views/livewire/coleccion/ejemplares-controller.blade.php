@@ -13,7 +13,7 @@
     <!-- ----------------------- CAMPOS DE BÚSQUEDA------------------------------- -->
     <div class="row py-3">
         <!-- Campus -->
-        <div class="col-sm-12 col-md-4 form-group">
+        <div class="col-sm-12 col-md-3 form-group">
             <label for="campus" class="form-label">Campus</label>
             <select wire:model.live="campus" wire:change="BuscaEnCampus()" id="campus" class="@error('campus') is-invalid @enderror form-select" type="text">
                 <option value="">Indica un campus   </option>
@@ -26,7 +26,7 @@
         </div>
 
         <!-- Camellón -->
-        <div class="col-sm-12 col-md-4 form-group">
+        <div class="col-sm-12 col-md-3 form-group">
             <label for="camellon" class="form-label">Camellón</label>
             <select wire:model="camellon" wire:change="BuscaEnCamellon()" id="camellon" class="@error('camellon') is-invalid @enderror form-select">
                 @if($campus != '')
@@ -48,11 +48,33 @@
         </div>
 
         <!-- Familia, Género /sp -->
-        <div class="col-sm-12 col-md-4 form-group">
+        <div class="col-sm-12 col-md-3 form-group">
             <label for="" class="form-label">Familia, Género o especie:</label>
             <input wire:model="" id="" class="@error('') is-invalid @enderror form-control" disabled>
             <div class="form-text"></div>
             @error('')<error>{{ $message }}</error>@enderror
+        </div>
+
+        <!-- Colección -->
+        <div class="col-sm-12 col-md-3 form-group">
+            <label for="" class="form-label">Colección:</label>
+            <input wire:model="" id="" class="@error('') is-invalid @enderror form-control" disabled>
+            <div class="form-text"></div>
+            @error('')<error>{{ $message }}</error>@enderror
+        </div>
+
+        <!-- Colección -->
+        <div class="col-sm-12 col-md-3 form-group">
+            <label for="" class="form-label">Alias:</label>
+            <input wire:model="" id="" class="@error('') is-invalid @enderror form-control" disabled>
+            <div class="form-text"></div>
+            @error('')<error>{{ $message }}</error>@enderror
+        </div>
+
+         <!-- Colección -->
+        <div class="col-sm-12 col-md-3 form-group">
+            <br>
+            <button class="btn btn-primary" disabled>Buscar</button>
         </div>
 
         <div class="col-3">
@@ -87,8 +109,13 @@
                         -- No hay ejemplares -->
                     @endif
 
+                    <div style="clear: both;">
+                        @if(count($ejemplares) > 0)
+                            <i class="bi bi-file-earmark-arrow-down PaClick" style="float: right;"> Descargar a csv</i>
+                        @endif
+                    </div>
                     <div class="table-responsive-sm">
-                        <table class="table table-striped">
+                        <table class="table table-striped table-sm">
                             <thead>
                                 <tr>
                                     <th>Id</th>
@@ -262,51 +289,31 @@
         /////// Recibe array de ejemplares (puntos) y los pinta
         if(event.Ejemplares != 'null'){
             event.Ejemplares.forEach(function(ubica){
-                //-- verifica que haya ícono --/
-                // console.log('for2',ubica)
-                if(ubica.icon_file){
-                    IconArch = ubica.icon_file;
+                if(event.DestacaEjemId == ubica.sig_id){ ///// si es destaca
+                    icono = '/iconos/PuntoRojo.png';
+                    tamanio = [20,20];
+                    textoPopup="<b>Este ejemplar</b>";
                 }else{
-                    IconArch = '/iconos/PuntoRojo.png';
-                }
-
-                //-- Si es igual a DestacaEjemId... --//
-                if(event.DestacaEjemId == ubica.sig_id){
-                    var MiColor='red';
-                    var MiSize=0.5;
-                    var ElIcono = L.icon({
-                        iconUrl: IconArch,
-                        iconSize:     [25, 25], // size of the icon
-                    });
-                    var marcador = L.marker([ubica.sig_y, ubica.sig_x],{
-                        icon:ElIcono
-                    });
-                    if(event.etiquetas=='1'){
-                        marcador.bindPopup(
-                            "Ejemplar <b>"+ ubica.sig_ejmid + "</b><br><a href='/ejem_inicio/" + ubica.sig_ejmid + "'><i class='bi bi-eye'></i>Ver</a>"
-                        );
+                    if(ubica.sig_icono != null){
+                        icono = ubica.sig_icono; ///// si NO es destaca y sí tiene ícono
+                        tamanio = [20,20];
+                    }else{
+                        icono = '/iconos/PuntoVerde.png'; ///// si NO es destaca y NO tiene ícono
+                        tamanio = [12,12];
                     }
-                    marcador.addTo(map);
-                }else{
-                    var MiColor='green';
-                    var MiSize=0.1;
-                    /////Plotea punto
-                    var marcador = L.circle([ubica.sig_y, ubica.sig_x],{
-                        color: MiColor,
-                        fillColor: MiColor,
-                        fillOpacity: 1,
-                        radius: MiSize,
-                    });
-                    if(event.etiquetas=='1'){
-                        marcador.bindPopup(
-                            "Ejemplar <b>"+ ubica.sig_ejmid + "</b><br><a href='/ejem_inicio/" + ubica.sig_ejmid + "'><i class='bi bi-eye'></i>Ver</a>"
-                        );
-                    }
-                    marcador.addTo(map);
+                    textoPopup="<img src="+ ubica.img_ruta +" style='width:150px;'><br><b>Ejemplar Id:"+ ubica.sig_ejmid +"<b><br><a href='/ejem_inicio/" + ubica.sig_ejmid + "' ><i class='bi bi-pencil-square'></i> Ver ejemplar </a> ";
                 }
+                ///// Genera objeto de ícono
+                iconoDeEjemplar = L.icon({
+                    iconUrl: icono, // Ruta a tu imagen
+                    iconSize: tamanio, // Tamaño del icono
+                });
+                //// Lo pinta
+                EjemplarPoint = L.marker([ubica.sig_y, ubica.sig_x], {icon: iconoDeEjemplar});
+                EjemplarPoint.addTo(map);
+                EjemplarPoint.bindPopup(textoPopup);
             });
         }
-
     });
 
     /* ------------ Cierra Mapa de Leaflet ---------- */

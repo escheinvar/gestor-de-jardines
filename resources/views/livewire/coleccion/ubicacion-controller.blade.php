@@ -27,15 +27,50 @@
     <div>
         <!-- -------- MAPA Y CUESTIONARIO ----------------- -->
         <div class="row">
-            <!-- MAPA  -->
+            <!-------------------------------------------------------------------------------->
+            <!------------------- COLUMNA IZQUIERDA ------------------------------------------>
+            <!-------------------------------------------------------------------------------->
             <div class="col-sm-12 @if($edit_adcolviva=='1')col-md-8 @endif p-3">
-                <div wire:ignore>
-                    <div id="map"></div>
+                <!-- bOTONES DE ACCIÓN -->
+                @if($edit_adcolviva=='1')
+                    <div class="row my-3">
+                        <div class="col-8"></div>
+                        <div class="col-2" style="font-size:70%;center">
+                            <center>
+                                <button wire:click="ActivarDesactivarMovimientos()" class="btn btn-sm @if($MovimientoActivo=='1') btn-danger @else btn-secondary @endif" style="width:100px;">
+                                    <img src="/iconos/IconoMoverPlanta.png" style="width:30px;height:30px;border:0x solid black;" class="mx-2">
+                                    @if($MovimientoActivo=='0')Mover @else Moviendo @endif
+                                </button>
+                            </center>
+                        </div>
+                        <div class="col-2" style="font-size:70%;center">
+                            <center>
+                                <a href="#retirar" class="nolink">
+                                    <button wire:click="VerNoVerBaja()" class="btn btn-sm @if($verBaja=='0') btn-secondary @else btn-danger @endif" style="width:100px;">
+                                        <img src="/iconos/IconoPlantaMuerta.png" style="width:30px;height:30px;border:0px solid black;" class="mx-2">
+                                        Retirar
+                                    </button>
+                                </a>
+                            </center>
+                        </div>
+                    </div>
+                @endif
+
+
+                <!-- MAPA  -->
+                <div class="row">
+                    <!----------------- Mapa ----------------- -->
+                    <div class="col-12" wire:ignore>
+                        <div id="map"></div>
+                    </div>
                 </div>
             </div>
 
-            <!-- -------- CUESTIONARIO ----------------- -->
+            <!-------------------------------------------------------------------------------->
+            <!------------------- COLUMNA DERECHA ------------------------------------------>
+            <!-------------------------------------------------------------------------------->
             @if($edit_adcolviva=='1')
+                <!-- -------- CUESTIONARIO ----------------- -->
                 <div class="col-sm-12 col-md-4">
                     <div class="row">
                         <!-- campus -->
@@ -73,15 +108,25 @@
                                 </div>
                                 <div class="col-8 form-group">
                                     <div class="row">
-                                        <!-- longitud -->
+                                        <!-- grida -->
                                         <div class="col-12 form-group">
+                                            <label for="grida">Grida</label>
+                                            <select wire:model="grida" wire:change="SeleccionaGrida()" id="grida" class="@error('grida') is-invalid @enderror form-select" @if($MovimientoActivo=='0') disabled @endif>
+                                                <option value="">Selecciona la grida</option>
+                                                @foreach ($gridas as $g)
+                                                    <option value="{{ $g->gri_id }}">{{ $g->gri_name }} [{{ $g->gri_resx }} x {{ $g->gri_resy }}]</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <!-- longitud -->
+                                        <div class="col-6 form-group">
                                             <label for="longitud">Longitud (X)<red>*</red></label>
                                             <input wire:model="longitud" type="text" class="@error('longitud') is-invalid @enderror form-control" @if($MovimientoActivo=='0') readonly @endif>
                                             <div class="form-text"></div>
                                             @error('longitud')<error>{{ $message }}</error>@enderror
                                         </div>
                                         <!-- latitud -->
-                                        <div class="col-12 form-group">
+                                        <div class="col-6 form-group">
                                             <label for="latitud">Latitud (Y)<red>*</red></label>
                                             <input wire:model="latitud" type="text" class="@error('latitud') is-invalid @enderror form-control" @if($MovimientoActivo=='0') readonly @endif>
                                             <div class="form-text"></div>
@@ -113,56 +158,37 @@
                             @error('notas')<error>{{ $message }}</error>@enderror
                         </div>
 
-                        {{-- <!-- Tipo de crecimiento -->
-                        <div class="col-6 form-group">
-                            <label for="tipocrecim"><br>Tipo de crecimiento<red>*</red></label>
-                            <select wire:model.live="tipocrecim" type="text" class="@error('tipocrecim') is-invalid @enderror form-select"  @if($MovimientoActivo=='0') disabled @endif>
-                                <option value="">Indica uno</option>
-                                @foreach ($tiposcrecimiento as $t)
-                                    <option value="{{ $t->con_txt }}">{{ $t->con_txt }}</option>
-                                @endforeach
-                            </select>
-                            <div class="form-text">
-                                @if($tipocrecim=='individual distinguible')Indica el número total de individuos del ejemplar.
-                                @elseif($tipocrecim=='individual en colonia')Indica el número de individuos que hay en las colonias y el número de colonias contadas
-                                @elseif($tipocrecim=='colonial')Indica el número total de colonias que tiene el ejemplar
-                                @elseif($tipocrecim=='indistinguible')Indica la extensión que ocupa el ejemplar en metros<sup>2</sup>:
-                                @endif
-                            </div>
-                            @error('tipocrecim')<error>{{ $message }}</error>@enderror
-                        </div> --}}
-
                         <!-- Número de colonias -->
                         <div class="col-6 form-group">
                             <label for="colonias">Extensión del ejemplar en m<sup>2</sup> (a nivel de piso): <red>*</red></label>
                             <input wire:model="colonias" type="text" class="@error('colonias') is-invalid @enderror form-control">
-                            <div class="form-text">
-                                Metros cuadrados aproximados (mts. largo x mts.ancho) que ocupa el ejemplar a nivel de piso.
-                            </div>
                             @error('colonias')<error>{{ $message }}</error>@enderror
+                            <div class="form-text">
+                                Mts. largo x mts.ancho a nivel de piso.
+                            </div>
                         </div>
 
                         <!-- Número de individuos -->
                         <div class="col-6 form-group">
                             <label for="cantidad">Número de individuos del ejemplar<red>*</red></label>
                             <input wire:model="cantidad" type="text" class="@error('cantidad') is-invalid @enderror form-control">
-                            <div class="form-text">
-                                Indica el número de individuos que reportas. Si son incontables, pon cero (0).
-                            </div>
                             @error('cantidad')<error>{{ $message }}</error>@enderror
+                            <div class="form-text">
+                                Si son incontables, poner cero (0).
+                            </div>
                         </div>
 
                         <!--  ícono -->
                         <div class="col-10 form-group">
                             <label for="icono">Ícono<red></red></label>
                             <select wire:model.live="icono" type="text" class="@error('icono') is-invalid @enderror form-select">
-                                {{-- <option value="">Selecciona un ícono</option> --}}
+                                <option value="">Selecciona un ícono</option>
                                 @foreach ($iconos as $i)
                                     <option value="{{ $i->icon_name }}">{{ $i->icon_name }}</option>
                                 @endforeach
                             </select>
-                            <div class="form-text"></div>
                             @error('icono')<error>{{ $message }}</error>@enderror
+                            <div class="form-text"><i onclick="VerNoVer('ver','Iconos')" class="bi bi-arrow-down-right-square-fill PaClick" ></i> Desplegar íconos</div>
                         </div>
                         <div class="col-2">
                             @if($icono != '')
@@ -180,30 +206,75 @@
             @endif
         </div>
 
-        <!-- -------- Acciones ---------------- -->
-        @if($edit_adcolviva=='1')
-            <div class="row">
-                <div class="col-3 col-md-1" style="font-size:70%;center">
-                    <center>
-                        <button wire:click="ActivarDesactivarMovimientos()" class="btn btn-sm @if($MovimientoActivo=='1') btn-danger @else btn-secondary @endif" style="width:100px;">
-                            <img src="/iconos/IconoMoverPlanta.png" style="width:50px;height:50px;border:0x solid black;" class="mx-2">
-                            @if($MovimientoActivo=='0')Mover @else Moviendo @endif
-                        </button>
-                    </center>
-                </div>
-                <div class="col-3 col-md-1" style="font-size:70%;center">
-                    <center>
-                        <a href="#retirar" class="nolink">
-                            <button wire:click="VerNoVerBaja()" class="btn btn-sm @if($verBaja=='0') btn-secondary @else btn-danger @endif" style="width:100px;">
-                                <img src="/iconos/IconoPlantaMuerta.png" style="width:50px;height:50px;border:0px solid black;" class="mx-2">
-                                Retirar
-                            </button>
-                        </a>
-                    </center>
-                </div>
-
+        <!-------------------------------------------------------------------------------->
+        <!------------------- RENGLÓN DE ABAJO ------------------------------------------->
+        <!-------------------------------------------------------------------------------->
+        <div class="row my-3" id="sale_verIconos" style="display:none">
+            <div class="col-12">
+                @foreach ($iconos as $i)
+                    <div style="display:inline-block;font-size:60%; padding:10px;">
+                        <center>
+                        <img src="{{ $i->icon_file }}" style="width:30px; height:30px;"><br>
+                        {{ $i->icon_name }}
+                        </center>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+         <div class="row my-3">
+            <!----------------- Alias ----------------- -->
+            <div class="col-12 col-md-6 form-group">
+                @if($edit_adcolviva=='1')
+                    <i class="bi bi-plus-square-fill PaClick agregar" wire:click="abreModalAlias()" style="margin-right:5px;"></i>
+                @endif
+                <H3 style="display: inline-block;">Alias de ubicación</H3><br>
+                @if($alias->count() > '0')
+                    @foreach ($alias as $a)
+                        {{ $a->alias_nombre }} ({{ $a->alias_tipo }})
+                        @if($edit_adcolviva=='1')
+                            <i wire:click="BorrarAlias('{{ $a->alias_id }}')" wire:confirm="Vas a eliminar este el alias {{ $a->alias_nombre }} de la ubicación. ¿Deseas continuar?" class="bi bi-trash agregar"></i>&nbsp; &nbsp;
+                        @endif
+                    @endforeach
+                @else
+                    -- no hay alias --
+                @endif
             </div>
 
+            <!----------------- Sub Colección ----------------- -->
+            <div class="col-12 col-md-6 form-group">
+                @if($edit_adcolviva=='1')
+                    <i class="bi bi-plus-square-fill PaClick agregar" wire:click="AbreElModalDecolecciones('{{ $idEjem }}')" style="margin-right:5px;"></i>
+                @endif
+                <h3  style="display: inline-block;">Sub colecciones: </h3>
+                @if($subcolecciones->count() > '0')
+                    @foreach ($subcolecciones as $s)
+                        <div style="display:block-inline; font-size:110%;">
+                            <li>
+                                {{ $s->col_ccolcoleccion }}
+                                @if($edit_adcolviva=='1') <i class="bi bi-trash agregar" wire:click="SacaDeColeccion('{{ $s->col_id }}')" wire:confirm="Estás por sacar a este ejemplar de la colección {{ $s->col_ccolcoleccion }}. ¿Deseaas continuar?"></i>@endif
+                            </li>
+                        </div>
+                    @endforeach
+                @else
+                    -- el ejemplar no es parte de ninguna subcolección --
+                @endif
+
+            </div>
+        </div>
+        <!----------------- Imágenes ----------------- -->
+        <div class="row">
+            <div class="col-12">
+                @if($edit_adcolviva=='1')
+                    <i wire:click="AbreModalObjeto('0','ejemplar','ejemplar_ubicación','ej','{{ $idEjem }}')" class="bi bi-plus-square-fill agregar" ></i>
+                @endif
+                <h3 style="display: inline-block;"> Imágenes</h3><br>
+                 <?php $imags=$imagenes; ?>
+                @include('plantillas.imagenes')
+            </div>
+        </div>
+
+        <!-- ------------------- SECCIÓN DE RETIRAR EJEMPLAR --------------------->
+        @if($edit_adcolviva=='1')
             <div class="row" style="@if($verBaja=='0') display:none; @else display:block; @endif" id="sale_retiraejemplar">
                 <div class="col-12 my-4">
                     <a name="retirar">
@@ -240,17 +311,8 @@
 
 
 
-    <!------------------------------------------------------------------------------------------- -->
-    <!------------------------------------------------------------------------------------------- -->
-    <!-- -------------------------- SECCIÓN DE SUB-COLECCIONES  --------------------------------- -->
-    <!------------------------------------------------------------------------------------------- -->
-    <!------------------------------------------------------------------------------------------- -->
-    <div>
-        <hr class="titulo">
-        <a name="subcolecciones">
-            <H3>Subcolecciones</H3>
-        </a>
-    </div>
+    <livewire:coleccion.ModalAliasController />
+    <livewire:coleccion.ModalSubcoleccionesController />
 
 
     <script>
@@ -298,6 +360,7 @@
                     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                 }).addTo(map);
             }
+
             //////////////////////////////////////////////
             /////////// Recibe array de camellones y los pinta
             if(event.camellones != 'null'){
@@ -374,53 +437,101 @@
             }
 
             //////////////////////////////////////////////
+            //////////////////////// Recibe y pinta grida
+            if(event.Grida != 'null'){
+                event.Grida.forEach(function(gri) {
+                    console.log('grida1',gri.gri_mapa)
+                    ///// convierte texto recibido en geoJson
+                    var geojsonFeature =JSON.parse(gri.gri_mapa)
+                    // console.log('grida',event.grida.gri_mapa)
+                    L.geoJSON(geojsonFeature,{
+                            style:{
+                                "color":'#606060',
+                                "weight": 0.5,
+                                "opacity": 1
+                            },
+                    }).addTo(map);
+                })
+            }
+
+            //////////////////////////////////////////////
             /////// Recibe array de ejemplares (puntos) y los pinta
             if(event.Ejemplares != 'null'){
                 event.Ejemplares.forEach(function(ubica){
-                    //-- verifica que haya ícono --/
-                    // console.log('for2',ubica)
-                    if(ubica.icon_file){
-                        IconArch = ubica.icon_file;
+                    if(event.DestacaEjemId == ubica.sig_id){ ///// si es destaca
+                        icono = '/iconos/PuntoRojo.png';
+                        tamanio = [20,20];
+                        textoPopup="<b>Este ejemplar</b>";
                     }else{
-                        IconArch = '/iconos/PuntoRojo.png';
-                    }
-
-                    //-- Si es igual a DestacaEjemId... --//
-                    if(event.DestacaEjemId == ubica.sig_id){
-                        var MiColor='red';
-                        var MiSize=0.5;
-                        var ElIcono = L.icon({
-                            iconUrl: IconArch,
-                            iconSize:     [25, 25], // size of the icon
-                        });
-                        var marcador = L.marker([ubica.sig_y, ubica.sig_x],{
-                            icon:ElIcono
-                        });
-                        if(event.etiquetas=='1'){
-                            marcador.bindPopup(
-                                "Ejemplar <b>"+ ubica.sig_ejmid + "</b><br><a href='/ejem_inicio/" + ubica.sig_ejmid + "'><i class='bi bi-eye'></i>Ver</a>"
-                            );
+                        if(ubica.sig_icono != null){
+                            icono = ubica.sig_icono; ///// si NO es destaca y sí tiene ícono
+                            tamanio = [20,20];
+                        }else{
+                            icono = '/iconos/PuntoVerde.png'; ///// si NO es destaca y NO tiene ícono
+                            tamanio = [12,12];
                         }
-                        marcador.addTo(map);
-                    }else{
-                        var MiColor='green';
-                        var MiSize=0.1;
-                        /////Plotea punto
-                        var marcador = L.circle([ubica.sig_y, ubica.sig_x],{
-                            color: MiColor,
-                            fillColor: MiColor,
-                            fillOpacity: 1,
-                            radius: MiSize,
-                        });
-                        if(event.etiquetas=='1'){
-                            marcador.bindPopup(
-                                "Ejemplar <b>"+ ubica.sig_ejmid + "</b><br><a href='/ejem_inicio/" + ubica.sig_ejmid + "'><i class='bi bi-eye'></i>Ver</a>"
-                            );
-                        }
-                        marcador.addTo(map);
+                        textoPopup="<img src="+ ubica.img_ruta +" style='width:150px;'><br><b>Ejemplar Id:"+ ubica.sig_ejmid +"<b><br><a href='/ejem_ubica/" + ubica.sig_ejmid + "' ><i class='bi bi-pencil-square'></i> Ver ejemplar </a> ";
                     }
+                    ///// Genera objeto de ícono
+                    iconoDeEjemplar = L.icon({
+                        iconUrl: icono, // Ruta a tu imagen
+                        iconSize: tamanio, // Tamaño del icono
+                    });
+                    //// Lo pinta
+                    EjemplarPoint = L.marker([ubica.sig_y, ubica.sig_x], {icon: iconoDeEjemplar});
+                    EjemplarPoint.addTo(map);
+                    EjemplarPoint.bindPopup(textoPopup);
                 });
             }
+
+            //////////////////////////////////////////////
+            /////// Recibe array de ejemplares (puntos) y los pinta
+            // if(event.Ejemplares != 'null'){
+            //     event.Ejemplares.forEach(function(ubica){
+            //         //-- verifica que haya ícono --/
+            //         // console.log('for2',ubica)
+            //         if(ubica.icon_file){
+            //             IconArch = ubica.icon_file;
+            //         }else{
+            //             IconArch = '/iconos/PuntoRojo.png';
+            //         }
+
+            //         //-- Si es igual a DestacaEjemId... --//
+            //         if(event.DestacaEjemId == ubica.sig_id){
+            //             var MiColor='red';
+            //             var MiSize=0.5;
+            //             var ElIcono = L.icon({
+            //                 iconUrl: IconArch,
+            //                 iconSize:     [25, 25], // size of the icon
+            //             });
+            //             var marcador = L.marker([ubica.sig_y, ubica.sig_x],{
+            //                 icon:ElIcono
+            //             });
+            //             if(event.etiquetas=='1'){
+            //                 marcador.bindPopup(
+            //                     "Ejemplar <b>"+ ubica.sig_ejmid + "</b><br><a href='/ejem_inicio/" + ubica.sig_ejmid + "'><i class='bi bi-eye'></i>Ver</a>"
+            //                 );
+            //             }
+            //             marcador.addTo(map);
+            //         }else{
+            //             var MiColor='green';
+            //             var MiSize=0.1;
+            //             /////Plotea punto
+            //             var marcador = L.circle([ubica.sig_y, ubica.sig_x],{
+            //                 color: MiColor,
+            //                 fillColor: MiColor,
+            //                 fillOpacity: 1,
+            //                 radius: MiSize,
+            //             });
+            //             if(event.etiquetas=='1'){
+            //                 marcador.bindPopup(
+            //                     "Ejemplar <b>"+ ubica.sig_ejmid + "</b><br><a href='/ejem_inicio/" + ubica.sig_ejmid + "'><i class='bi bi-eye'></i>Ver</a>"
+            //                 );
+            //             }
+            //             marcador.addTo(map);
+            //         }
+            //     });
+            // }
 
         });
 

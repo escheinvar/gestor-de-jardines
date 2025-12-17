@@ -6,12 +6,17 @@ use App\Http\Controllers\Api\camellones;
 use App\Models\cat_camellones;
 use App\Models\cat_campus;
 use App\Models\cat_conceptos;
+use App\Models\cat_gridas;
 use App\Models\cat_iconos;
+use App\Models\ej_alias;
+use App\Models\ej_colecciones;
 use App\Models\ej_conteos;
 use App\Models\ej_nombres_cientificos;
 use App\Models\ej_nombres_comunes;
+use App\Models\ej_subcolecciones;
 use App\Models\ej_ubicaciones;
 use App\Models\ejemplares;
+use App\Models\imagenes;
 use App\Models\usr_roles;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -23,7 +28,7 @@ class UbicacionController extends Component
     public $MenuDeEjemplares='ubicacion', $ejemplar, $ejemplar_ScName, $ejemplar_CoName, $ejemplar_ubica;  ##### Variables solicitadas por la plantilla del menú del ejemplar
     public $edit_curcient, $edit_adcolviva, $CampusAutorizados;     ##### Variable solicitadas por front-end para entrar en modo edición
     public $MovimientoActivo; #### Flag que permite(1) o no (0) mover datos
-    public $campus, $camellon, $latitud, $longitud, $restriccion, $notas, $tipocrecim, $colonias, $cantidad, $icono;
+    public $campus, $camellon, $latitud, $longitud, $restriccion, $notas, $tipocrecim, $colonias, $cantidad, $icono, $alias, $grida;
     public $temp, $color1;
     public $verBaja, $razonBaja, $fechaBaja, $explicaBaja;
     public $MapaConEtiquetas;
@@ -91,7 +96,10 @@ class UbicacionController extends Component
                 $conteo=ej_conteos::where('cant_ejmid',$this->idEjem)->where('cant_act','1')->where('cant_del','0')->first();
                 $this->colonias = $conteo->cant_ext;
                 $this->cantidad = $conteo->cant_inds;
-                $this->icono = $ubica->sig_icono;
+                $icono=preg_replace('/\/iconos\//','',$ubica->sig_icono);
+                $icono=preg_replace('/\....$/','',$icono);
+                // dd($ubica->sig_icono,$icono);
+                $this->icono = $icono;
             }else{
                 $this->HayUbica='0';
                 $this->icono='PuntoVerde';
@@ -113,21 +121,28 @@ class UbicacionController extends Component
             // dd($CampusIdDelEjemplar,$camellones);
 
             if($this->HayUbica=='0'){
-                $this->MapaCamellones($camellones,'0','null','null','null',$this->MapaConEtiquetas);
+                $this->MapaCamellones($camellones,'0','null','null','null',$this->MapaConEtiquetas, 'null');
 
             }elseif($this->HayUbica=='1'){
                 $Ubicaciones=ej_ubicaciones::leftJoin('cat_iconos','sig_icono','=','icon_name')
                     ->where('sig_camid',$this->ubica->sig_camid)
                     ->where('sig_act','1')->where('sig_del','0')
+                    ->leftJoin('imagenes', function($join){
+                        $join->on('sig_ejmid','=','img_ejmid')
+                            ->where('img_cimgtipo','ejemplar_portada')
+                            ->where('img_act','1')
+                            ->where('img_del','0')
+                            ->limit(1);
+                    })
                     ->get()->toArray();
-                $this->MapaCamellones($camellones,'0',$this->ubica->sig_camid, $Ubicaciones, $ubica->sig_id,$this->MapaConEtiquetas);
+                $this->MapaCamellones($camellones,'0',$this->ubica->sig_camid, $Ubicaciones, $ubica->sig_id,$this->MapaConEtiquetas,'null');
             }
             $this->color1="btn-secondary";
         }
     }
 
 
-    public function MapaCamellones($camellones, $streetMap, $DestacaCamId, $Ejemplares, $DestacaEjemId, $etiquetas){
+    public function MapaCamellones($camellones, $streetMap, $DestacaCamId, $Ejemplares, $DestacaEjemId, $etiquetas, $Grida){
         ##### Esta función requiere que se definan las siguientes variables:
         ##### $camellones = cat_camellon::get() ó 'null' con la seleccion de camellones a mapear (si es 'null', solo muestra los ejemplares)
         ##### $streetMap='1' ó '0' Indica si se muestra fondo de StreeMap (1) o no (0)
@@ -197,9 +212,40 @@ class UbicacionController extends Component
         $this->dispatch('CierraMapa');
 
         ##### Para capturar coordenadas, se requiere etiquetas=null
-        $this->dispatch('IniciaMapaCamellones', etiquetas:$etiquetas, camellones:$camellones, DestacaCamId:$DestacaCamId, streetmap:$streetMap, zoom:$zoom, x:$x, y:$y,  Ejemplares:$Ejemplares, DestacaEjemId:$DestacaEjemId);
+        $this->dispatch('IniciaMapaCamellones', etiquetas:$etiquetas, camellones:$camellones, DestacaCamId:$DestacaCamId, streetmap:$streetMap, zoom:$zoom, x:$x, y:$y,  Ejemplares:$Ejemplares, DestacaEjemId:$DestacaEjemId, Grida:$Grida);
     }
 
+    public function SeleccionaGrida(){
+        #######################################################
+        ############################### Monta el mapa
+        $CampusIdDelEjemplar=ejemplares::where('ejm_id',$this->idEjem)
+            ->leftJoin('cat_campus','ejm_ccamsiglas','=','ccam_siglas')
+            ->value('ccam_id');
+        $camellones=cat_camellones::where('cam_ccamid',$CampusIdDelEjemplar)->get();
+
+        if($this->HayUbica=='0'){
+            $this->MapaCamellones($camellones,'0','null','null','null',$this->MapaConEtiquetas,'null');
+
+        }elseif($this->HayUbica=='1'){
+            $Ubicaciones=ej_ubicaciones::leftJoin('cat_iconos','sig_icono','=','icon_name')
+                ->where('sig_camid',$this->ubica->sig_camid)
+                ->where('sig_act','1')->where('sig_del','0')
+                ->leftJoin('imagenes', function($join){
+                    $join->on('sig_ejmid','=','img_ejmid')
+                        ->where('img_cimgtipo','ejemplar_portada')
+                        ->where('img_act','1')
+                        ->where('img_del','0')
+                        ->limit(1);
+                })
+                ->get()->toArray();
+            if($this->grida != ''){
+                $grida=cat_gridas::where('gri_id',$this->grida)->get();
+                $this->MapaCamellones($camellones,'0',$this->ubica->sig_camid, $Ubicaciones, $this->ubica->sig_id,$this->MapaConEtiquetas, $grida);
+            }else{
+                $this->MapaCamellones($camellones,'0',$this->ubica->sig_camid, $Ubicaciones, $this->ubica->sig_id,$this->MapaConEtiquetas, 'null');
+            }
+        }
+    }
 
     public function SeleccionaCoords(){
         $this->color1="btn-success";
@@ -207,32 +253,16 @@ class UbicacionController extends Component
         $this->dispatch('CapturaCoordenadas');
     }
 
-    public  function GuardaUbicacion(){
+    public function GuardaUbicacion(){
         $this->validate([
             'campus'=>'required',
             'camellon'=>'required',
             'latitud'=>'required',
             'longitud'=>'required',
             'restriccion'=>'required',
-            // 'tipocrecim'=>'required',
             'colonias'=>'required',
             'cantidad'=>'required'
         ]);
-        // if(in_array($this->tipocrecim,['individual distinguible','indistinguible'])){
-        //     $this->validate([
-        //         'cantidad'=>'required',
-        //     ]);
-        // }elseif(in_array($this->tipocrecim,['colonial'])){
-        //     $this->validate([
-        //         'colonias'=>'required',
-        //     ]);
-        // }elseif(in_array($this->tipocrecim,['individual en colonia'])){
-        //     $this->validate([
-        //         'colonias'=>'required',
-        //         'cantidad'=>'required',
-        //     ]);
-        // }
-
 
         ####### Prepara nuevos valores para ubicaicón
         $valores=[
@@ -243,8 +273,7 @@ class UbicacionController extends Component
             'sig_x'=>$this->longitud,
             'sig_y'=>$this->latitud,
             'sig_restriccion'=>$this->restriccion,
-            // 'sig_tipocrecim'=>$this->tipocrecim,
-            'sig_icono'=>$this->icono,
+            'sig_icono'=>cat_iconos::where('icon_name',$this->icono)->value('icon_file'),
             'sig_notas'=>$this->notas,
             'sig_usrid'=>Auth::user()->id,
         ];
@@ -283,13 +312,26 @@ class UbicacionController extends Component
     public function MuestraCamellon(){
         #######################################################
         ############################### Monta el mapa
-        $CampusIdDelEjemplar=cat_campus::where('ccam_siglas',$this->ejemplar->ejm_ccamsiglas)->value('ccam_id');
-        $camellones=cat_camellones::where('cam_ccamid',$CampusIdDelEjemplar)->get();
-        $Ubicaciones=ej_ubicaciones::where('sig_camid',$this->camellon)->where('sig_act','1')->where('sig_del','0')->get()->toArray();
-        ##### Cambia color del ícono
-        $this->color1="btn-secondary";
-        ##### Ejecuta mapa
-        $this->MapaCamellones($camellones,'0',$this->camellon,$Ubicaciones,'null',$this->MapaConEtiquetas);
+        if($this->camellon != ''){
+            $CampusIdDelEjemplar=cat_campus::where('ccam_siglas',$this->ejemplar->ejm_ccamsiglas)->value('ccam_id');
+            $camellones=cat_camellones::where('cam_ccamid',$CampusIdDelEjemplar)->get();
+            $Ubicaciones=ej_ubicaciones::where('sig_camid',$this->camellon)
+                ->where('sig_act','1')
+                ->where('sig_del','0')
+                ->leftJoin('imagenes', function($join){
+                        $join->on('sig_ejmid','=','img_ejmid')
+                            ->where('img_cimgtipo','ejemplar_portada')
+                            ->where('img_act','1')
+                            ->where('img_del','0')
+                            ->limit(1);
+                    })
+                ->get()->toArray();
+            ##### Cambia color del ícono
+            $this->color1="btn-secondary";
+            $this->grida='';
+            ##### Ejecuta mapa
+            $this->MapaCamellones($camellones,'0',$this->camellon,$Ubicaciones,'null',$this->MapaConEtiquetas,'null');
+        }
     }
 
     public function ActivarDesactivarMovimientos(){
@@ -328,6 +370,34 @@ class UbicacionController extends Component
         redirect('/ejemplares');
     }
 
+    public function abreModalAlias(){
+        $data=['ejmId'=>$this->idEjem, 'tipo'=>'ubicación']; ##### ejmId=número Id del ejemplar; tipo=['ejemplar','bitácora','ubicación','otro']
+        $this->dispatch('abreModalDeAlias',$data);
+    }
+
+    public function BorrarAlias($IDalias){
+        ej_alias::where('alias_id',$IDalias)->update([
+            'alias_del'=>'1',
+        ]);
+        // redirect('/ejem_ubica'.$this->idEjem);
+    }
+
+    public function AbreElModalDecolecciones(){
+        $data=['ejmId'=>$this->idEjem];
+        $this->dispatch('abreModalDeSubcolecciones',$data);
+    }
+
+    public function SacaDeColeccion($colId){
+        ej_subcolecciones::where('col_id',$colId)->update([
+            'col_del'=>'1',
+        ]);
+    }
+
+    public function AbreModalObjeto($par1,$par2, $par3, $par4, $par5){
+        $data=['ImgId'=>$par1, 'ImgModulo'=>$par2, 'ImgTipo'=>$par3, 'Clase'=>$par4, 'IdClase'=>$par5];
+        $this->dispatch('abreModalDeImagen', $data);
+    }
+
     public function render() {
         ###################################################################
         ##################################### Prepara autorizaciones
@@ -335,6 +405,7 @@ class UbicacionController extends Component
         $CampusIdDelEjemplar=cat_campus::where('ccam_siglas',$this->ejemplar->ejm_ccamsiglas)->value('ccam_id');
         ##### Permisos admin-colviva,
         $this->edit_adcolviva='0';
+        $CampusAutorizados2=[];
         if(array_intersect(['admin-colviva'],session('rol'))){
             $CampusAutorizados2=usr_roles::where('rol_crolrol','admin-colviva')
                 ->where('rol_usrid',Auth::user()->id)
@@ -344,7 +415,16 @@ class UbicacionController extends Component
             if(in_array($CampusDelEjemplar, $CampusAutorizados2) OR  in_array('todos',$CampusAutorizados2) ){
                 $this->edit_adcolviva='1';
             }
+
+            if(in_array('todos',$CampusAutorizados2)){
+                $CampusAutorizados2=cat_campus::where('ccam_act','1')->pluck('ccam_siglas')->toArray();
+            }else{
+                $CampusAutorizados2=[];
+            }
         }
+        ################################################################
+        ################### Carga gridas
+        $gridas=cat_gridas::whereIn('gri_ccamsiglas',$CampusAutorizados2)->get();
 
         #################################################################
         ################### Carga ubicación
@@ -358,14 +438,38 @@ class UbicacionController extends Component
             $this->HayUbica='0';
         }
 
+        #################################################################
+        ################### Carga alias
+        $this->alias=ej_alias::where('alias_ejmid',$this->idEjem)
+            ->where('alias_tipo','ubicación')
+            ->where('alias_act','1')
+            ->where('alias_del','0')
+            ->get();
+
+        $subcolecciones=ej_colecciones::where('col_ejmid',$this->idEjem)
+            ->where('col_act','1')
+            ->where('col_del','0')
+            ->get();
+
+        #################################################################
+        ################### Carga imágenes
+        $imagenes=imagenes::where('img_ejmid',$this->idEjem)
+            ->whereIn('img_cimgtipo',['ejemplar_ubicación','ejemplar_portada','ejemplar_ejemplar'])
+            ->where('img_act','1')
+            ->where('img_del','0')
+            ->get();
+
         ########## Obtiene catálogos
         $camellones=cat_camellones::where('cam_ccamid',$CampusIdDelEjemplar)->get();
         $tiposcrecimiento=cat_conceptos::where('con_tema','tipo-crecimiento')->select('con_txt')->get();
-        $iconos=cat_iconos::all();
+        $iconos=cat_iconos::orderBy('icon_name')->get();
         return view('livewire.coleccion.ubicacion-controller',[
             'camellones'=>$camellones,
             'tiposcrecimiento'=>$tiposcrecimiento,
             'iconos'=>$iconos,
+            'gridas'=>$gridas,
+            'subcolecciones'=>$subcolecciones,
+            'imagenes'=>$imagenes,
         ]);
     }
 }

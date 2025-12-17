@@ -39,7 +39,7 @@
                 <div class="col-3">Nombre científico</div>
                 <div class="col-8">
                     @if($ejemplar_ScName) {{ $ejemplar_ScName->scn_name }}
-                    @else<error> -- no definido --</error>
+                    @else<error> -- no definido --</error> @if($alias->where('alias_tipo','nombre científico')->count() > '0') &nbsp; Sugiere <i>{{ $alias->where('alias_tipo','nombre científico')->value('alias_nombre') }}</i> @endif
                     @endif
                 </div>
             </div>
@@ -48,8 +48,8 @@
             <div class="row py-1">
                 <div class="col-3">Nombres comunes:</div>
                 <div class="col-8">
-                    @if($ejemplar_CoName){{ implode(', ',$ejemplar_CoName->pluck('con_nombre')->toArray()) }}
-                    @else<error> -- no definido --</error>
+                    @if($ejemplar_CoName->count() > 0){{ implode(', ',$ejemplar_CoName->pluck('con_nombre')->toArray()) }}
+                    @else<error> -- no definido --</error>  @if($alias->where('alias_tipo','nombre común')->count() > '0') &nbsp; Sugiere <i>{{ $alias->where('alias_tipo','nombre común')->value('alias_nombre') }}</i> @endif
                     @endif
                 </div>
             </div>
@@ -68,9 +68,9 @@
             <div class="row py-1">
                 <div class="col-3">Alias del ejemplar:</div>
                 <div class="col-8">
-                    @if($alias)
+                    @if($alias->count() > 0)
                         @foreach ($alias as $a)
-                            {{ $a->alias_nombre }} {{ $alias->count() }}
+                            {{ $a->alias_nombre }} ({{ $a->alias_tipo }}) &nbsp; | &nbsp;
                         @endforeach
                     @endif
                 </div>
@@ -93,7 +93,7 @@
                 <div class="col-3">Bitácora</div>
                 <div class="col-8">
                     @if($ejemplar->ejm_bitid > '0'){{ $ejemplar->ejm_bitid }}
-                    @else <error>Falta bitácora</error>
+                    @else <error>Falta bitácora</error>   @if($alias->where('alias_tipo','clavo')->count() > '0') &nbsp; Sugiere clavo <i>{{ $alias->where('alias_tipo','clavo')->value('alias_nombre') }}</i> @endif
                     @endif
                 </div>
             </div>
@@ -262,51 +262,50 @@
             }
 
             //////////////////////////////////////////////
+            //////////////////////// Recibe y pinta grida
+            // if(event.Grida != 'null'){
+            //     event.Grida.forEach(function(gri) {
+            //         console.log('grida1',gri.gri_mapa)
+            //         ///// convierte texto recibido en geoJson
+            //         var geojsonFeature =JSON.parse(gri.gri_mapa)
+            //         // console.log('grida',event.grida.gri_mapa)
+            //         L.geoJSON(geojsonFeature,{
+            //                 style:{
+            //                     "color":'#606060',
+            //                     "weight": 0.5,
+            //                     "opacity": 1
+            //                 },
+            //         }).addTo(map);
+            //     })
+            // }
+
+            //////////////////////////////////////////////
             /////// Recibe array de ejemplares (puntos) y los pinta
             if(event.Ejemplares != 'null'){
                 event.Ejemplares.forEach(function(ubica){
-                    //-- verifica que haya ícono --/
-                    // console.log('for2',ubica)
-                    if(ubica.icon_file){
-                        IconArch = ubica.icon_file;
+                    if(event.DestacaEjemId == ubica.sig_id){ ///// si es destaca
+                        icono = '/iconos/PuntoRojo.png';
+                        tamanio = [20,20];
+                        textoPopup="<b>Este ejemplar</b>";
                     }else{
-                        IconArch = '/iconos/PuntoRojo.png';
-                    }
-
-                    //-- Si es igual a DestacaEjemId... --//
-                    if(event.DestacaEjemId == ubica.sig_id){
-                        var MiColor='red';
-                        var MiSize=0.5;
-                        var ElIcono = L.icon({
-                            iconUrl: IconArch,
-                            iconSize:     [25, 25], // size of the icon
-                        });
-                        var marcador = L.marker([ubica.sig_y, ubica.sig_x],{
-                            icon:ElIcono
-                        });
-                        if(event.etiquetas=='1'){
-                            marcador.bindPopup(
-                                "Ejemplar <b>"+ ubica.sig_ejmid + "</b><br><a href='/ejem_inicio/" + ubica.sig_ejmid + "'><i class='bi bi-eye'></i>Ver</a>"
-                            );
+                        if(ubica.sig_icono != null){
+                            icono = ubica.sig_icono; ///// si NO es destaca y sí tiene ícono
+                            tamanio = [20,20];
+                        }else{
+                            icono = '/iconos/PuntoVerde.png'; ///// si NO es destaca y NO tiene ícono
+                            tamanio = [12,12];
                         }
-                        marcador.addTo(map);
-                    }else{
-                        var MiColor='green';
-                        var MiSize=0.1;
-                        /////Plotea punto
-                        var marcador = L.circle([ubica.sig_y, ubica.sig_x],{
-                            color: MiColor,
-                            fillColor: MiColor,
-                            fillOpacity: 1,
-                            radius: MiSize,
-                        });
-                        if(event.etiquetas=='1'){
-                            marcador.bindPopup(
-                                "Ejemplar <b>"+ ubica.sig_ejmid + "</b><br><a href='/ejem_inicio/" + ubica.sig_ejmid + "'><i class='bi bi-eye'></i>Ver</a>"
-                            );
-                        }
-                        marcador.addTo(map);
+                        textoPopup="<img src="+ ubica.img_ruta +" style='width:150px;'><br><b>Ejemplar Id:"+ ubica.sig_ejmid +"<b><br><a href='/ejem_inicio/" + ubica.sig_ejmid + "' ><i class='bi bi-pencil-square'></i> Ver ejemplar </a> ";
                     }
+                    ///// Genera objeto de ícono
+                    iconoDeEjemplar = L.icon({
+                        iconUrl: icono, // Ruta a tu imagen
+                        iconSize: tamanio, // Tamaño del icono
+                    });
+                    //// Lo pinta
+                    EjemplarPoint = L.marker([ubica.sig_y, ubica.sig_x], {icon: iconoDeEjemplar});
+                    EjemplarPoint.addTo(map);
+                    EjemplarPoint.bindPopup(textoPopup);
                 });
             }
 

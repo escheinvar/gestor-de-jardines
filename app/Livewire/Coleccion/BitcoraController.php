@@ -357,7 +357,7 @@ class BitcoraController extends Component
 
         ######## Carga alias:
         $alias=ej_alias::where('alias_ejmid',$this->idEjem)
-            ->where('alias_tipo','bitácora')
+            ->whereIn('alias_tipo',['bitácora','clavo'])
             ->where('alias_act','1')
             ->where('alias_del','0')
             ->get();

@@ -33,7 +33,7 @@ $this->ejemplar_ubica = ej_ubicaciones::where('sig_ejmid',$this->idEjem)
 
 <div class="p-2" style="background-color:#efebe8;" wire:ignore>
     <!-- -------------------------------------------------------------------------------------------------------------------------- -->
-    <!-- -------------- VERIFICA QUE EXISTAN LAS VARIABLES NECESARIAS ------------------------------------------------------------- -->
+    <!-- -------------- VERIFICA QUE EXISTAN LAS VARIABLES NECESARIAS PARA LA VISTA ----------------------------------------------- -->
     <!-- -------------------------------------------------------------------------------------------------------------------------- -->
     @if(!isset($idEjem))
         {{ $idEjem='' }}
@@ -56,6 +56,11 @@ $this->ejemplar_ubica = ej_ubicaciones::where('sig_ejmid',$this->idEjem)
         {{-- <div class="alert alert-danger"> Debes definir variable $ejemplar_CoName desde el controlador para ejecutar correctamente el MenúDeEjemplar </div> --}}
     @endif
 
+    <div class="my-4">
+        <a href="/ejemplares" class="nolink">
+            <-- Ejemplares
+        </a>
+    </div>
     <!-- -------------------------------------------------------------------------------------------------------------------------- -->
     <!-- ---------------------------------------------- INICIA EL MENÚ ------------------------------------------------------------ -->
     <!-- -------------------------------------------------------------------------------------------------------------------------- -->

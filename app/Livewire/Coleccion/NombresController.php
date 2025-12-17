@@ -166,7 +166,7 @@ class NombresController extends Component
         $alias=ej_alias::where('alias_ejmid',$this->idEjem)
             ->where('alias_act','1')
             ->where('alias_del','0')
-            ->select('alias_id','alias_nombre')
+            ->whereIn('alias_tipo',['ejemplar','nombre científico','nombre común'])
             ->get();
 
         $herbario=imagenes::where('img_cimgtipo','herbario_propio')

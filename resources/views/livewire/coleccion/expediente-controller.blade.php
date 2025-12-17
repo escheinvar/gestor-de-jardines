@@ -19,4 +19,27 @@
     <!-- -------------------- TERMINA DATOS GENERALES DEL EJEMPLAR ------------------------------- -->
     <!------------------------------------------------------------------------------------------- -->
     <h2>Expediente</h2>
+
+    <div class="row">
+        <div class="col-12">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Tipo</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($expedientes as $e)
+                        <tr>
+                            <td>{{ $e->exp_fecha }}</td>
+                            <td>{{ $e->exp_cexpname }}</td>
+                            <td>{{ $e->exp_txt }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>

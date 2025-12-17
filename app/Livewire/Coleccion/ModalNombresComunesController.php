@@ -213,6 +213,7 @@ class ModalNombresComunesController extends Component
         ];
         if($this->conId =='0'){
             $datos['con_id']=ej_nombres_comunes::max('con_id')+1;
+            // dd($datos);
             $nvo=ej_nombres_comunes::create($datos);
             $this->conId=$nvo->con_id;
         }else{

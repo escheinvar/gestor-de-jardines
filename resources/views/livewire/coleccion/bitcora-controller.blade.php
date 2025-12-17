@@ -21,8 +21,15 @@
     <!-- Cuando no hay bitácora vinculada, solicita una -->
     @if($bitacoraPendiente=='1')
         @if($edit_adcolviva=='1')
+            <div class="row my-2">
+                @if($alias->count() > '0')
+                    Se sugiere:
+                    @foreach ($alias as $a)
+                        {{ $a->alias_nombre }} ({{ $a->alias_tipo }})
+                    @endforeach
+                @endif
+            </div>
             <div class="row">
-
                 <div class="col-sm-6 col-md-2 my-4 form-group">
                     <label class="form-label">Vincular este ejemplar a:</label>
                     <div class="form-check">
@@ -59,7 +66,7 @@
         <h3>Datos generales</h3>
         <div class="row">
             <!-- Campus al que pertenece -->
-            <div class="col-sm-12 col-md-4 form-group">{{ $campusEjem }}
+            <div class="col-sm-12 col-md-4 form-group">
                 <label for="campusEjem" class="form-label">Campus al que pertenece <red>*</red></label>
                 <select wire:model="campusEjem" id="campusEjem" class="@error('campusEjem') is-invalid @enderror form-select" @if($idEjem != '0') disabled   @endif >
                     <option value=''>Indica el campus al que pertenece</option>
@@ -317,6 +324,7 @@
                 </div>
             </div>
         </div>
+
 
         <!-- -------------------- BOTONES DE GUARDAR O EDITAR --------------------- -->
         <div class="row">

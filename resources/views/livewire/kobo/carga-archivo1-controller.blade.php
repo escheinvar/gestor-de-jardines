@@ -216,7 +216,7 @@
                                 <!-- nombre científico-->
                                 <div>
                                     @if($e->kobo2_nombrecient != '')
-                                        <i>{{ $e->kobo2_nombrecient }}</i>
+                                        <i class="bi bi-tag-fill" style="color:gray;"><sub><i>{{ $e->kobo2_nombrecient }}</i></sub></i>
                                     @else
                                         <i class="bi bi-tag-fill" style="color:black;"><sub>Nom. cient.</sub></i>
                                     @endif
@@ -226,7 +226,7 @@
                                 <!-- nombre común -->
                                 <div>
                                     @if($e->kobo2_nombrecom != '')
-                                        {{ $e->kobo2_nombrecom }}
+                                        <i class="bi bi-tag-fill" style="color:gray;"><sub>{{ $e->kobo2_nombrecom }}</sub></i>
                                     @else
                                         <i class="bi bi-tag-fill" style="color:black;"><sub>Nom. cient.</sub></i>
                                     @endif

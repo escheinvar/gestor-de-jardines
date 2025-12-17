@@ -60,6 +60,11 @@ class InicioController extends Component
                 ->where('sig_act','1')
                 ->where('sig_del','0')
                 ->first();
+            $this->alias = ej_alias::where('alias_ejmid',$this->idEjem)
+                ->where('alias_act','1')
+                ->where('alias_del','0')
+                ->orderBy('alias_id')
+                ->get();
         }
 
         ######################################### Carga datos de jardín
@@ -73,15 +78,24 @@ class InicioController extends Component
             ->get();
 
         ######################################### Ejecuta mapa
-        if($this->ejemplar_ubica){
-
+        if($this->ejemplar_ubica){ ##### if hay ubicación...
             $campusId=cat_campus::where('ccam_siglas',$this->ejemplar->ejm_ccamsiglas)->value('ccam_id');
             $camellones=cat_camellones::where('cam_ccamid',$campusId)->get();
-            $Ubicaciones=ej_ubicaciones::where('sig_camid',$this->ejemplar_ubica->sig_camid)->join('cat_iconos','sig_icono','=','icon_name')->get();
-            $this->MapaCamellones($camellones,'0',$this->ejemplar_ubica->sig_camid,  $Ubicaciones, $this->ejemplar_ubica->sig_id, '1');
+            $Ejemplares=ej_ubicaciones::where('sig_camid',$this->ejemplar_ubica->sig_camid)
+                ->where('sig_act','1')->where('sig_del','0')
+                ->leftJoin('cat_iconos','sig_icono','=','icon_name')
+                ->leftJoin('imagenes', function($join){
+                    $join->on('sig_ejmid','=','img_ejmid')
+                        ->where('img_cimgtipo','ejemplar_portada')
+                        ->where('img_act','1')
+                        ->where('img_del','0')
+                        ->limit(1);
+                })
+                ->get();
+            // dd($Ejemplares);
+            $this->MapaCamellones($camellones,'0',$this->ejemplar_ubica->sig_camid,  $Ejemplares, $this->ejemplar_ubica->sig_id, '1');
         }
     }
-
 
 
     public function MapaCamellones($camellones, $streetMap, $DestacaCamId, $Ejemplares, $DestacaEjemId, $etiquetas){
@@ -156,8 +170,6 @@ class InicioController extends Component
         ##### Para capturar coordenadas, se requiere etiquetas=null
         $this->dispatch('IniciaMapaCamellones', etiquetas:$etiquetas, camellones:$camellones, DestacaCamId:$DestacaCamId, streetmap:$streetMap, zoom:$zoom, x:$x, y:$y,  Ejemplares:$Ejemplares, DestacaEjemId:$DestacaEjemId);
     }
-
-
 
 
     public function render(){

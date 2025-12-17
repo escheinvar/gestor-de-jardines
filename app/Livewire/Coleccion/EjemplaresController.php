@@ -120,6 +120,13 @@ class EjemplaresController extends Component
                         ->where('scn_del','0')
                         ->select('scn_familia','scn_name');
                 })
+                ->leftJoin('imagenes', function($join){
+                    $join->on('sig_ejmid','=','img_ejmid')
+                        ->where('img_cimgtipo','ejemplar_portada')
+                        ->where('img_act','1')
+                        ->where('img_del','0')
+                        ->limit(1);
+                })
                 ->where('ejm_del','0')
                 ->orderBy('ejm_id')
                 ->get();
@@ -170,6 +177,13 @@ class EjemplaresController extends Component
                 $ejmsMapa=ej_ubicaciones::where('sig_camcamellon',$this->camellon)
                     ->where('sig_act','1')
                     ->where('sig_del','0')
+                    ->leftJoin('imagenes', function($join){
+                        $join->on('sig_ejmid','=','img_ejmid')
+                            ->where('img_cimgtipo','ejemplar_portada')
+                            ->where('img_act','1')
+                            ->where('img_del','0')
+                            ->limit(1);
+                    })
                     ->get();
             }
             #####################################################

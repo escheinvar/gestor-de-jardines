@@ -16,6 +16,9 @@
         {{-- @if($idEjem > 0) de {{ $ejemplar->ejm_ccamsiglas }} @endif --}}
     </div>
     <div class="row">
+        Hay un total de {{ $Nimags }} imágenes.
+    </div>
+    <div class="row">
         <div class="col-sm-12 col-md-3 my-3">
             <div class="form-check">
                 <input wire:model.live="tipoBusqueda" wire:click="CambiaTipoBusqueda()" value="ejemplar" class="form-check-input" type="radio" name="tipoBusqueda" id="tipoBusquedaEjemplar">

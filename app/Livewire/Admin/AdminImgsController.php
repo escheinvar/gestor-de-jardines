@@ -124,11 +124,12 @@ class AdminImgsController extends Component
             $tipos=collect();
         }
 
-
+        $Nimags=imagenes::where('img_act','1')->where('img_del','0')->count();
         return view('livewire.admin.admin-imgs-controller',[
             'modulos'=>$modulos,
             'tipos'=>$tipos,
             'totalesPorTipo'=>$totalesPortipo,
+            'Nimags'=>$Nimags,
         ]);
     }
 }
