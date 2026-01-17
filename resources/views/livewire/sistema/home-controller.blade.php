@@ -58,8 +58,11 @@
     <!-- ------------------------------------------- -->
 
 
-
-
+        <div class="my-4" wire:ignore>
+            <div wire:model.live="textin" id="summernote">Texto a editar</div>
+        </div>
+<button id="botoncito" wire:click="cachador()">ver</button>
+        va: {{ $textin }}
         <!-- ------------------------------------------------------------------ -->
         <!-- -------------------- Inicia modulo de bitacoras ------------------- -->
         <div class="my-4">
@@ -94,9 +97,136 @@
         <!-- ------------------------------------------------------------------ --> --}}
 
 
+<span class="error2">blaa</span> a
+<script>
+    /* --------------- Summernote --------------------------- */
+    /* --------------- Summernote --------------------------- */
+    /* --------------- Summernote --------------------------- */
+    // $(document).ready(function() {
+    //     $('#summernote').summernote();
+    // });
 
 
 
+    /* ----------- Botón linea arriba ---------- */
+    var BotonLineaArriba = function (context) {
+        var ui = $.summernote.ui;
+        // create button
+        var button = ui.button({
+            contents: '<i class="ar"/> a',
+            tooltip: 'Barra arriba',
+            click: function () {
+            // context.invoke('editor.insertText', 'hello');
+            // context.invoke('editor.formatPara'); // Example: formats the current block to a <p>
+            // context.invoke('editor.addClass', 'error2');
+            var range = context.invoke('editor.createRange');
+                if (range.toString()) {
+                var highlightedText = '<span class="ar">' + range.toString() + '</span>';
+                context.invoke('editor.pasteHTML', highlightedText);
+                }
+            }
+        });
+        return button.render(); // return button as jquery object
+    }
+
+    /* ----------- Botón linea abajo ---------- */
+    var BotonLineaAbajo = function (context) {
+        var ui = $.summernote.ui;
+        // create button
+        var button = ui.button({
+            contents: '<i class="ab"/> a',
+            tooltip: 'Barra abajo',
+            click: function () {
+            // context.invoke('editor.insertText', 'hello');
+            // context.invoke('editor.formatPara'); // Example: formats the current block to a <p>
+            // context.invoke('editor.addClass', 'error2');
+            var range = context.invoke('editor.createRange');
+                if (range.toString()) {
+                var highlightedText = '<span class="ab">' + range.toString() + '</span>';
+                context.invoke('editor.pasteHTML', highlightedText);
+                }
+            }
+        });
+        return button.render(); // return button as jquery object
+    }
+
+    /* ----------- Texto con diagonal ---------- */
+    var BotonLineaDiagonal = function (context) {
+        var ui = $.summernote.ui;
+        // create button
+        var button = ui.button({
+            contents: '<i class="diag"/> e',
+            tooltip: 'Barra diagonal',
+            click: function () {
+            // context.invoke('editor.insertText', 'hello');
+            // context.invoke('editor.formatPara'); // Example: formats the current block to a <p>
+            // context.invoke('editor.addClass', 'error2');
+            var range = context.invoke('editor.createRange');
+                if (range.toString()) {
+                var highlightedText = '<span class="diag">' + range.toString() + '</span>';
+                context.invoke('editor.pasteHTML', highlightedText);
+                }
+            }
+        });
+        return button.render(); // return button as jquery object
+    }
+    /* ----------- Circulo arriba ---------- */
+    var BotonCirculoArriba = function (context) {
+        var ui = $.summernote.ui;
+        // create button
+        var button = ui.button({
+            contents: '<i class="diag"/> e',
+            tooltip: 'Barra diagonal',
+            click: function () {
+            // context.invoke('editor.insertText', 'hello');
+            // context.invoke('editor.formatPara'); // Example: formats the current block to a <p>
+            // context.invoke('editor.addClass', 'error2');
+            var range = context.invoke('editor.createRange');
+                if (range.toString()) {
+                var highlightedText = '<span class="circ">' + range.toString() + '</span>';
+                context.invoke('editor.pasteHTML', highlightedText);
+                }
+            }
+        });
+        return button.render(); // return button as jquery object
+    }
+
+    // $(document).ready(function(){
+    document.addEventListener('livewire:init', function () {
+        $('#summernote').summernote({
+            toolbar: [
+                ['style', ['bold', 'italic', 'underline', 'clear']],
+                ['font', ['strikethrough', 'superscript', 'subscript']],
+                // ['fontsize', ['fontsize']],
+                // ['color', ['color']],
+                // ['para', ['ul', 'ol', 'paragraph']],
+                ['para', ['ul', 'ol']],
+                // ['height', ['height']],
+                ['view', ['fullscreen', 'codeview', 'help']],
+                ['table', ['table']],
+                ['insert', ['link', 'picture', 'video']],
+                ['group', [ 'specialChar' ]],
+                ['mybutton', ['LineaArriba','LineaAbajo','LineaDiagonal','CirculoArriba']]
+            ],
+
+            buttons: {
+                LineaArriba: BotonLineaArriba,
+                LineaAbajo: BotonLineaAbajo,
+                LineaDiagonal: BotonLineaDiagonal,
+                CirculoArriba: BotonCirculoArriba
+            }
+        });
+    });
+</script>
+
+<script>
+    $('#botoncito').click(function(){
+        var codigo = $('#summernote').summernote('code');
+        @this.set('textin',codigo,live=true)
+        console.log('va',codigo)
+    })
+
+</script>
 
 </div>
 <!-- ------------ TERMINA CONTENIDO PRINCIPAL ------------------- -->

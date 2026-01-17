@@ -12,7 +12,7 @@ class HomeController extends Component
 
     ###################################################################
     ###################################### Inicia Módulo de Bitácoras
-    public $MyId, $ja;
+    public $MyId, $ja, $textin;
     public function mount(){
         $this->MyId='0';
     }
@@ -55,7 +55,6 @@ class HomeController extends Component
     // }
     ######################################## Termina Módulo de Imágenes
     ####################################################################
-
 
 
     public function render(){

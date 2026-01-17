@@ -6,18 +6,27 @@ use App\Models\buzon;
 use App\Models\usr_roles;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class BuzonController extends Component
 {
-    public $verLeidos,$verEnviados, $VerEnviarMsj, $MsjA, $MsjAsunto, $RepplyTo, $Msj;
-    public $ganonesLee, $ganonesBorra;
+    use WithPagination;
+
+    public $buzon,$verLeidos,$verEnviados, $VerEnviarMsj, $MsjA, $MsjAsunto, $RepplyTo, $Msj;
+    public $ganonesLee, $ganonesBorra,$SelectTodo;
     public $msjTo, $msjToName,$asunto, $mensaje,$msjNuevo, $replyTo;
 
+    ##################################################################
+    ########## NOTA: Este buzón utiliza la función gneneral /App/Helpers/EnviaMensajeAbuzon.php
+    ##########       el cual usa la extensión Mailgun y sus archs /App/Mail/CorreoPorAvisoDeBuzon.php
+    ##################################################################
     public function mount(){
         $this->verLeidos=FALSE;
         $this->verEnviados=FALSE;
         $this->ganonesLee=[];
         $this->ganonesBorra=[];
+        $this->SelectTodo=FALSE;
+
 
     }
 
@@ -50,7 +59,13 @@ class BuzonController extends Component
         redirect('/buzon');
     }
 
-
+    public function MarcaDesmarcaTodo(){
+        if($this->SelectTodo==TRUE){
+            $this->ganonesLee=$this->buzon->pluck('buz_id');
+        }else{
+            $this->ganonesLee=[];
+        }
+    }
 
     ###########################################################
     ##################################### Inicia zona de modal
@@ -105,6 +120,7 @@ class BuzonController extends Component
         $this->CierraModal();
     }
 
+
     ###########################################################
     ########################################### Inicia render
     public function render(){
@@ -116,28 +132,30 @@ class BuzonController extends Component
             'buzon'=>$buzonSesion,
         ]);
 
+        $paginas='5';
         if($this->verLeidos==TRUE){$leidos='<=';}else{$leidos='=';}
-
-        $recibidos= buzon::where('buz_del','0')
+        if($this->verEnviados==TRUE){
+            $this->buzon= buzon::where('buz_del','0')
             ->where('buz_act',$leidos,'1')
             ->where('buz_to',Auth::user()->id)
+            ->orWhere('buz_from',Auth::user()->id)
             ->leftJoin('users','buz_from','=','id')
             ->orderBy('buz_date','desc')
             ->orderBy('buz_hora','desc')
+            // ->paginate($paginas);
             ->get();
-
-        $enviados=buzon::where('buz_from',Auth::user()->id)
-            ->leftJoin('users','buz_from','=','id')
-            ->orderBy('buz_date','desc')
-            ->orderBy('buz_hora','desc')
-            ->get();
-
-        if($this->verEnviados==TRUE){
-            $buzon=$recibidos->merge($enviados);
         }else{
-            $buzon=$recibidos;
+            $this->buzon= buzon::where('buz_del','0')
+                ->where('buz_act',$leidos,'1')
+                ->where('buz_to',Auth::user()->id)
+                ->leftJoin('users','buz_from','=','id')
+                ->orderBy('buz_date','desc')
+                ->orderBy('buz_hora','desc')
+                // ->paginate($paginas);
+                ->get();
         }
 
+        ##### Lista de destinatarios en "enviar mensaje a..."
         $destinatarios=usr_roles::where('rol_del','0')
             ->where('rol_act','1')
             ->select('rol_usrid','rol_ccamsiglas','rol_crolrol','usrname')
@@ -148,7 +166,7 @@ class BuzonController extends Component
             ->get();
 
         return view('livewire.sistema.buzon-controller',[
-            'buzon'=>$buzon,
+            // 'buzon'=>$buzon,
             'destinatarios'=>$destinatarios,
         ]);
     }

@@ -23,6 +23,11 @@ if(!function_exists('EnviaMensajeAbuzon')){
       ['1','2'],    ### array de mails a enviar ó vacío ''
     );
     */ ############################## Fin del ejemplo
+
+    ##################################################################
+    ########## NOTA: Esta función gneral usa la extensión Mailgun y sus
+    ##########       archs /App/Mail/CorreoPorAvisoDeBuzon.php
+    ##################################################################
     function EnviaMensajeAbuzon($to,$from,$asunto,$mensaje,$notas,$comp,$ifReply,$mails){
         #dd(['1_to*'=>$to,'2_from*'=>$from,'3_asunto*'=>$asunto,'4_mensaje*'=>$mensaje,'5_notas'=>$notas,'6_comp*'=>$comp,'7_ifReply'=>$ifReply,      '8_mails'=>$mails]);
 

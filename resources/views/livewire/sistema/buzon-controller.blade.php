@@ -8,10 +8,30 @@
 
 <div>
     <h2><i class="bi bi-inbox"></i> Buzón de {{ Auth::user()->usrname }}</h2>
-
+    <div>
+        <!-- indicador de número de  nuevos -->
+        <span style="margin:5px; padding:1px; @if($buzon->where('buz_leido','0')->count() > 0)color:#CD7B34; font-weight:bold; @endif">
+            {{ $buzon->where('buz_act','1')->where('buz_from','!=',Auth::user()->id)->count() }} <i class="bi bi-envelope-fill"></i>
+            @if($buzon->where('buz_act','0')->where('buz_from','!=',Auth::user()->id)->count() =='1') nuevo @else nuevos @endif
+        </span>
+        <!-- indicador de número de leídos -->
+        @if($verLeidos==TRUE)
+            <span style="margin:5px; padding:1px; color:gray; @if($buzon->where('buz_leido','1')->count() > 0) font-weight:bold; @endif">
+                {{ $buzon->where('buz_act','0')->where('buz_from','!=',Auth::user()->id)->count() }} <i class="bi bi-envelope-open"></i>
+                @if($buzon->where('buz_act','0')->where('buz_from','!=',Auth::user()->id)->count() =='1') leído @else leídos @endif
+            </span>
+        @endif
+    </div>
     <!-- ---------------------------------------------------------------------------------- -->
     <!-- ------------- INICIA BARRA SUPERIOR DE ACCIONES PARA BUZÓN  ---------------------- -->
     <div class="my-2" style="background-color:#CDC6B9; padding:5px;">
+        <!-- Marcar todos -->
+        <div class="form-check mx-1" style="display:inline-block;">
+            <input wire:model.live="SelectTodo" wire:click="MarcaDesmarcaTodo()"  class="form-check-input" type="checkbox" id="checkDefault">
+            <label class="form-check-label" for="checkDefault">
+                Marcar todos
+            </label>
+        </div>
         <!-- mostrar leídos -->
         <div class="form-check mx-1" style="display:inline-block;">
             <input wire:model.live="verLeidos" class="form-check-input" type="checkbox" id="checkDefault">
@@ -26,27 +46,16 @@
                 Mostrar enviados
             </label>
         </div>
-        <!-- indicador de número de  nuevos -->
-        <span style="margin:5px; padding:1px; @if($buzon->where('buz_leido','0')->count() > 0)color:#CD7B34; font-weight:bold; @endif">
-            {{ $buzon->where('buz_act','1')->where('buz_from','!=',Auth::user()->id)->count() }} <i class="bi bi-envelope-fill"></i>
-            @if($buzon->where('buz_act','0')->where('buz_from','!=',Auth::user()->id)->count() =='1') nuevo @else nuevos @endif
-        </span>
-        <!-- indicador de número de leídos -->
-        @if($verLeidos==TRUE)
-            <span style="margin:5px; padding:1px; color:gray; @if($buzon->where('buz_leido','1')->count() > 0) font-weight:bold; @endif">
-                {{ $buzon->where('buz_act','0')->where('buz_from','!=',Auth::user()->id)->count() }} <i class="bi bi-envelope-open"></i>
-                @if($buzon->where('buz_act','0')->where('buz_from','!=',Auth::user()->id)->count() =='1') leído @else leídos @endif
-            </span>
-        @endif
+
 
         <span style="margin:5px; padding:1px;" >
             <span style="float: right;">
-                <button wire:click="LeerMensajes()" type="button" class="btn btn-sm btn-primary mx-2" style="display:inline-block" @if(count($ganonesLee)==0) disabled @endif)>
-                    <i class="bi bi-envelope-open"></i> Leer <sub> {{ count($ganonesLee) }}</sub>
+                <button wire:click="LeerMensajes()" type="button" class="btn btn-sm btn-primary mx-2" style="color:#CDC6B9; display:inline-block" @if(count($ganonesLee)==0) disabled @endif)>
+                    <i class="bi bi-envelope-open" style="color:#CDC6B9;"></i> Leer <sub> {{ count($ganonesLee) }}</sub>
                 </button>
 
-                <button wire:click="BorrarMensajes()" type="button" class="btn btn-sm btn-primary mx-2" style="display:inline-block" @if(count($ganonesLee)==0) disabled @endif wire:confirm="Estás por eliminar definitivamente este mensaje. Esta acción no puede ser revertida. ¿Deseas continuar?">
-                    <i class="bi bi-trash"></i> Borrar <sub>{{ count($ganonesLee) }}</sub>
+                <button wire:click="BorrarMensajes()" type="button" class="btn btn-sm btn-primary mx-2" style="color:#CDC6B9; display:inline-block" @if(count($ganonesLee)==0) disabled @endif wire:confirm="Estás por eliminar definitivamente este mensaje. Esta acción no puede ser revertida. ¿Deseas continuar?">
+                    <i class="bi bi-trash" style="color:#CDC6B9;"></i> Borrar <sub>{{ count($ganonesLee) }}</sub>
                 </button>
             </span>
         </span>
@@ -67,7 +76,7 @@
                                 <div style="">
                                     @if($b->buz_to==Auth::user()->id)<!-- solo muestra si son recibidos (no enviados) -->
                                         <div style="display: inline-block;" class="m-1 p-1" >
-                                            <input type="checkbox" wire:model.live="ganonesLee" id="ch{{ $b->buz_id }}" value="{{ $b->buz_id }}">
+                                            <input type="checkbox" wire:model.live="ganonesLee"  id="ch{{ $b->buz_id }}" value="{{ $b->buz_id }}">
                                             @if( $b->buz_act == '1')
                                                 <i class="bi bi-envelope-fill"></i>
                                             @else
@@ -211,6 +220,21 @@
                 $('#ModalEnviarMensaje').modal('hide');
            });
         });
+
+        /* #### Script para marcar/desmarcar todos los mensajes */
+        function MarcaDesmarcaTodo(source) {
+            // Get all checkboxes with the class 'my-checkbox-class'
+            var checkboxes = document.querySelectorAll('.EsteMensaje');
+
+            // The 'source' is the "Select All" checkbox itself (passed via 'this' in HTML onclick)
+            var isChecked = source.checked;
+
+            // Iterate over the checkboxes and set their 'checked' property
+            for (var i = 0; i < checkboxes.length; i++) {
+                checkboxes[i].checked = isChecked;
+            }
+        }
+
     </script>
 </div>
 
