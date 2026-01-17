@@ -32,19 +32,8 @@ class UsrRolesSeeder extends Seeder
                 'rol_ccamsiglas'=>'JebOax',
                 'rol_crolrol'=>'webmaster',
                 'rol_describe'=>'Web mastter',
-            ],[
-                'rol_id'=>'4',
-                'rol_usrid'=>'2',
-                'rol_ccamsiglas'=>'JebOax',
-                'rol_crolrol'=>'curador-colviva',
-                'rol_describe'=>'Curador de Colección Viva del JebOax',
-            ],[
-                'rol_id'=>'5',
-                'rol_usrid'=>'2',
-                'rol_ccamsiglas'=>'JebOax',
-                'rol_crolrol'=>'curador-semillas',
-                'rol_describe'=>'Curador de Semillas del JebOax',
             ]
+
         ];
 
         if(usr_roles::count()=='0'){
