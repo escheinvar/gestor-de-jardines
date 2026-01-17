@@ -16,7 +16,7 @@ class CatRolesSeeder extends Seeder
         $events=[
             ['crol_rol'=>'admin',                   'crol_gps'=>'todos',                            'crol_describe'=>'(Enrique) Administrador General del sistema'],
             ['crol_rol'=>'admin-campus',            'crol_gps'=>'adminjardin',                      'crol_describe'=>'(Enrique) Administrador General de un campus'],
-            // ['crol_rol'=>'webmaster',               'crol_gps'=>'',                                 'crol_describe'=>'(Enrique) Web master'],
+            ['crol_rol'=>'webmaster',               'crol_gps'=>'',                                 'crol_describe'=>'(Enrique) Web master'],
             // ['crol_rol'=>'api-read',                'crol_gps'=>'',                                 'crol_describe'=>'Consumidor de API externo (lectura)'],
             // ['crol_rol'=>'api',                     'crol_gps'=>'',                                 'crol_describe'=>'Consumidor de API externo (lectura y escritura)'],
             // ['crol_rol'=>'amigo',                   'crol_gps'=>'amigo',                            'crol_describe'=>'Persona del público general, Amigo del Jardín'],
