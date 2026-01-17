@@ -9,7 +9,7 @@ class cat_lenguas extends Model
     // use HasFactory;
 	protected $connection='pgsql';
 	protected $table = 'cat_lenguas';
-	protected $primaryKey = 'clen   _id';
+	protected $primaryKey = 'clen_id';
 	public $incrementing = true;
 	#protected $keyType = 'string';
 
