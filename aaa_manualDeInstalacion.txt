@@ -1,5 +1,6 @@
 #### https://www.skynat-s.com/blog/how-to-install-and-configure-laravel-with-nginx-on-ubuntu-24-04/
 
+#################################################################################
 ###################################################### Instalar sistema operativo
 ### Descargar sistema operativo ubuntu 24.04 en formato iso
 ### Generar usb booteable con iso
@@ -7,47 +8,76 @@
 ### Incertar usb y reiniciar equipo
 ### Instalar ubuntu siguiendo las instrucciones. Una vez esté instalado el sistema operativo:
 
-###################################################### Agregar Nuevo usuario de ubuntu para el sistema
+############ Agregar Nuevo usuario de ubuntu para el sistema
 adduser jardin
 sudo adduser jardin sudo
 
+###############################################################################
 ###################################################### Instalar PHP y librerías
-sudo apt install php8.3 php8.3-fpm php8.3-cli php8.3-common php8.3-curl php8.3-mbstring php8.3-mysql php8.3-xml php8.3-zip php-gd php-imagick
+sudo add-apt-repository ppa:ondrej/php
+sudo apt update
+#sudo apt install php8.3 php8.3-fpm php8.3-cli php8.3-common php8.3-curl php8.3-mbstring php8.3-mysql php8.3-xml php8.3-zip  php-gd    php-imagick
+ sudo apt install php8.4 php8.4-fpm php8.4-cli php8.4-common php8.4-curl php8.4-mbstring              php8.4-xml php8.4-zip php8.4-gd php8.4-imagick php8.4-imap php8.4-intl php8.4-pgsql  -y
+sudo apt install  php8.4-xsl  php-zip php-xml php-gd
 
+#########################################################################
 ###################################################### Instalar nginx
 sudo apt install nginx -y
 
+############ configuro nginx para php
+sudo nano /etc/nginx/sites-available/default
+location ~ \.php$ {
+    include snippets/fastcgi-php.conf;
+    fastcgi_pass unix:/var/run/php/php8.4-fpm.sock;  ## verificar ruta de fpm-sock
+}
+
+############ inicio php con nginix
+sudo systemctl restart php8.4-fpm
+sudo systemctl realpath_rootstart nginx
+sudo systemctl enable nginx
+sudo systemctl enable php8.4-fpm
+
+######### Verificar que ya jala php con nginx
+sudo nano '<?php  phpinfo(); ?>' > /var/Www/html/info.php
+######### ver html y luego borrar info.php
+sudo rm /var/www/html/info.php
+
+#########################################################################
 ###################################################### Instalo Postgresql
 ### agrego repositorio
 sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
 ### agrego key de repositorio
 curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/postgresql.gpg
 ### actualizo listado
-apt update
+sudo apt update
 ### instalo postgres
 sudo apt install postgresql
 ### inicio servicio postgres
 sudo systemctl start postgresql
 sudo systemctl enable postgresql
 
-###################################################### Configuro Postgres
-### configuro para usar password md5 (para conect remotevia PgADMIN X EJ)
-sudo sed -i '/^host/s/ident/md5/' /etc/postgresql/17/main/pg_hba.conf #### sustituye ident por md5 en lineas que inicien con "host"
-sudo sed -i '/^local/s/peer/trust/' /etc/postgresql/17/main/pg_hba.conf
 
-### permito conecciones remotas a postgres:
-sudo nano /etc/postgresql/17/main/postgresql.conf
-### modifico las siguientes líneas
+#################### Configuro Postgres
+### configuro para usar password md5 (para conect remotevia PgADMIN X EJ) (a partir de v. 18 ya no se usa md5)
+##sudo sed -i '/^host/s/ident/md5/' /etc/postgresql/18/main/pg_hba.conf #### sustituye ident por md5 en lineas que inicien con "host"
+##sudo sed -i '/^local/s/peer/trust/' /etc/postgresql/18/main/pg_hba.conf
+
+### permito conecciones remotas a postgres ### modifico las siguientes líneas:
+sudo nano /etc/postgresql/18/main/postgresql.conf
+### modificar:
 listen_addresses = '*'
-password_encription = md5
+#password_encryption = md5
+password_encryption = scram-sha-256
 
-### editar /etc/postgresql/17/main/pg_hba.conf  y agregar al final:
-host    all    all    0.0.0.0/0    md5
+### editar  y agregar al final:
+sudo nano /etc/postgresql/18/main/pg_hba.conf
+#host    all    all    0.0.0.0/0    md5
+host    all    all    0.0.0.0/0    scram-sha-256
 
 ### ingreso a postgres y pongo password a usuario
-sudo -u postgres psql
-ALTER USER postgres PASSWORD 'VeryStronGPassWord@1137';
-exit;
+#sudo -u postgres psql
+#ALTER USER postgres PASSWORD 'VeryStronGPassWord@1137';
+#exit;
 
 ### Reinicio postgres
 sudo systemctl restart postgresql
@@ -55,22 +85,10 @@ sudo systemctl restart postgresql
 ### permito postgres en firewall
 sudo ufw allow 5432/tcp
 
-###################################################### instalo libreria php postgres
-### para php-postgres
-apt install php-pgsql
-#apt install php-mysql php-sqlite
 
-### para php ngnix
-php -v
-systemctl start php8.3-fpm
 
-### habilitar para que inicien juntos
-systemctl enable php8.3-fpm nginx
-
-#### librerias php que suelo usar:
-apt install php8.3-gd php8.3-intl php8.3-xsl  php-zip php-xml php-gd
-
-###################################################### Instalo composer
+#########################################################################
+################################################ Instalo composer/laravel
 curl -sS https://getcomposer.org/installer | php
 sudo mv composer.phar /usr/local/bin/composer
 composer --version
@@ -80,6 +98,7 @@ cd /var/www/html
 git clone https://git....
 composer install
 ### copiar archivo .env
+### Crear bd y usuario de bd.
 php artisan key:generate
 php artisan migrate --seed
 
@@ -112,6 +131,15 @@ server {
     location = /robots.txt  { access_log off; log_not_found off; }
 
     error_page 404 /index.php;
+
+    location ~ \.php$ {
+            include snippets/fastcgi-php.conf;
+            #### With php-fpm (or other unix sockets): #### verificar la ruta de socket correcta
+            fastcgi_pass unix:/run/php/php8.4-fpm.sock;
+            #### With php-cgi (or other tcp sockets):
+            #fastcgi_pass 127.0.0.1:9000;
+    }
+
 
     location ~ ^/index\.php(/|$) {
         fastcgi_pass unix:/var/run/php/php8.3-fpm.sock;

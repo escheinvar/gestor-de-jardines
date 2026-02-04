@@ -17,7 +17,7 @@ class CargaArchivo1Controller extends Component
 {
     use WithFileUploads;
 
-    public  $campus, $excel, $token, $rutaImg, $ejemplares;
+    public  $edit, $campus, $excel, $token, $rutaImg, $ejemplares;
 
     public function mount(){
         $this->ejemplares=kobo2::where('kobo2_del','0')
@@ -93,6 +93,14 @@ class CargaArchivo1Controller extends Component
     }
 
     public function render() {
+        ##### Verifica acceso
+        if(array_intersect(session('rol'), ['admin-campus','admin-colviva','curador-cientifico'])){
+            $this->edit='1';
+        }else{
+            $this->edit='0';
+            redirect('/noauth/-- solicita acceso --');
+        }
+
         $campuses=cat_campus::orderBy('ccam_siglas')->get();
 
         $camellones=cat_camellones::where('cam_del','0')

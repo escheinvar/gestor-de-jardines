@@ -21,7 +21,7 @@ use Livewire\Component;
 class LimpiaRegistroController extends Component
 {
 
-    public $koboid, $dato;
+    public $koboid, $dato, $edit;
     public $campus, $autor, $fecha, $ubicaname, $ubicanotas, $camellon, $camellones, $latitud, $longitud;
     public $TomCors, $scname, $comname, $ejmname, $cantidad, $exten,$clavo, $prev, $next, $NuevoNombreComun, $NuevaEtiquetaejemplar;
     public $grida, $gridas;
@@ -103,6 +103,7 @@ class LimpiaRegistroController extends Component
         {
             ####### Baja fotoubica
             $name='kobotmp/'.$this->dato->kobo2_id.'_ubica.jpg';
+            #dd($name,$this->dato->kobo2_fotoubica);
             if($this->dato->kobo2_fotoubica != '' AND !Storage::exists($name)){
                 $response = Http::withHeaders([
                     'Authorization' => 'Token ' . session('tokenKobo'),
@@ -110,7 +111,9 @@ class LimpiaRegistroController extends Component
                 if($response->successful()){
                     Storage::put($name, $response->body());
                 }
+
             }
+
 
             ####### Baja foto ejemplar
             $name='kobotmp/'.$this->dato->kobo2_id.'_ejemplar.jpg';
@@ -696,6 +699,14 @@ class LimpiaRegistroController extends Component
     }
 
     public function render() {
+        ##### Verifica acceso
+        if(array_intersect(session('rol'), ['admin-campus','admin-colviva','curador-cientifico'])){
+            $this->edit='1';
+        }else{
+            $this->edit='0';
+            redirect('/noauth/-- solicita acceso --');
+        }
+
         $campuses=cat_campus::where('ccam_act','1')->get();
 
         ##### Cargo datos del ejemplar

@@ -9,9 +9,19 @@
 @endsection
 <div>
     <h2>Carga de archivo de KoboCollect</h2>
+    <div style="font-size: 80%;color:grey;">
+        Este catálogo es administrado por el rol <b>admin-campus</b>,<b>admin-colviva</b> ó <b>curador-cientifico</b>, (en el campus que tenga privilegio)
+        {{-- @if($idEjem > 0) de {{ $ejemplar->ejm_ccamsiglas }} @endif --}}
+        @if($edit=='0') <error style="font-size: 90%;"> No autorizado</error> @else <span style="font-size:90%;color:green;"> Autorizado </span>@endif <br>
+    </div>
 
     <div class="row">
         <div class="col-12">
+            <span onclick="VerNoVer('ver','Manual')" class="PaClick" style="float: right;">
+                <i class="bi bi-info-circle-fill"></i> Manuales
+            </span>
+        </div>
+        <div class="col-12" id="sale_verManual" style="display:none;font-size:80%;">
             <li><a href="#" target="new">Descargar</a> plantilla para Kobo</li>
             <li>Manual para cargar plantilla en Kobo</li>
             <li>Manual para capturar datos de campo</li>
