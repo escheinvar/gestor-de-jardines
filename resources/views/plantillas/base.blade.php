@@ -148,6 +148,7 @@
                                         Ayuda
                                     </a>
                                     <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item @if(request()->path() == 'manual') active @endif" href="/manual">Manuales del sistema</a></li>
                                         <li><a class="dropdown-item @if(request()->path() == 'api_manual') active @endif" href="/api_manual">Manual de API</a></li>
                                         <li><a class="dropdown-item @if(request()->path() == 'nosotros') active @endif" href="/nosotros">Sobre el Sistema</a></li>
                                     </ul>
@@ -172,6 +173,7 @@
                                         Ayuda
                                     </a>
                                     <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item @if(request()->path() == 'manual') active @endif" href="/manual">Manuales del sistema</a></li>
                                         <li><a class="dropdown-item @if(request()->path() == 'api_manual') active @endif" href="/api_manual">Manual de API</a></li>
                                         <li><a class="dropdown-item @if(request()->path() == 'nosotros') active @endif" href="/nosotros">Sobre el Sistema</a></li>
                                     </ul>

@@ -26,7 +26,7 @@ class CatRolesSeeder extends Seeder
             // ['crol_rol'=>'auxJefe-colviva',         'crol_gps'=>'jardin,colviva',                   'crol_describe'=>'(Mariela) Persona auxiliar en jefe de la Colección Viva'],
             // ['crol_rol'=>'auxInvents-colviva',      'crol_gps'=>'jardin,colviva',                   'crol_describe'=>'(Gaby T.) Persona auxiliar de inventarios de la Colección Viva'],
             // ['crol_rol'=>'auxGral-colviva',         'crol_gps'=>'jardin,colviva',                   'crol_describe'=>'(Jardineros) Persona auxiliar general de Colección Viva'],
-            // ['crol_rol'=>'capturista-colviva',      'crol_gps'=>'jardin,colviva,amigo',             'crol_describe'=>'(ServSoc) Persona capturista para colección viva'],
+            ['crol_rol'=>'capturista-colviva',      'crol_gps'=>'jardin,colviva,amigo',             'crol_describe'=>'(ServSoc) Persona capturista para colección viva'],
 
             // ['crol_rol'=>'curador-semillas',        'crol_gps'=>'adminjardin,jardin,semillas',      'crol_describe'=>'(Niza) Persona curadora de la Colección de Semillas'],
             // ['crol_rol'=>'auxGral-semillas',        'crol_gps'=>'jardin,semillas',                  'crol_describe'=>'(Paty) Persona auxiliar general de Colección de Semillas'],

@@ -11,18 +11,16 @@ use Livewire\Component;
 
 class GridasController extends Component
 {
-    public $edit;
-    public $orden, $sent, $CampusSelected, $GridaSelected, $Gridas;
+    public $edit, $gridas;
+    public $orden, $sent, $CampusSelected, $GridaSelected;
 
     public function mount(){
         $this->orden='cam_id';
         $this->sent='asc';
-        $this->CampusSelected='JebOax';
-
-
-        $datos=cat_gridas::where('gri_id','1')->get();
-        // dd($datos);
-        $this->MapaCamellones($datos,'1','null');
+        $this->CampusSelected='';
+        $this->gridas=[];
+        // $datos=cat_gridas::where('gri_id','1')->get();
+        // $this->MapaCamellones($datos,'1','null');
     }
 
     public function ordena($campo){
@@ -88,9 +86,47 @@ class GridasController extends Component
         $this->dispatch('IniciaMapaCamellones', zoom:$zoom, streetmap:$streetMap, mapas:$mapas, x:$x, y:$y, DestacaId:$DestacaId);
     }
 
+    public function CargaJardin(){
+        if($this->CampusSelected!=''){
+            $this->gridas=cat_gridas::where('gri_del','0')
+                ->where('gri_act','1')
+                ->where('gri_ccamsiglas',$this->CampusSelected)
+                #->whereIn('gri_ccamsiglas', $campus->pluck('ccam_siglas')->toArray())
+                ->get();
+        }else{
+            $this->gridas=[];
+        }
+        $this->GridaSelected='';
+        $this->dispatch('CierraMapa');
+        #dd($this->CampusSelected,$this->gridas);
+    }
+
+    public function CargaGrida($indica){
+        if($indica == '0' AND  $this->GridaSelected !='') {
+            $datos=cat_gridas::where('gri_id', $this->GridaSelected )->get();
+            $this->MapaCamellones($datos,'1','null');
+
+        }
+
+        if($indica > '0') {
+            $datos=cat_gridas::where('gri_id', $indica )->get();
+            $this->MapaCamellones($datos,'1','null');
+        }
+        #dd('je',$indica, $datos, $this->GridaSelected);
+
+    }
+
+
     public function AbrirModalGridas($id){
         $data=['gridId'=>$id];  ### donde $par1 tiene el Id de la grida a editar ó 0 para nuevo<
         $this->dispatch('abreModalDeGridas');
+    }
+
+    public function Borrar($griId){
+        cat_gridas::where('gri_id',$griId)->update([
+            'gri_del'=>'1',
+        ]);
+        $this->dispatch('AvisoExitoGrida1', msj:'Se eliminó la grida.');
     }
 
     public function render(){
@@ -121,11 +157,20 @@ class GridasController extends Component
         }
 
         ###################################### Carga las gridas
-        $gridas=cat_gridas::where('gri_del','0')->where('gri_act','1')->get();
+        // if($this->CampusSelected!=''){
+        //     $this->gridas=cat_gridas::where('gri_del','0')
+        //         ->where('gri_act','1')
+        //         ->where('gri_ccamsiglas',$this->GridaSelected)
+        //         #->whereIn('gri_ccamsiglas', $campus->pluck('ccam_siglas')->toArray())
+        //         ->get();
+        // }else{
+        //     $this->gridas=[];
+        // }
 
+        #dd($campus->pluck('ccam_siglas')->toArray());
         return view('livewire.admin.gridas-controller',[
             'campus'=>$campus,
-            'gridas'=>$gridas,
+            // 'gridas'=>$gridas,
         ]);
     }
 }

@@ -11,6 +11,7 @@ composer require livewire/livewire
 composer require symfony/mailgun-mailer symfony/http-client
 
 ##### Generé liga para subir archivos a public (php artisan  storage:link)
+### en la carpeta /storage/app/ hacer una liga simbólica denominada private que redirige a public/
 ln -s public/ storage/app/private
 
 ##### Instalé laravel sanctum y api route (para api rest)

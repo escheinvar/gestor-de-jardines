@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\login\loginController;
 use App\Http\Controllers\login\logoutController;
+use App\Http\Middleware\rolAdminAdminCampusMiddleware;
 use App\Http\Middleware\rolAdminCampusMiddleware;
 use App\Http\Middleware\rolAdminMiddleware;
 use App\Http\Middleware\UsuarioAutenticadoConRolMiddleware;
@@ -34,10 +35,12 @@ use App\Livewire\Sistema\RecuperaPasswd01Controller;
 use App\Livewire\Sistema\RecuperaPasswdController;
 use App\Livewire\Web\ApiManual;
 use App\Livewire\Web\ErrorController;
+use App\Livewire\Web\Manual;
 use App\Livewire\Web\NoauthController;
 use App\Livewire\Web\SobreElSistema;
 use App\Models\bibliografia;
 use Illuminate\Support\Facades\Route;
+
 
 
 
@@ -67,8 +70,12 @@ Route::middleware([UsuarioAutenticadoConRolMiddleware::class])->group(function()
 
     /* ---------------- Logeados con Rol de Admin ------------------- */
     Route::middleware([rolAdminMiddleware::class])->group(function(){
-        Route::get('/usuarios',AdminUsuariosController::class)->name('usuarios');
         Route::get('/campus',CampusYjardinesController::class)->name('campus');
+    });
+
+    /* ---------------- Logeados con Rol de Admin o de Admin-campus ------------------- */
+    Route::middleware([rolAdminAdminCampusMiddleware::class])->group(function(){
+        Route::get('/usuarios',AdminUsuariosController::class)->name('usuarios');
     });
 
     /* ---------------- Logeados con Rol de Admin-Campus ------------------- */
@@ -104,7 +111,8 @@ Route::middleware([UsuarioAutenticadoConRolMiddleware::class])->group(function()
 /* ---------------------------------------- WEB PÚBLICO  ------------------------- */
 Route::get('/noauth/{msj}',NoauthController::class)->name('noauth');
 Route::get('/error/{msj}',ErrorController::class)->name('error');
-Route::get('/api_manual', ApiManual::class)->name('api_manual');
+Route::get('/api_manual', ApiManual::class)->name('api_manualapi');
+Route::get('/manual', Manual::class)->name('api_manual');
 Route::get('/nosotros', SobreElSistema::class)->name('nosotros');
 
 

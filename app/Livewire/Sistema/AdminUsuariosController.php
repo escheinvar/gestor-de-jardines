@@ -7,6 +7,7 @@ use App\Models\cat_jardines;
 use App\Models\cat_roles;
 use App\Models\User;
 use App\Models\usr_roles;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\WithFileUploads;
 
@@ -36,10 +37,10 @@ class AdminUsuariosController extends Component
 
     public function render() {
         ################################# Revisa permisos
-        if(in_array('admin',session('rol'))){
-            $this->edit=TRUE;
+        if(array_intersect(['admin','admin-campus'],session('rol'))){
+            $this->edit='1';
         }else{
-            $this->edit=FALSE;
+            $this->edit='0';
         }
 
         $usuarios=User::select(['id','act','email','usrname','nombre','apellido','nace','avatar'])
@@ -51,20 +52,36 @@ class AdminUsuariosController extends Component
             ->orderBy('rol_tipo1','asc')
             ->orderBy('rol_tipo2','asc')
             ->get();
-            // $catLenguas=CatLenguasModel::orderBy('clen_lengua','asc')->get();
-            #dd($roles,$catLenguas);
+        ##### jardines autoirizados (de admin-campus)
+        $JardsUsr=usr_roles::where('rol_usrid',Auth::user()->id)
+            ->where('rol_crolrol','admin-campus')
+            ->where('rol_del','0')
+            ->where('rol_act','1')
+            ->pluck('rol_ccamsiglas')
+            ->toArray();
+#dd($JardsUsr);
+        if(in_array('admin',session('rol')) or in_array('todos',$JardsUsr)){
+            $catJards=cat_campus::where('ccam_act','1')
+                ->OrderBy('ccam_siglas')
+                ->orderBy('ccam_name')
+                ->get();
+        }else{
+            $catJards=cat_campus::where('ccam_act','1')
+                ->OrderBy('ccam_siglas')
+                ->orderBy('ccam_name')
+                ->whereIn('ccam_siglas',$JardsUsr)
+                ->get();
+        }
 
-        $catJards=cat_campus::join('cat_jardines','ccam_cjarid','=','cjar_id')
-            ->select('ccam_siglas','ccam_name','cjar_siglas','cjar_name')
-            ->OrderBy('ccam_siglas')
-            ->orderBy('ccam_name')
-            ->get();
+
+
 
         return view('livewire.sistema.admin-usuarios-controller',[
             'usuarios'=>$usuarios,
             'roles'=>$roles,
             'catJards'=>$catJards,
             'catRoles'=>cat_roles::select('crol_rol','crol_describe')->orderBy('crol_rol')->get(),
+            'JardsDelUsr'=>$JardsUsr,
         ]);
     }
 

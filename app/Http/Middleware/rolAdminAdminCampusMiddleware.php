@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class rolAdminMiddleware
+class rolAdminAdminCampusMiddleware
 {
     /**
      * Handle an incoming request.
@@ -15,7 +15,7 @@ class rolAdminMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if(in_array('admin',session('rol')) ){
+        if(in_array('admin',session('rol')) or in_array('admin-campus',session('rol'))){
             return $next($request);
         }else{
             return redirect()->route('noauth',[" "]);

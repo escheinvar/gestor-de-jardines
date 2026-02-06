@@ -20,7 +20,6 @@ class cat_gridas extends Model
         'gri_name',
         'gri_explica',
         'gri_ccamsiglas',
-        'gri_ccamsiglas',
         'gri_resx',
         'gri_resy',
         'gri_mapa',

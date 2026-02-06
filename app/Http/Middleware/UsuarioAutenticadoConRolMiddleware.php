@@ -47,7 +47,8 @@ class UsuarioAutenticadoConRolMiddleware
         }else{
             #### Redirecciona
             Auth::logout();
-            return redirect()->route('noauth',[" "]);
+            // return redirect()->route('noauth',[" "]);
+            return redirect('/');
         }
     }
 }

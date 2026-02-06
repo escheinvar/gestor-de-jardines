@@ -15,7 +15,7 @@
 <div>
     <h2>Administración de usuarios</h2>
     <div style="font-size: 80%;color:grey;">
-        Este catálogo es administrado por el rol <b>Admin</b>
+        Este catálogo es administrado por el rol <b>Admin</b> y por el rol <b>admin-campus</b>
         @if($edit=='0') <error style="font-size: 90%;"> No autorizado</error> @else <span style="font-size:90%;color:green;"> Autorizado </span>@endif <br>
         {{-- @if($idEjem > 0) de {{ $ejemplar->ejm_ccamsiglas }} @endif --}}
     </div>
@@ -180,9 +180,11 @@
                                             <td > {{ $r->rol_ccamsiglas }} </td>
                                             <td> {{ $r->rol_crolrol }} </td>
                                             <td>
+                                                @if(in_array('admin', session('rol')) OR in_array($r->rol_ccamsiglas, $JardsDelUsr))
                                                 <button  wire:click="InactivarRol({{ $r->rol_id }})" wire:confirm="Estás por quitarle definitivamente el rol de {{ $r->rol_crolrol }} a este usuario ¿Deseas continuar?" class="btn btn-secondary btn-sm">
                                                     <i class="bi bi-trash"></i>
                                                 </button>
+                                                @endif
                                             </td>
                                         </tr>
                                     @endforeach
@@ -191,9 +193,11 @@
                                             <select wire:model.live="NvoJardin" class="form-select" aria-label="Default select example">
                                                 <option value="">Indica un jardín/campus</option>
                                                 @foreach ($catJards as $jar)
-                                                    <option value="{{ $jar->ccam_siglas }}"> {{ $jar->cjar_name }} / {{ $jar->ccam_siglas }} ({{ $jar->ccam_name }})</option>
+                                                    <option value="{{ $jar->ccam_siglas }}"> {{ $jar->ccam_name }} / {{ $jar->ccam_siglas }} ({{ $jar->ccam_name }})</option>
                                                 @endforeach
-                                                <option value="todos">Todos</option>
+                                                @if(in_array('admin', session('rol')) )
+                                                    <option value="todos">Todos</option>
+                                                @endif
                                             </select>
                                         </td>
                                         <td>

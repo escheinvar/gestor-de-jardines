@@ -10,8 +10,7 @@
 
     <div class="row">
         <div style="font-size: 80%;color:grey;">
-            Este catálogo es administrado por el rol <b>admin-campus</b> (y al campus sobre el que tenga privilegio)
-            {{-- @if($idEjem > 0) de {{ $ejemplar->ejm_ccamsiglas }} @endif --}}
+            Este catálogo es administrado por el rol <b>admin-campus</b> (al campus sobre el que tenga privilegio)
             @if($edit=='0') <error style="font-size: 90%;"> No autorizado</error> @else <span style="font-size:90%;color:green;"> Autorizado </span>@endif <br>
         </div>
     </div>
@@ -19,7 +18,7 @@
     <div class="row my-3">
         <div class="col-sm-6 col-md-4 form-group">
             <label class="form-label">Campus y jardín</label>
-            <select wire:model="CampusSelected" class="form-select">
+            <select wire:model.live="CampusSelected" wire:change="CargaJardin()" class="form-select">
                 <option value=""> Indica Campus [jardin]</option>
                 @foreach ($campus as $cam)
                     <option value="{{ $cam->ccam_siglas }}">{{ $cam->ccam_name }} [{{ $cam->cjar_name }}]</option>
@@ -30,7 +29,7 @@
 
         <div class="col-sm-6 col-md-4 form-group">
             <label class="form-label">Gridas</label>
-            <select wire:model="GridaSelected" class="form-select">
+            <select wire:model.live="GridaSelected" wire:change="CargaGrida('0')" class="form-select">
                 <option value=""> Selecciona una grida </option>
                 @foreach ($gridas as $g)
                     <option value="{{ $g->gri_id }}"> {{ $g->gri_name }} [{{ $g->gri_resx }}, {{ $g->gri_resy }}] </option>
@@ -62,6 +61,7 @@
             <div class="col-sm-12 col-md-6 table-responsive">
                 <table class="table table-striped">
                     <thead>
+                        <th><span wire:click="ordena('gri_ccamsiglas')" class="PaClick">Campus</span></th>
                         <th><span wire:click="ordena('gri_name')" class="PaClick">Nombre</span></th>
                         <th><span wire:click="ordena('gri_resx')" class="PaClick">Res X</span> /
                             <span wire:click="ordena('gri_resy')" class="PaClick">Res Y</span></th>
@@ -71,17 +71,29 @@
                     <tbody>
                         @foreach ($gridas as $g)
                             <tr>
+                                <!-- Campus -->
+                                <td class="PaClick" wire:click="CargaGrida('{{ $g->gri_id }}')">
+                                    {{ $g->gri_ccamsiglas }}
+                                </td>
+
                                 <!-- Nombre -->
-                                <td>{{ $g->gri_name }}</td>
+                                <td class="PaClick" wire:click="CargaGrida('{{ $g->gri_id }}')">
+                                    {{ $g->gri_name }}
+                                </td>
 
                                 <!-- Resolución X, Y -->
-                                <td>{{ $g->gri_resx }} / {{ $g->gri_resy }}</td>
+                                <td class="PaClick" wire:click="CargaGrida('{{ $g->gri_id }}')">
+                                    {{ $g->gri_resx }} / {{ $g->gri_resy }}
+                                </td>
 
                                 <!-- Explicaicón-->
-                                <td>{{ $g->gri_explica }}</td>
+                                <td>
+                                    {{ $g->gri_explica }}
+                                </td>
+
                                 <!-- Mapa y editor -->
                                 <td>
-                                    <i class="bi bi-pencil-square"></i>
+                                    <i class="bi bi-trash PaClick agregar" wire:click="Borrar('{{ $g->gri_id }}')" wire:confirm="Estas por elminar permanentemente la grida. ¿Quieres continuar?"></i>
                                 </td>
                             </tr>
                         @endforeach
@@ -150,6 +162,12 @@
         Livewire.on('CierraMapa', (event) => {
             $("#map").replaceWith(`<div id="map">`)
         });
+
+        /* -------------- Mensaje -------------------- */
+        Livewire.on('AvisoExitoGrida1',()=>{
+            alert(event.detail.msj);
+            window.location.reload();
+        })
 
     </script>
 
