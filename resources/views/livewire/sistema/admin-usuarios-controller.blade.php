@@ -169,16 +169,16 @@
                             <table class="table table-striped table-sm">
                                 <thead>
                                     <tr>
-                                        <th>Campus</th>
                                         <th>Rol</th>
+                                        <th>Campus</th>
                                         <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach ($rolesUsr as $r)
                                         <tr>
-                                            <td > {{ $r->rol_ccamsiglas }} </td>
                                             <td> {{ $r->rol_crolrol }} </td>
+                                            <td > {{ $r->rol_ccamsiglas }} </td>
                                             <td>
                                                 @if(in_array('admin', session('rol')) OR in_array($r->rol_ccamsiglas, $JardsDelUsr))
                                                 <button  wire:click="InactivarRol({{ $r->rol_id }})" wire:confirm="Estás por quitarle definitivamente el rol de {{ $r->rol_crolrol }} a este usuario ¿Deseas continuar?" class="btn btn-secondary btn-sm">
@@ -189,6 +189,15 @@
                                         </tr>
                                     @endforeach
                                     <tr>
+
+                                        <td>
+                                            <select wire:model.live="NvoRol" class="form-select" aria-label="Default select example">
+                                                <option value="">Indica un rol</option>
+                                                @foreach($catRoles as $rol)
+                                                    <option value="{{ $rol->crol_rol }}">{{ $rol->crol_rol }}</option>
+                                                @endforeach
+                                            </select>
+                                        </td>
                                         <td>
                                             <select wire:model.live="NvoJardin" class="form-select" aria-label="Default select example">
                                                 <option value="">Indica un jardín/campus</option>
@@ -201,21 +210,24 @@
                                             </select>
                                         </td>
                                         <td>
-                                            <select wire:model.live="NvoRol" class="form-select" aria-label="Default select example">
-                                                <option value="">Indica un rol</option>
-                                                @foreach($catRoles as $rol)
-                                                    <option value="{{ $rol->crol_rol }}">{{ $rol->crol_rol }}</option>
-                                                @endforeach
-                                            </select>
-                                        </td>
-                                        <td>
                                             <button  wire:click="AgregarRol()" class="btn btn-secondary btn-sm" @if($NvoJardin =='' && $NvoRol == '') disabled @endif>
                                                 <i class="bi bi-plus"></i>
                                             </button>
                                         </td>
                                     </tr>
+                                    <tr>
+                                        <td colspan='3' style="background-color: transparent;">
+                                            @if($NvoRol != '')
+                                                <span style="font-size: 80%;">
+                                                    <b>{{ $catRoles->where('crol_rol',$NvoRol)->value('crol_rol') }}</b>:
+                                                    {{ $catRoles->where('crol_rol',$NvoRol)->value('crol_describe') }}
+                                                </span>
+                                            @endif
+                                        </td>
+                                    </tr>
                                 </tbody>
                             </table>
+
                         </div>
                     </div>
                 </div>

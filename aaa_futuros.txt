@@ -29,14 +29,6 @@ Módulo Buscador de bitácoras.
 Módulo que permita buscar bitácoras por si ID o por
 número de id del ejemplar-dueño de la bitárora o por especie.
 ----------------------------------------------------------
-Módulo de depuración de imágenes.
-Módulo que lea todos los archivos existentes en carpeta /public/img
-y luego revise cuál de ellas NO ESTÁ en la tabla imágenes,
-para eliminarlas
-----------------------------------------------------------
-Módulo de buzón
-- Agregar botón para marcar o desmarcar todos los mensajes
-----------------------------------------------------------
 Nuevo módulo de herbario
 - Crear módulo que permita guardar en base de datos, además
 de la foto, todos los datos de la ficha del ejemplar de herbario
@@ -53,13 +45,6 @@ Para sustituir la opción "Mover" de ubicacion_controller (que ahora
 está embebido en la página)
 
 -------------------------------------------------------------
-Crear módulo "Administrador de gridas"
-Un módulo que permita incorporar nuevas gridas a cada jardín y que
-además pueda ver los camellones.
-- sería bueno que al cargar el mapa, calcule las coordenadas extremas
-  (en lugar de tener que ponerlas en la base.)
-
--------------------------------------------------------------
 Crear módulo "Administrador de colecciónes"
 Un ḿódulo que permita crear o eliminar colecciones
 
@@ -69,3 +54,27 @@ Donde se pueda ver y buscar ejemplares que pertenecen a
 una subcolección
 
 -------------------------------------------------------------
+Crear módulo de depuración de archivos
+(borrar archivos que no estén en base de datos o  borrar dato que no tenga archivo)
+- avatar de usuario  (public/avatar/ -> avatar.users)
+- avatar de jardín  (public/avatar/jardines -> cjar_logo.cat_jardines)
+- imágenes de cédulas
+- Audios de cédulas
+
+
+
+
+
+
+===============================================================================
+=================================================================== FINALIZADOS
+===============================================================================
+-------------------------------------------------------------
+Módulo de buzón
+- Agregar botón para marcar o desmarcar todos los mensajes
+-------------------------------------------------------------
+Crear módulo "Administrador de gridas" (finalizado 6 de feb 26)
+Un módulo que permita incorporar nuevas gridas a cada jardín y que
+además pueda ver los camellones.
+- sería bueno que al cargar el mapa, calcule las coordenadas extremas
+  (en lugar de tener que ponerlas en la base.)

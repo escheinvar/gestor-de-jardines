@@ -39,3 +39,8 @@ composer require maatwebsite/excel
 # La función genera el inbox del buzón y además envía un correo electrónico (cuando se indica el array de mails
 # y además cuando el usuario acepta correos desde su configuración)
 #
+##### Instalé yucadoo para validar geoJson
+composer require yucadoo/laravel-geojson-rule
+#$validatedData = $request->validate([
+#   'geojson_file' => ['required', 'file', 'mimes:json', new GeoJson],
+#]);

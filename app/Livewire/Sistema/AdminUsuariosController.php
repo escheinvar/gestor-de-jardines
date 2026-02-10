@@ -73,9 +73,6 @@ class AdminUsuariosController extends Component
                 ->get();
         }
 
-
-
-
         return view('livewire.sistema.admin-usuarios-controller',[
             'usuarios'=>$usuarios,
             'roles'=>$roles,

@@ -10,7 +10,7 @@
 <div>
     <h2>Carga de archivo de KoboCollect</h2>
     <div style="font-size: 80%;color:grey;">
-        Este catálogo es administrado por el rol <b>admin-campus</b>,<b>admin-colviva</b> ó <b>curador-cientifico</b>, (en el campus que tenga privilegio)
+        Este módulo puede ser ejecutado por: <b>admin-campus</b>, <b>admin-colviva</b>, <b>curador-cientifico</b> ó <b>capturista-colviva</b> (en el campus que tenga privilegio)
         {{-- @if($idEjem > 0) de {{ $ejemplar->ejm_ccamsiglas }} @endif --}}
         @if($edit=='0') <error style="font-size: 90%;"> No autorizado</error> @else <span style="font-size:90%;color:green;"> Autorizado </span>@endif <br>
     </div>
