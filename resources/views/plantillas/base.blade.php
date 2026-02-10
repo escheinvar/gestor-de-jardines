@@ -120,7 +120,7 @@
 
 
                                 <!--dropdown 1-->
-                                @if(in_array('admin',session('rol')) or in_array('admin-campus',session('rol')))
+                                @if(in_array('admin',session('rol')) or array_intersect(['admin-campus','admin','admin-colviva','curador-cientifico','capturista-colviva'],session('rol')))
                                     <li class="nav-item dropdown">
                                         <a class="nav-link dropdown-toggle @if(in_array(request()->path(),['recorridos','mapa'])) active @endif" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                             Admin
