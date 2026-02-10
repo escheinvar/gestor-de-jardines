@@ -700,7 +700,7 @@ class LimpiaRegistroController extends Component
 
     public function render() {
         ##### Verifica acceso
-        if(array_intersect(session('rol'), ['admin-campus','admin-colviva','curador-cientifico'])){
+        if(array_intersect(session('rol'), ['admin-campus','admin-colviva','curador-cientifico','capturista-colviva'])){
             $this->edit='1';
         }else{
             $this->edit='0';
