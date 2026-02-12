@@ -51,6 +51,7 @@
     </ul>
     <h3>Roles en el SiGesJar</h3>
     <ul>
+        <li><b>Consulta</b>: Persona adscrita a un campus que puede ver los ejemplares y su información pública</li>
         <li><b>Admin</b> Persona sin adscripción a un jardín, que administra el acceso de administradores de jardín, así como de campus y jardines.</li>
         <li><b>admin-campus</b> Persona adscrita a un jardín que administra los camellones de los campus, gridas y usuarios y roles de su jardín.</li>
         <li><b>admin-colviva</b> Persona que adscrita a un jardín que </li>

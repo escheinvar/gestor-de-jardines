@@ -67,11 +67,12 @@ class ModalAliasController extends Component
         // }
         ##### Si se indicó el tipo "otro", entonces toma nuevo valor
         if($this->modalias_tipoAlias=='otro'){$this->modalias_tipoAlias=$this->modalias_otroTipo;}
+        #dd($this->modalias_ejmId, $dataBit,'a',$this->modalias_tipoAlias, $this->modalias_nuevoAlias, $this->modalias_explica);
         ##### Guarda el nuevo alias
         ej_alias::create([
             'alias_ejmid'=>$this->modalias_ejmId,
             'alias_bitid'=>$dataBit,
-            'alias_tipo'=>$this->modalias_tipoAlias,
+            'alias_tipo'=>$this->modalias_tipoAlias,  ### dice ubicación
             'alias_nombre'=>$this->modalias_nuevoAlias,
             'alias_explica'=>$this->modalias_explica,
             'alias_usrid'=>Auth::user()->id,

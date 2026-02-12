@@ -106,6 +106,7 @@ class EjemplaresController extends Component
                 ->where('cam_del','0')
                 ->where('cam_act','1')
                 ->get();
+            #dd($this->campus,$campusID,$this->camellones);
             #####################################################
             #################################### Carga ejemplares
             $this->ejemplares=ejemplares::where('ejm_ccamsiglas',$this->campus)
@@ -194,22 +195,30 @@ class EjemplaresController extends Component
 
 
     public function render(){
+
         #####################################################
         ########################## Obtiene campus autorizados
-        $campuses=usr_roles::where('rol_usrid',Auth::user()->id)
-            ->leftJoin('cat_campus','rol_ccamsiglas','=','ccam_siglas')
-            ->whereIn('rol_crolrol', session('rol'))
-            ->select('ccam_id','ccam_siglas','ccam_name')
-            ->orderBy('ccam_siglas')
-            ->get();
-        $cuentaTodos=usr_roles::where('rol_usrid',Auth::user()->id)->where('rol_ccamsiglas','todos')->count();
-        if($cuentaTodos > '0'){
-            $campuses=cat_campus::select('ccam_id','ccam_siglas','ccam_name')->orderBy('ccam_siglas')->get();
+        $campuses1=usr_roles::where('rol_usrid',Auth::user()->id)
+            ->where('rol_del','0')
+            ->where('rol_act','1')
+            ->pluck('rol_ccamsiglas')
+            ->unique('rol_ccamsiglas')
+            ->toArray();
+        if(in_array('todos',$campuses1)){
+            $campuses=cat_campus::where('ccam_act','1')
+                ->select('ccam_id','ccam_siglas','ccam_name')
+                ->orderBy('ccam_siglas')
+                ->get();
+        }else{
+            $campuses=cat_campus::where('ccam_act','1')
+                ->whereIn('ccam_siglas',$campuses1)
+                ->select('ccam_id','ccam_siglas','ccam_name')
+                ->orderBy('ccam_siglas')
+                ->get();
         }
 
-    // if($this->campus != ''){
-    //     $this->MapaCamellones($this->camellones,  '1', 'null',   'null',  'null','1');
-    // }
+        #dd($campuses);
+
         return view('livewire.coleccion.ejemplares-controller',[
             'campuses'=>$campuses,
         ]);

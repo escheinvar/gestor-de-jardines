@@ -41,7 +41,7 @@
 
         <!-- aviso de privilegios -->
         <div style="font-size: 80%;color:grey;">
-            Nombres: Sección administrada por <b>curador-cientifico</b>
+            Nombre científico: Sección administrada por <b>curador-cientifico</b>
             @if($idEjem > 0) de {{ $ejemplar->ejm_ccamsiglas }} @endif
             @if($edit_curcient=='0') <error style="font-size: 90%;"> (No autorizado)</error> @else <span style="font-size:90%;color:green;"> (Autorizado) </span>@endif <br>
             <b>admin-colviva</b> puede administrar nombres de campo, pero desde bitácora
@@ -115,7 +115,7 @@
             <H3 style="display: inline-block;">Nombres comunes</H3><br>
 
             <!-- aviso de privilegios -->
-            <div style="font-size: 80%;color:grey;">
+            <div style="font-size:80%; color:grey;">
                 Nombres comunes: Sección administrada por <b>curador-cientifico</b>
                 @if($idEjem > 0) de {{ $ejemplar->ejm_ccamsiglas }} @endif
                 @if($edit_curcient=='0') <error style="font-size: 90%;"> (No autorizado)</error> @else <span style="font-size:90%;color:green;"> (Autorizado) </span>@endif
@@ -303,10 +303,19 @@
     <div>
         <hr class="titulo">
         <a name="alias">
-            @if($edit_curcient=='1')
+            @if($edit_curcient=='1' OR $edit_adcolviva=='1')
                 <i class="bi bi-plus-square-fill PaClick agregar" wire:click="AbrirModalAlias()" style="margin-right:5px;"></i>
             @endif
             <H3 style="display: inline-block;">Otros nombres o identificadores asignados al ejemplar</H3><br>
+            <!-- aviso de privilegios -->
+            <div style="font-size: 80%;color:grey;">
+                Otros Nombres: Sección administrada por <b>curador-cientifico</b>
+                @if($edit_curcient=='0') <error style="font-size: 90%;"> (No autorizado)</error> @else <span style="font-size:90%;color:green;"> (Autorizado) </span>@endif
+                ó <b>admin-colviva</b>
+                @if($edit_adcolviva=='0') <error style="font-size: 90%;"> (No autorizado)</error> @else <span style="font-size:90%;color:green;"> (Autorizado) </span>@endif
+                puede administrar esta parte.
+            </div>
+
         </a>
         <div class="row">
             <div class="col-12">
@@ -316,7 +325,7 @@
                     <ul>
                         @foreach ($alias as $a)
                             <li>{{ $a->alias_nombre }} ({{ $a->alias_tipo }})
-                                @if($edit_curcient=='1')
+                                @if($edit_curcient=='1' OR $edit_adcolviva=='1')
                                     <i wire:click="BorrarAlias({{ $a->alias_id }})" wire:confirm="Vas a eliminar este alias permanentemente. ¿deseas continuar?" class="bi bi-trash agregar"></i>
                                 @endif
                             </li>

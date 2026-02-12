@@ -16,7 +16,7 @@ class NombresController extends Component
 
     public $idEjem;                      ##### Variables recibidas desde URL (Id del ejemplar)
     public $MenuDeEjemplares='nombres', $ejemplar, $ejemplar_ScName, $ejemplar_CoName;  ##### Variables solicitadas por la plantilla del menú del ejemplar
-    public $edit_curcient, $edit_adcolviva, $CampusAutorizados;     ##### Variable solicitadas por front-end para entrar en modo edición
+    public $edit_curcient, $edit_adcolviva, $edit_adcampus, $CampusAutorizados;     ##### Variable solicitadas por front-end para entrar en modo edición
     public $HayNomCien;                ##### Flag que vale 0 cuando no hay ni un nombre cient. y 1 cuando sí hay.
     public $nuevoAlias;
 
@@ -85,7 +85,7 @@ class NombresController extends Component
     }
 
     public function AbrirModalAlias (){
-        $data=['ejmId'=>$this->idEjem, 'tipo'=>'ubicacion'];
+        $data=['ejmId'=>$this->idEjem, 'tipo'=>'ejemplar'];
         $this->dispatch('abreModalDeAlias', $data);
     }
 
@@ -108,30 +108,27 @@ class NombresController extends Component
         ###################################################################
         ##################################### Prepara autorizaciones
         $CampusDelEjemplar=$this->ejemplar->ejm_ccamsiglas;
-        ##### Permisos curador-científico,
-        $this->edit_curcient='0';
-        if(array_intersect(['curador-cientifico'],session('rol'))){
-            $CampusAutorizados1=usr_roles::where('rol_crolrol','curador-cientifico')
+
+        $this->edit_curcient='0'; $this->edit_adcolviva='0';
+        if(array_intersect(['curador-cientifico','admin-colviva'],session('rol'))){
+            ##### Permisos curador-científico,
+            $CampusAutorizados=usr_roles::where('rol_crolrol','curador-cientifico')
                 ->where('rol_usrid',Auth::user()->id)
                 ->where('rol_del','0')->where('rol_act','1')
-                ->pluck('rol_ccamsiglas')
-                ->toArray();
-            if(in_array($CampusDelEjemplar, $CampusAutorizados1) OR  in_array('todos',$CampusAutorizados1) ){
+                ->pluck('rol_ccamsiglas')->toArray();
+            if(in_array($CampusDelEjemplar, $CampusAutorizados) OR  in_array('todos',$CampusAutorizados)  ){
                 $this->edit_curcient='1';
             }
-        }
-        ##### Permisos admin-colviva,
-        $this->edit_adcolviva='0';
-        if(array_intersect(['admin-colviva'],session('rol'))){
-            $CampusAutorizados2=usr_roles::where('rol_crolrol','admin-colviva')
+            ##### Permisos administrador-campus,
+            $CampusAutorizados=usr_roles::where('rol_crolrol','admin-colviva')
                 ->where('rol_usrid',Auth::user()->id)
                 ->where('rol_del','0')->where('rol_act','1')
-                ->pluck('rol_ccamsiglas')
-                ->toArray();
-            if(in_array($CampusDelEjemplar, $CampusAutorizados2) OR  in_array('todos',$CampusAutorizados2) ){
+                ->pluck('rol_ccamsiglas')->toArray();
+            if(in_array($CampusDelEjemplar, $CampusAutorizados) OR  in_array('todos',$CampusAutorizados)  ){
                 $this->edit_adcolviva='1';
             }
         }
+
 
         ##### Busca nombres científicos del ejemplar
         $nomcien=ej_nombres_cientificos::where('scn_ejmid',$this->idEjem)
