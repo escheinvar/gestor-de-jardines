@@ -5,7 +5,7 @@
 <!-- silenciar banner if required -->
 @section('banner') banner-3lineas @endsection <!-- banner-1linea banner-2lineas banner-3lineas -->
 @section('banner-title') Sistema<br>Gestor<br>de Jardines @endsection
-@section('banner-img') imagen1 @endsection <!-- imagen1 a imagen10 -->
+@section('banner-img') imagen9 @endsection <!-- imagen1 a imagen10 -->
 <!-- silenciar cintillo-ubica if required -->
 {{-- @section('cintillo-ubica') -> {{request()->path() }} @endsection
 @section('cintillo') &nbsp; @endsection --}}

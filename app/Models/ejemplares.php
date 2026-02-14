@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class ejemplares extends Model
 {
@@ -33,4 +35,49 @@ class ejemplares extends Model
         'ejm_ripcausa',
         'ejm_notasingreso',
     ];
+
+    ################ Agrega los alias del ejemplar
+    public function alias(): HasMany{
+        return $this->hasMany(ej_alias::class,'alias_ejmid')
+            ->where('alias_act','1')
+            ->where('alias_del','0');
+    } ##### en controller: ejemplares::with('alias')->get()
+
+
+    ################ Agrega la(s) imagen(es) de portada del ejemplar
+    public function imagenes(): HasMany{
+        return $this->hasMany(imagenes::class,'img_ejmid')
+            ->where('img_act','1')
+            ->where('img_del','0');
+    }
+    ################ Agrega el nombre científico
+    public function nombreCientifico(): HasOne{
+        return $this->hasOne(ej_nombres_cientificos::class,'scn_ejmid')
+            ->where('scn_act','1')
+            ->where('scn_del','0')
+            ->orderBy('scn_fecha_determina');
+    }
+    ################ Agrega el nombre comun
+    public function nombresComunes(): HasMany{
+        return $this->hasMany(ej_nombres_comunes::class,'con_ejmid')
+            ->where('con_act','1')
+            ->where('con_del','0');
+    }
+
+    ################ Agrega la ubicación del ejemplar
+    public function ubicacion(): HasOne{
+        return $this->hasOne(ej_ubicaciones::class,'sig_ejmid')
+            ->where('sig_act','1')
+            ->where('sig_del','0');
+    }
+
+    ################ Agrega la ubicación del ejemplar
+    public function colecciones(): HasMany{
+        return $this->hasMany(ej_subcolecciones::class,'col_ejmid')
+            ->where('col_act','1')
+            ->where('col_del','0');
+    }
+
+
+
 }

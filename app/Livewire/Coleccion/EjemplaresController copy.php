@@ -97,7 +97,12 @@ class EjemplaresController extends Component
         $this->dispatch('IniciaMapaCamellones', mapas:$mapas, streetmap:$streetMap, zoom:$zoom, x:$x, y:$y, DestacaId:$DestacaId, Ubicaciones:$Ubicaciones, DestacaUbicaId:$DestacaUbicaId);
     }
 
+
     public function BuscaEnCampus(){
+        #######################################################
+        ##### Busca en Campus edita la tabla $this->$camellones
+        ##### y la tabla $this->ejemplares (con lista de camellones
+        ##### y lista de ejemplares) y ejecuta el mapa
         #####################################################
         ####################################  Genera listado de camellones
         if($this->campus != ''){
@@ -128,8 +133,9 @@ class EjemplaresController extends Component
         }
     }
 
-
-
+    public function BuscaEnEjemplares(){
+        dd('ja',$this->ejemplares);
+    }
 
     public function render(){
         #####################################################
@@ -145,9 +151,10 @@ class EjemplaresController extends Component
             $campuses=cat_campus::select('ccam_id','ccam_siglas','ccam_name')->orderBy('ccam_siglas')->get();
         }
 
-if($this->campus != ''){
-    $this->MapaCamellones($this->camellones,  '1', 'null',   'null',  'null');
-}
+        if($this->campus != ''){
+            $this->MapaCamellones($this->camellones,  '1', 'null',   'null',  'null');
+        }
+
         return view('livewire.coleccion.ejemplares-controller',[
             'campuses'=>$campuses,
         ]);

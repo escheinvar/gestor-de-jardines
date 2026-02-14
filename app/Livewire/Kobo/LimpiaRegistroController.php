@@ -409,16 +409,16 @@ class LimpiaRegistroController extends Component
         #########################################
         ################ Crea el ejemplar
         $NvoEjemplar=$ejemplar=ejemplares::create([
-                'ejm_id'=>ejemplares::max('ejm_id')+1,
-                'ejm_ccamsiglas'=>$this->dato->kobo2_ccamsiglas,  ##### siglas del campus
-                'ejm_bitid'=>'0',        ##### id de bitácora =0 (sin bitácora)
-                'ejm_madreid'=>null,
-                'ejm_padreid'=>null,
-                'ejm_loteid'=>null,
-                'ejm_ripdate'=>null,
-                'ejm_ripcausa'=>null,
-                'ejm_notasingreso'=>'Digitalizado  por usrId '.Auth::user()->id.' ('.date('Y-m-d'). ') desde koboId'.$this->dato->kobo2_koboid.' cargado por '.$this->dato->kobo2_username.' ('.$this->dato->kobo2_dato.')',
-            ]);
+            'ejm_id'=>ejemplares::max('ejm_id')+1,
+            'ejm_ccamsiglas'=>$this->dato->kobo2_ccamsiglas,  ##### siglas del campus
+            'ejm_bitid'=>'0',        ##### id de bitácora =0 (sin bitácora)
+            'ejm_madreid'=>null,
+            'ejm_padreid'=>null,
+            'ejm_loteid'=>null,
+            'ejm_ripdate'=>null,
+            'ejm_ripcausa'=>null,
+            'ejm_notasingreso'=>'Digitalizado  por usrId '.Auth::user()->id.' ('.date('Y-m-d'). ') desde koboId'.$this->dato->kobo2_koboid.' cargado por '.$this->dato->kobo2_username.' ('.$this->dato->kobo2_dato.')',
+        ]);
         #########################################
         ################ Guarda nombre científico
         if($this->dato->kobo2_nombrecient != ''){

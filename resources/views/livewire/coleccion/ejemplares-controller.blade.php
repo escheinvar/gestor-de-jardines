@@ -28,16 +28,20 @@
         <!-- Camellón -->
         <div class="col-sm-12 col-md-3 form-group">
             <label for="camellon" class="form-label">Camellón</label>
-            <select wire:model="camellon" wire:change="BuscaEnCamellon()" id="camellon" class="@error('camellon') is-invalid @enderror form-select">
+            <select wire:model="camellon" wire:change="BuscaEnCamellon()" id="camellon" class="@error('camellon') is-invalid @enderror form-select" @if($campus =='') disabled @endif>
                 @if($campus != '')
                     <option value="">Indica un camellón</option>
+                    @if($camellones->count() > 0)
+                        <option value="TodosLosCamellones">Todos</option>
+                        <option value="NingunCamellon">Sin ubicación</option>
+                    @endif
                     @foreach ($camellones as $c)
-                    <option value="{{ $c->cam_camellon }}">
-                        {{ $c->cam_camellon }}
-                        @if($c->cam_mapa =='')[** NO GEOGRÁFICO**]@endif
-                    </option>
+                        <option value="{{ $c->cam_camellon }}">
+                            {{ $c->cam_camellon }}
+                            @if($c->cam_mapa =='')[** NO GEOGRÁFICO**]@endif
+                        </option>
                     @endforeach
-                    <option value="Ninguno">Sin asignación a camellón</option>
+
 
                 @else
                     <option value="">Indica un campus primero</option>
@@ -46,35 +50,35 @@
             <div class="form-text"></div>
             @error('camellon')<error>{{ $message }}</error>@enderror
         </div>
+    </div>
 
-        <!-- Familia, Género /sp -->
+    <div class="row py-3">
+        <!-- Buscar por texto de Familia, Género /sp Alias -->
         <div class="col-sm-12 col-md-3 form-group">
-            <label for="" class="form-label">Familia, Género o especie:</label>
-            <input wire:model="" id="" class="@error('') is-invalid @enderror form-control" disabled>
+            <label for="" class="form-label">Familia, nombre científico o común o alias:</label>
+            <input wire:model="" id="" class="@error('') is-invalid @enderror form-control" @if($campus =='') disabled @endif>
             <div class="form-text"></div>
             @error('')<error>{{ $message }}</error>@enderror
         </div>
 
-        <!-- Colección -->
+        <!-- Buscar por Colección -->
         <div class="col-sm-12 col-md-3 form-group">
-            <label for="" class="form-label">Colección:</label>
-            <input wire:model="" id="" class="@error('') is-invalid @enderror form-control" disabled>
+            <label for="coleccion" class="form-label">Colección:</label>
+            <select wire:model="coleccion" id="coleccion" class="@error('coleccion') is-invalid @enderror form-select" @if($campus =='') disabled @endif>
+                <option value="">Todas</option>
+                @foreach ($colecciones as $col)
+                    <option value="{{ $col->colsej_name }}">{{ $col->colsej_name }}</option>
+                @endforeach
+                <option value="NingunaColeccion">Sin colección asignada</option>
+            </select>
             <div class="form-text"></div>
-            @error('')<error>{{ $message }}</error>@enderror
+            @error('coleccion')<error>{{ $message }}</error>@enderror
         </div>
 
-        <!-- Colección -->
-        <div class="col-sm-12 col-md-3 form-group">
-            <label for="" class="form-label">Alias:</label>
-            <input wire:model="" id="" class="@error('') is-invalid @enderror form-control" disabled>
-            <div class="form-text"></div>
-            @error('')<error>{{ $message }}</error>@enderror
-        </div>
-
-         <!-- Colección -->
+        <!-- Botón de buscar -->
         <div class="col-sm-12 col-md-3 form-group">
             <br>
-            <button class="btn btn-primary" disabled>Buscar</button>
+            <button wire:click="BuscaEnEjemplares()" class="btn btn-primary" @if($campus =='') disabled @endif>Buscar</button>
         </div>
 
         <div class="col-3">
@@ -97,7 +101,9 @@
         <div class="row" >
             <!-- ------------------------------------------------------------------------- -->
             <!-- ----------------------- BÚSQUEDA EN MAPA -------------------------------- -->
+            {{-- <h3>Mapa de {{ $campus }}</h3> --}}
             <div class="col-sm-12 col-md-6" wire:ignore>
+                <br><br>
                 <div id="map"></div>
             </div>
 
@@ -105,60 +111,124 @@
             <!-- --------------------------- TABLA --------------------------------------- -->
             <div class="col-sm-12 col-md-6">
                 @if($ejemplares)
-                    @if(count($ejemplares) == 0)
-                        -- No hay ejemplares -->
-                    @endif
-
                     <div style="clear: both;">
                         @if(count($ejemplares) > 0)
                             <i class="bi bi-file-earmark-arrow-down PaClick" style="float: right;"> Descargar a csv</i>
                         @endif
                     </div>
+                    <div>
+                        <h3>{{ $campus }}</h3>
+                    </div>
                     <div class="table-responsive-sm">
                         <table class="table table-striped table-sm">
                             <thead>
-                                <tr>
+                                <tr style="vertical-align: middle;text-align:center;">
                                     <th>Id</th>
-                                    <th>Campus</th>
                                     <th>Camellón</th>
-                                    <th>Familia</th>
-                                    <th>Nombre cientifico</th>
-                                    <th>Faltantes</th>
+                                    <th>[Familia]<br>Nombre cientifico</th>
+                                    <th>Nombre común</th>
+                                    <th>Colección</th>
+                                    <th>Alias</th>
                             </thead>
                             <tbody>
                                 @foreach ($ejemplares as $e)
                                     <tr>
-                                        <td>
+                                        <!-- ID -->
+                                        <td style="font-size: 80%;">
                                             <a href="/ejem_inicio/{{ $e->ejm_id }}">
-                                                ID {{ $e->ejm_id }}
+                                                {{ $e->ejm_id }}
                                             </a>
                                         </td>
-                                        <td>
-                                            {{ $e->ejm_ccamsiglas }}
+
+                                        <!-- camellón -->
+                                        <td style="font-size: 80%;">
+                                            @if($e->ubicacion)
+                                                {{ $e->ubicacion->sig_camcamellon }}
+                                            @else
+                                                <center><error>
+                                                    <a href="/ejem_ubica/{{ $e->ejm_id }}" class="nolink">
+                                                        <i class="bi bi-exclamation-octagon-fill" style="font-size:80%;"></i>
+                                                    </a>
+                                                </error></center>
+                                            @endif
                                         </td>
-                                        <td>
-                                            {{ $e->sig_camcamellon }}
+
+                                        <!-- familia y Nombre científico -->
+                                        <td style="font-size: 80%;">
+                                            @if($e->nombreCientifico)
+                                                [{{ $e->nombreCientifico->scn_familia }}]
+                                                {{ $e->nombreCientifico->scn_name }}
+                                            @endif
+                                            @if(!$e->nombreCientifico or $e->nombreCientifico->scn_name =='')
+                                                <center><error>
+                                                    <a href="/ejem_nombres/{{ $e->ejm_id }}" class="nolink">
+                                                        <i class="bi bi-exclamation-octagon-fill" style="font-size:80%;"></i>
+                                                    </a>
+                                                </error></center>
+                                            @endif
                                         </td>
-                                        <td>
-                                            {{ $e->scn_familia }}
+
+
+                                        <!-- Nombre común -->
+                                        <td style="font-size: 80%;">
+                                            @if($e->nombresComunes->count() > 0)
+                                                @foreach ($e->nombresComunes as $n)
+                                                    <div class="elemento">
+                                                        {{ $n->con_nombre }}
+                                                    </div>
+                                                @endforeach
+                                            @else
+                                                <center>
+                                                    <a href="/ejem_nombres/{{ $e->ejm_id }}" class="nolink">
+                                                        <i class="bi bi-exclamation-octagon-fill"></i>
+                                                    </a>
+                                                </center>
+                                            @endif
                                         </td>
-                                        <td>
-                                            {{ $e->scn_name }}
+
+                                        <!-- Colecciones -->
+                                        <td style="font-size: 80%;">
+                                            @if($e->colecciones->count() > 0)
+                                                @foreach ($e->colecciones as $n)
+                                                    <div class="elemento">
+                                                        {{ $n->col_ccolcoleccion }}
+                                                    </div>
+                                                @endforeach
+                                            @else
+                                                <center>
+                                                    <a href="/ejem_ubica/{{ $e->ejm_id }}" class="nolink">
+                                                        <i class="bi bi-exclamation-octagon-fill"></i>
+                                                    </a>
+                                                </center>
+                                            @endif
                                         </td>
-                                        <td>
-                                            <div style="font-size: 70%;">
-                                                @if($e->ejm_bitid=='0') <div><i class="bi bi-journals" style="color:rgb(55, 0, 255);">Bitacora</i></div> @endif
-                                                @if($e->sig_camcamellon =='') <div><i class="bi bi-geo-alt-fill" style="color:red;">Ubicar</i></div> @endif
-                                                @if($e->scn_name=='')<div><i class="bi bi-tag-fill" style="color:rgb(201, 16, 185);">Sc. name</i> </div>@endif
-                                            </div>
+
+                                        <!-- Alias -->
+                                        <td style="font-size: 80%;">
+                                            @if($e->alias)
+                                                @foreach ($e->alias as $n)
+                                                <div class="elemento">
+                                                    {{ $n->alias_nombre }}
+                                                </div>
+                                                @endforeach
+                                            @else
+                                                <center>
+                                                    <i class="bi bi-exclamation-octagon-fill" style="font-size:80%;"></i>
+                                                </center>
+                                            @endif
                                         </td>
+
 
                                     </tr>
                                 @endforeach
                             </tbody>
                         </table>
                     </div>
+                    @if(count($ejemplares) == 0)
+                        -- No hay ejemplares -->
+                    @endif
                 @endif
+
             </div>
         </div>
     {{-- @elseif($campus != '' AND $camellones->count()=='0')

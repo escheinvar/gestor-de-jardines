@@ -1,6 +1,13 @@
 BUG: OJO: Verificar que sólo se pueda editar la bitácora cuando sea la
 del propietario
-
+----------------------------------------------------------
+Módulo que alerte cuando el usuario tiene notificaciones apagadas
+(el sistema rquiere de notificaciones)
+(livewire detectar si tiene notificaciones activas)
+----------------------------------------------------------
+Mover lo necesario para que se pueda registrar nombre científico
+a nivel de familia (sin género ni especie) y que no lo considere como
+validado con nombre científico.
 ----------------------------------------------------------
 Completar bibliografia-controller (catálogo bibliográfico)
 - crear búsquedas de bibliografía por autor, titulo, año, revista/editorial

@@ -545,6 +545,15 @@ div.iconoWWW {
     color:inherit;
 }
 
+div.elemento {
+    /*==== Para cuando hay varios elementos dentro de una
+    celda en una tabla, permite distinguir cada uno ===*/
+    display:inline-block;
+    border:1px dashed #CDC6B9;
+    padding:1px;
+    border-radius:3px;
+    margin:3px;
+}
 
 /*=======================================*/
 /* Caracteres de texto para traductores */

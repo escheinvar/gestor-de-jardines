@@ -4,17 +4,26 @@ namespace App\Livewire\Coleccion;
 
 use App\Models\cat_camellones;
 use App\Models\cat_campus;
+use App\Models\cat_colec_ejemps;
+use App\Models\ej_alias;
+use App\Models\ej_subcolecciones;
+use App\Models\ej_ubicaciones;
 use App\Models\ejemplares;
 use App\Models\usr_roles;
-use App\Models\ej_alias;
-use App\Models\ej_ubicaciones;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class EjemplaresController extends Component
 {
-    public $campus, $ejemplares, $camellones, $camellon;
+    public $campus, $ejemplares, $camellones, $camellon, $coleccion;
     public $edit, $temp, $alias;
+    /* =========================================================
+    Este módulo trabaja sobre dos variables principales:
+    $this->ejemplares y $this->camellones, donde se guardan
+    la tabla de ejemplares y la de camellones a mostrar.
+    Cuando se selecciona un campus,
+    ========================================================= */
 
     public function mount(){
         // $this->campus='';
@@ -95,44 +104,59 @@ class EjemplaresController extends Component
         $this->dispatch('IniciaMapaCamellones', etiquetas:$etiquetas, camellones:$camellones, DestacaCamId:$DestacaCamId, streetmap:$streetMap, zoom:$zoom, x:$x, y:$y,  Ejemplares:$Ejemplares, DestacaEjemId:$DestacaEjemId);
     }
 
+    public function EjemplaresBase($SiglasCampus){
+        #####################################################
+        ####################### Carga ejemplares de un campus
+        $this->ejemplares=ejemplares::where('ejm_ccamsiglas',$SiglasCampus)
+            ->leftJoin('ej_ubicaciones', function($join){
+                $join->on('ejm_id','=','sig_ejmid')
+                ->where('sig_act','1')
+                ->where('sig_del','0');
+                // ->select('sig_camcamellon');
+            })
+            ->leftJoin('ej_subcolecciones', function($join){
+                $join->on('ejm_id','=','col_ejmid')
+                    ->where('col_act','1')
+                    ->where('col_del','0');
+                    // ->select('col_ccolcoleccion');
+            })
+            // ->leftJoin('ej_nombres_cientificos', function($join){
+            //     $join->on('ejm_id','=','scn_ejmid')
+            //         ->where('scn_act','1')
+            //         ->where('scn_del','0')
+            //         ->select('scn_familia','scn_name');
+            // })
+            // ->leftJoin('imagenes', function($join){
+            //     $join->on('sig_ejmid','=','img_ejmid')
+            //         ->where('img_cimgtipo','ejemplar_portada')
+            //         ->where('img_act','1')
+            //         ->where('img_del','0')
+            //         ->limit(1);
+            // })
+
+            ->where('ejm_del','0')
+            ->orderBy('ejm_id')
+            // ->with('alias')
+            // ->with('imagenes')
+            // ->with('nombreCientifico')
+            // ->with('nombresComunes')
+            // ->with('ubicacion')
+            // ->with('colecciones')
+            ->get();
+    }
+
     public function BuscaEnCampus(){
         $this->dispatch('CierraMapa');
         $this->camellon='';
-        #####################################################
-        ####################################  Genera listado de camellones
+        ###################  Genera listado de camellones
         if($this->campus != ''){
             $campusID=cat_campus::where('ccam_siglas',$this->campus)->value('ccam_id');
             $this->camellones=cat_camellones::where('cam_ccamid',$campusID)
                 ->where('cam_del','0')
                 ->where('cam_act','1')
                 ->get();
-            #dd($this->campus,$campusID,$this->camellones);
-            #####################################################
-            #################################### Carga ejemplares
-            $this->ejemplares=ejemplares::where('ejm_ccamsiglas',$this->campus)
-                ->leftJoin('ej_ubicaciones', function($join){
-                    $join->on('ejm_id','=','sig_ejmid')
-                    ->where('sig_act','1')
-                    ->where('sig_del','0');
-                })
-                ->leftJoin('ej_nombres_cientificos', function($join){
-                    $join->on('ejm_id','=','scn_ejmid')
-                        ->where('scn_act','1')
-                        ->where('scn_del','0')
-                        ->select('scn_familia','scn_name');
-                })
-                ->leftJoin('imagenes', function($join){
-                    $join->on('sig_ejmid','=','img_ejmid')
-                        ->where('img_cimgtipo','ejemplar_portada')
-                        ->where('img_act','1')
-                        ->where('img_del','0')
-                        ->limit(1);
-                })
-                ->where('ejm_del','0')
-                ->orderBy('ejm_id')
-                ->get();
-            #####################################################
-            ######################################### Carga mapa
+            $this->EjemplaresBase($this->campus);
+            ############### Carga mapa
             $this->MapaCamellones($this->camellones,'0', 'null',   'null','null','1');
 
         }else{
@@ -143,38 +167,33 @@ class EjemplaresController extends Component
 
     public function BuscaEnCamellon(){
         if($this->camellones->count() > '0' AND $this->camellon != ''){
-            // dd('ja');
-            #####################################################
-            ################### Carga Id del camellon seleccionado
+            ############### Carga Id del camellon seleccionado
             $camellonID=cat_camellones::where('cam_camellon',$this->camellon)->value('cam_id');
-            #####################################################
-            #################################### Carga ejemplares
-            $this->ejemplares=ejemplares::where('ejm_ccamsiglas',$this->campus)
-                ->leftJoin('ej_ubicaciones', function($join) {
-                    $join->on('ejm_id','=','sig_ejmid')
-                    ->where('sig_act','1')
-                    ->where('sig_del','0');
-                })
-                ->leftJoin('ej_nombres_cientificos', function($join){
-                    $join->on('ejm_id','=','scn_ejmid')
-                        ->where('scn_act','1')
-                        ->where('scn_del','0')
-                        ->select('scn_familia','scn_name');
-                })
-                ->where('ejm_del','0')
-                ->orderBy('ejm_id')
-                ->get();
-
-            ################################################################
-            #################################### if camellon=='ninguno'
-            if($this->camellon=='Ninguno'){
+            ##### Construye $this-ejemplares de un jardín:
+            $this->EjemplaresBase($this->campus);
+            ############### if camellon=='ninguno'
+            if($this->camellon=='NingunCamellon'){
                 $this->ejemplares= $this->ejemplares->whereNull('sig_id');
                 $ejmsMapa='null';
 
+            }elseif($this->camellon=='TodosLosCamellones'){
+                ############### Carga mapa del camellón seleccionado
+                $ejmsMapa=ej_ubicaciones::where('sig_ccamsiglas',$this->campus)
+                    ->where('sig_act','1')
+                    ->where('sig_del','0')
+                    ->leftJoin('imagenes', function($join){
+                        $join->on('sig_ejmid','=','img_ejmid')
+                            ->where('img_cimgtipo','ejemplar_portada')
+                            ->where('img_act','1')
+                            ->where('img_del','0')
+                            ->limit(1);
+                    })
+                    ->get();
+                ############### Carga mapa
+                $this->MapaCamellones($this->camellones,'0', 'null',   $ejmsMapa,'null','1');
             }else{
-                ###### Carga table de todos
                 $this->ejemplares= $this->ejemplares->where('sig_camcamellon',$this->camellon);
-                ##### Carga mapa
+                ############### Carga mapa del camellón seleccionado
                 $ejmsMapa=ej_ubicaciones::where('sig_camcamellon',$this->camellon)
                     ->where('sig_act','1')
                     ->where('sig_del','0')
@@ -186,18 +205,85 @@ class EjemplaresController extends Component
                             ->limit(1);
                     })
                     ->get();
+                ############### Carga mapa
+                $this->MapaCamellones($this->camellones,'0', $camellonID,   $ejmsMapa,'null','1');
             }
-            #####################################################
-            ######################################### Carga mapa
-            $this->MapaCamellones($this->camellones,'0', $camellonID,   $ejmsMapa,'null','1');
+
         }
     }
 
+    public function BuscaEnEjemplares(){
+        dd('falta');
+        #####################################################
+        ####################### Carga ejemplares de un campus
+        if($this->coleccion == ''){
+            $colec='%';
+        }elseif($this->coleccion=='NingunaColeccion'){
+            $colec='%';
+        }else{
+            $colec=$this->coleccion;
+        }
+
+
+
+        if($this->camellones->count() > '0' AND $this->camellon != ''){
+            ############### Carga Id del camellon seleccionado
+            $camellonID=cat_camellones::where('cam_camellon',$this->camellon)->value('cam_id');
+            ##### Construye $this-ejemplares de un jardín:
+            $this->EjemplaresBase($this->campus);
+
+            ####################################
+            ############### if camellon=='ninguno'
+            if($this->camellon=='NingunCamellon'){
+                $this->ejemplares= $this->ejemplares->whereNull('sig_id');
+                $ejmsMapa='null';
+
+            ####################################
+            ############## If camellon=='todos'
+            }elseif($this->camellon=='TodosLosCamellones'){
+                ############### Carga mapa del camellón seleccionado
+                $ejmsMapa=ej_ubicaciones::where('sig_ccamsiglas',$this->campus)
+                    ->where('sig_act','1')
+                    ->where('sig_del','0')
+                    ->leftJoin('imagenes', function($join){
+                        $join->on('sig_ejmid','=','img_ejmid')
+                            ->where('img_cimgtipo','ejemplar_portada')
+                            ->where('img_act','1')
+                            ->where('img_del','0')
+                            ->limit(1);
+                    })
+                    ->get();
+                ############### Carga mapa
+                $this->MapaCamellones($this->camellones,'0', 'null',   $ejmsMapa,'null','1');
+
+            ####################################
+            ############## if camellon == alguno
+            }else{
+                $this->ejemplares= $this->ejemplares->where('sig_camcamellon',$this->camellon);
+                ############### Carga mapa del camellón seleccionado
+                $ejmsMapa=ej_ubicaciones::where('sig_camcamellon',$this->camellon)
+                    ->where('sig_act','1')
+                    ->where('sig_del','0')
+                    ->leftJoin('imagenes', function($join){
+                        $join->on('sig_ejmid','=','img_ejmid')
+                            ->where('img_cimgtipo','ejemplar_portada')
+                            ->where('img_act','1')
+                            ->where('img_del','0')
+                            ->limit(1);
+                    })
+                    ->get();
+                ############### Carga mapa
+                $this->MapaCamellones($this->camellones,'0', $camellonID,   $ejmsMapa,'null','1');
+            }
+
+        }
+        // $this->ejemplares=$this->ejemplares->where('col_ccolcoleccion','ilike','%'.$colec.'%');
+
+        dd($this->ejemplares, $this->coleccion);
+    }
 
     public function render(){
-
-        #####################################################
-        ########################## Obtiene campus autorizados
+        ################### Obtiene campus autorizados
         $campuses1=usr_roles::where('rol_usrid',Auth::user()->id)
             ->where('rol_del','0')
             ->where('rol_act','1')
@@ -217,10 +303,11 @@ class EjemplaresController extends Component
                 ->get();
         }
 
-        #dd($campuses);
+        $colecciones=cat_colec_ejemps::all();
 
         return view('livewire.coleccion.ejemplares-controller',[
             'campuses'=>$campuses,
+            'colecciones'=>$colecciones,
         ]);
     }
 }

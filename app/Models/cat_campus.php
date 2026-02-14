@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class cat_campus extends Model
 {
@@ -27,10 +29,9 @@ class cat_campus extends Model
 
     public function jardin(){
         return $this->belongsTo(cat_jardines::class,'ccam_cjarid');
-    }
+    } ##### en controller: ejemplares::with('jardin')->get()
 
-
-    // public function camellones(){
-    //     return $this->hasMany(cat_campus::class);
-    // }
+    public function camellones(): HasMany{
+        return $this->hasMany(cat_camellones::class, 'cam_ccamid');
+    } ##### en controller: ejemplares::with('camellones')->get()
 }
