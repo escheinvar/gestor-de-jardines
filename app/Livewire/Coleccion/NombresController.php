@@ -105,6 +105,11 @@ class NombresController extends Component
     }
 
     public function render() {
+        ######## Verifica que se tenga acceso al campus
+        $jard=ejemplares::where('ejm_id',$this->idEjem)->value('ejm_ccamsiglas');
+        if(!in_array($jard,session('jar'))){
+            redirect('/noauth/Solicita acceso al campus '.$jard);
+        }
         ###################################################################
         ##################################### Prepara autorizaciones
         $CampusDelEjemplar=$this->ejemplar->ejm_ccamsiglas;

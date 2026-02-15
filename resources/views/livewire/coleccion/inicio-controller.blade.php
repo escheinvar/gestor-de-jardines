@@ -31,7 +31,7 @@
             <!-- ID ejemplar-->
             <div class="row py-1">
                 <div class="col-3">Id de ejemplar:</div>
-                <div class="col-8">{{ $idEjem }}</div>
+                <div class="col-8">{{ str_pad($idEjem,4,"0",STR_PAD_LEFT) }}</div>
             </div>
 
             <!-- Nombre científico -->

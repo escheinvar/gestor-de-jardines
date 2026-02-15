@@ -17,7 +17,7 @@ use Livewire\Component;
 
 class EjemplaresController extends Component
 {
-    public $campus, $ejemplares, $camellones, $camellon, $coleccion, $buscar;
+    public $campus, $ejemplares, $camellones, $camellon, $coleccion, $buscar, $buscarID;
     public $edit, $temp, $alias;
     /* =========================================================
     Este módulo trabaja sobre dos variables principales:
@@ -31,6 +31,7 @@ class EjemplaresController extends Component
         $this->camellones=collect();
         $this->coleccion='';
         $this->buscar='';
+        $this->buscarID='';
     }
 
     public function MapaCamellones($camellones, $streetMap, $DestacaCamId, $Ejemplares, $DestacaEjemId, $etiquetas){
@@ -226,14 +227,70 @@ class EjemplaresController extends Component
                         ->limit(1);
                 })
                 ->get();
-            // dd($SigIdGanones,$this->ejemplares);
+            // dd($ejmsMapa,$this->ejemplares, $this->camellones);
             ############### Carga mapa
             $this->MapaCamellones($this->camellones,'0', 'null',   $ejmsMapa,'null','1');
         }
     }
 
-    public function BorrarBuscar(){
+    public function BuscarID(){
+        ###### Ejecuta la búsqueda en BD
+        $busqueda=ejemplares::query()
+            ->where('ejm_id',$this->buscarID)
+            ->where('ejm_del','0')
+            ->where('ejm_act','1')
+            ->leftJoin('ej_ubicaciones', function($join){
+                $join->on('ejm_id','=','sig_ejmid')
+                ->where('sig_act','1')
+                ->where('sig_del','0');
+            })
+            ->orderBy('ejm_id')
+            ->with('alias')
+            ->with('imagenes')
+            ->with('nombreCientifico')
+            ->with('nombresComunes')
+            ->with('ubicacion')
+            ->with('colecciones');
+
+        ###### Ejecuta búsqueda
+        $this->ejemplares=$busqueda->get();
+
+        ############################################################
+        ######################################## Carga el Mapa
+        $ejmsMapa=ej_ubicaciones::whereIn('sig_id',  $this->ejemplares->pluck('sig_id')->toArray() )
+        ->where('sig_act','1')
+            ->where('sig_del','0')
+            ->leftJoin('imagenes', function($join){
+                $join->on('sig_ejmid','=','img_ejmid')
+                    ->where('img_cimgtipo','ejemplar_portada')
+                    ->where('img_act','1')
+                    ->where('img_del','0')
+                    ->limit(1);
+            })
+            ->get();
+
+        $this->campus=$ejmsMapa->value('sig_ccamsiglas');
+
+        $this->camellon=$ejmsMapa->value('sig_camcamellon');
+// dd($this->campus, $this->camellon);
+        $this->camellones=cat_camellones::where('cam_camellon',$this->camellon)
+            ->where('cam_del','0')
+            ->where('cam_act','1')
+            ->get();
+
+
+        ############### Carga mapa
+        $this->MapaCamellones($this->camellones,'0', 'null',   $ejmsMapa,'null','1');
+
+    }
+
+    public function BorrarBuscarTexto(){
         $this->buscar='';
+        $this->BuscaEnCamellon();
+    }
+
+    public function BorrarBuscarID(){
+        $this->buscarID='';
         $this->BuscaEnCamellon();
     }
 

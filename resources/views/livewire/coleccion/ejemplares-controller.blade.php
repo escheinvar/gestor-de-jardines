@@ -70,18 +70,32 @@
         <!-- -------------------- Buscar por texto de Familia, Género /sp Alias ---------------------->
         <div class="col-sm-12 col-md-3 form-group">
             <label for="buscar" class="form-label">Familia, nombre científico o común o alias:</label>
-            <input wire:model.live="buscar" id="buscar" class="@error('buscar') is-invalid @enderror form-control" @if($campus =='' or $camellon=='') disabled @endif>
+            <input wire:model.live="buscar" id="buscar" class="agregar @error('buscar') is-invalid @enderror form-control" @if($campus =='' or $camellon=='') disabled @endif>
+            <i class="bi bi-x-square agregar mx-2" wire:click="BorrarBuscarTexto()"></i>
             <div class="form-text">Usa % como comodín (xej: agave% para todos los agaves).</div>
             @error('buscar')<error>{{ $message }}</error>@enderror
         </div>
 
-
-
-        <!-- -------------------- Botón de buscar ---------------------->
+        <!-- -------------------- Botón de buscar texto---------------------->
         <div class="col-sm-12 col-md-3 form-group">
             <br>
-            <i class="bi bi-x-square agregar mx-2" wire:click="BorrarBuscar()"></i>
+
             <button wire:click="BuscaEnCamellon()" class="btn btn-primary" @if($campus =='' or $camellon=='' or $buscar=='') disabled @endif>Buscar</button>
+        </div>
+
+        <!-- -------------------- Buscar por ID ---------------------->
+        <div class="col-sm-12 col-md-3 form-group">
+            <label for="buscarID" class="form-label">Por ID:</label>
+            <input wire:model="buscarID" id="buscarID" class="agregar @error('buscarID') is-invalid @enderror form-control" @if($campus =='a') disabled @endif>
+            <i class="bi bi-x-square agregar mx-2" wire:click="BorrarBuscarID()"></i>
+            <div class="form-text"></div>
+            @error('buscarID')<error>{{ $message }}</error>@enderror
+        </div>
+
+        <!-- -------------------- Botón de buscar texto---------------------->
+        <div class="col-sm-12 col-md-3 form-group">
+            <br>
+            <button wire:click="BuscarID()" class="btn btn-primary" @if($campus =='a') disabled @endif>Buscar ID</button>
         </div>
 
         <div class="col-3">
@@ -121,7 +135,7 @@
                     </div>
                     <div>
                         <h3>{{ $campus }}</h3>
-                        @if($ejemplares){{ $ejemplares->count() }}@endif
+                        @if($ejemplares){{ $ejemplares->count() }} ejemplares @endif
                     </div>
                     <div class="table-responsive-sm">
                         <table class="table table-striped table-sm">
@@ -140,7 +154,7 @@
                                         <!-- ID -->
                                         <td style="font-size: 80%;">
                                             <a href="/ejem_inicio/{{ $e->ejm_id }}">
-                                                {{ $e->ejm_id }}
+                                                {{ str_pad($e->ejm_id,4,"0",STR_PAD_LEFT) }}
                                             </a>
                                         </td>
 

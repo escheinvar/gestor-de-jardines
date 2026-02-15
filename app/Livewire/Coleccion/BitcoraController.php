@@ -294,6 +294,11 @@ class BitcoraController extends Component
     }
 
     public function render() {
+        ######## Verifica que se tenga acceso al campus
+        $jard=ejemplares::where('ejm_id',$this->idEjem)->value('ejm_ccamsiglas');
+        if(!in_array($jard,session('jar'))){
+            redirect('/noauth/Solicita acceso al campus '.$jard);
+        }
         #############################################################
         ###### Carga los datos para la plantilla del menú de ejemplar
         $this->ejemplar=ejemplares::where('ejm_id',$this->idEjem)

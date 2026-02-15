@@ -3,14 +3,16 @@
 namespace App\Livewire\Coleccion;
 
 use App\Http\Controllers\Api\camellones;
+use App\Models\cat_camellones;
 use App\Models\cat_campus;
+use App\Models\ej_alias;
 use App\Models\ej_nombres_cientificos;
 use App\Models\ej_nombres_comunes;
-use App\Models\cat_camellones;
 use App\Models\ej_ubicaciones;
-use App\Models\ej_alias;
 use App\Models\ejemplares;
 use App\Models\imagenes;
+use App\Models\usr_roles;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class InicioController extends Component
@@ -173,6 +175,12 @@ class InicioController extends Component
 
 
     public function render(){
+        ######## Verifica que se tenga acceso al campus
+        $jard=ejemplares::where('ejm_id',$this->idEjem)->value('ejm_ccamsiglas');
+        if(!in_array($jard,session('jar'))){
+            redirect('/noauth/Solicita acceso al campus '.$jard);
+        }
+
         return view('livewire.coleccion.inicio-controller');
     }
 }
