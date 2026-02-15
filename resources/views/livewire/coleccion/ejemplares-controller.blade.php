@@ -28,7 +28,7 @@
         <!-- -------------------- Camellón ---------------------->
         <div class="col-sm-12 col-md-3 form-group">
             <label for="camellon" class="form-label">Camellón</label>
-            <select wire:model="camellon" wire:change="BuscaEnCamellon()" id="camellon" class="@error('camellon') is-invalid @enderror form-select" @if($campus =='') disabled @endif>
+            <select wire:model.live="camellon" wire:change="BuscaEnCamellon()" id="camellon" class="@error('camellon') is-invalid @enderror form-select" @if($campus =='') disabled @endif>
                 @if($campus != '')
                     <option value="">Indica un camellón</option>
                     @if($camellones->count() > 0)
@@ -50,13 +50,11 @@
             <div class="form-text"></div>
             @error('camellon')<error>{{ $message }}</error>@enderror
         </div>
-    </div>
 
-    <div class="row py-3">
         <!-- -------------------- Buscar por Colección ---------------------->
         <div class="col-sm-12 col-md-3 form-group">
             <label for="coleccion" class="form-label">Colección:</label>
-            <select wire:model="coleccion" wire:change="BuscaEnCamellon()" id="coleccion" class="@error('coleccion') is-invalid @enderror form-select" @if($campus =='' or $camellon=='') disabled @endif>
+            <select wire:model.live="coleccion" wire:change="BuscaEnCamellon()" id="coleccion" class="@error('coleccion') is-invalid @enderror form-select" @if($campus =='' or $camellon=='') disabled @endif>
                 <option value="">Todas</option>
                 @foreach ($colecciones as $col)
                     <option value="{{ $col->ccol_coleccion }}">{{ $col->ccol_coleccion }}</option>
@@ -66,7 +64,9 @@
             <div class="form-text"></div>
             @error('coleccion')<error>{{ $message }}</error>@enderror
         </div>
+    </div>
 
+    <div class="row py-3">
         <!-- -------------------- Buscar por texto de Familia, Género /sp Alias ---------------------->
         <div class="col-sm-12 col-md-3 form-group">
             <label for="buscar" class="form-label">Familia, nombre científico o común o alias:</label>
@@ -74,6 +74,8 @@
             <div class="form-text">Usa % como comodín (xej: agave% para todos los agaves).</div>
             @error('buscar')<error>{{ $message }}</error>@enderror
         </div>
+
+
 
         <!-- -------------------- Botón de buscar ---------------------->
         <div class="col-sm-12 col-md-3 form-group">

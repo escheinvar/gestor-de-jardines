@@ -148,15 +148,6 @@ class EjemplaresController extends Component
     }
 
     public function BuscaEnCamellon(){
-        // ##### Define variable de camellón
-        // if($this->camellon=='Todos' or $this->camellon==''){
-        //     $came='%';
-        // }elseif($this->camellon=='NingunCamellon'){
-        //     $came='%';
-        // }else{
-        //     $came=$this->camellon;
-        // }
-
         ###### Ejecuta la búsqueda en BD
         if($this->camellones->count() > '0' AND $this->camellon != ''){
             $busqueda=ejemplares::query()
@@ -185,7 +176,7 @@ class EjemplaresController extends Component
             }elseif($this->camellon == 'Ninguno'){
                 $busqueda->whereNull('sig_id');
             }
-;
+
             ###### Continúa búsqueda de Colecciones
             if($this->coleccion != '' and $this->coleccion != 'NingunaColeccion'){
                 $busqueda->whereHas('colecciones',function($q){
@@ -200,15 +191,18 @@ class EjemplaresController extends Component
             ##### Continúa búsqueda por texto Familia, nombre científico
             ##### nombre común o alias.
             if($this->buscar != ''){
-                $busqueda->whereHas('nombreCientifico',function($q){
-                    $q->where('scn_familia','ilike',$this->buscar)
-                      ->orWhere('scn_name','ilike',$this->buscar);
-                })
-                ->orWhereHas('nombresComunes',function($q){
-                    $q->where('con_nombre','ilike',$this->buscar);
-                })
-                ->orWhereHas('alias',function($q){
-                    $q->where('alias_nombre','ilike',$this->buscar);
+                $busqueda->where(function($b){
+                    return $b
+                    ->whereHas('nombreCientifico',function($q){
+                        $q->where('scn_familia','ilike',$this->buscar)
+                        ->orWhere('scn_name','ilike',$this->buscar);
+                    })
+                    ->orWhereHas('nombresComunes',function($q){
+                        $q->where('con_nombre','ilike',$this->buscar);
+                    })
+                    ->orWhereHas('alias',function($q){
+                        $q->where('alias_nombre','ilike',$this->buscar);
+                    });
                 });
 
             }
@@ -218,27 +212,21 @@ class EjemplaresController extends Component
 
             ############################################################
             ######################################## Carga el Mapa
-            if($this->camellon == 'NingunCamellon'){
-                $ejmsMapa='null';
-                $this->dispatch('CierraMapa');
-            }else{
-                if($this->camellon=='Todos'){
-                    $where1='sig_ccamsiglas'; $where2=$this->campus;
-                }else{
-                    $where1='sig_camcamellon'; $where2=$this->camellon;
-                }
-                $ejmsMapa=ej_ubicaciones::where($where1, $where2)
-                    ->where('sig_act','1')
-                    ->where('sig_del','0')
-                    ->leftJoin('imagenes', function($join){
-                        $join->on('sig_ejmid','=','img_ejmid')
-                            ->where('img_cimgtipo','ejemplar_portada')
-                            ->where('img_act','1')
-                            ->where('img_del','0')
-                            ->limit(1);
-                    })
-                    ->get();
-            }
+
+            // $SigIdGanones=;
+
+            $ejmsMapa=ej_ubicaciones::whereIn('sig_id',  $this->ejemplares->pluck('sig_id')->toArray() )
+            ->where('sig_act','1')
+                ->where('sig_del','0')
+                ->leftJoin('imagenes', function($join){
+                    $join->on('sig_ejmid','=','img_ejmid')
+                        ->where('img_cimgtipo','ejemplar_portada')
+                        ->where('img_act','1')
+                        ->where('img_del','0')
+                        ->limit(1);
+                })
+                ->get();
+            // dd($SigIdGanones,$this->ejemplares);
             ############### Carga mapa
             $this->MapaCamellones($this->camellones,'0', 'null',   $ejmsMapa,'null','1');
         }
