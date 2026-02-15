@@ -12,7 +12,7 @@
     <!-- ------------------------------------------------------------------------- -->
     <!-- ----------------------- CAMPOS DE BÚSQUEDA------------------------------- -->
     <div class="row py-3">
-        <!-- Campus -->
+        <!-- -------------------- Campus ---------------------->
         <div class="col-sm-12 col-md-3 form-group">
             <label for="campus" class="form-label">Campus</label>
             <select wire:model.live="campus" wire:change="BuscaEnCampus()" id="campus" class="@error('campus') is-invalid @enderror form-select" type="text">
@@ -25,15 +25,14 @@
             @error('campus')<error>{{ $message }}</error>@enderror
         </div>
 
-        <!-- Camellón -->
+        <!-- -------------------- Camellón ---------------------->
         <div class="col-sm-12 col-md-3 form-group">
             <label for="camellon" class="form-label">Camellón</label>
             <select wire:model="camellon" wire:change="BuscaEnCamellon()" id="camellon" class="@error('camellon') is-invalid @enderror form-select" @if($campus =='') disabled @endif>
                 @if($campus != '')
                     <option value="">Indica un camellón</option>
                     @if($camellones->count() > 0)
-                        <option value="TodosLosCamellones">Todos</option>
-                        <option value="NingunCamellon">Sin ubicación</option>
+                        <option value="Todos">Cualquiera</option>
                     @endif
                     @foreach ($camellones as $c)
                         <option value="{{ $c->cam_camellon }}">
@@ -41,8 +40,9 @@
                             @if($c->cam_mapa =='')[** NO GEOGRÁFICO**]@endif
                         </option>
                     @endforeach
-
-
+                    @if($camellones->count() > 0)
+                        <option value="Ninguno">Sin camellón</option>
+                    @endif
                 @else
                     <option value="">Indica un campus primero</option>
                 @endif
@@ -53,32 +53,33 @@
     </div>
 
     <div class="row py-3">
-        <!-- Buscar por texto de Familia, Género /sp Alias -->
-        <div class="col-sm-12 col-md-3 form-group">
-            <label for="" class="form-label">Familia, nombre científico o común o alias:</label>
-            <input wire:model="" id="" class="@error('') is-invalid @enderror form-control" @if($campus =='') disabled @endif>
-            <div class="form-text"></div>
-            @error('')<error>{{ $message }}</error>@enderror
-        </div>
-
-        <!-- Buscar por Colección -->
+        <!-- -------------------- Buscar por Colección ---------------------->
         <div class="col-sm-12 col-md-3 form-group">
             <label for="coleccion" class="form-label">Colección:</label>
-            <select wire:model="coleccion" id="coleccion" class="@error('coleccion') is-invalid @enderror form-select" @if($campus =='') disabled @endif>
+            <select wire:model="coleccion" wire:change="BuscaEnCamellon()" id="coleccion" class="@error('coleccion') is-invalid @enderror form-select" @if($campus =='' or $camellon=='') disabled @endif>
                 <option value="">Todas</option>
                 @foreach ($colecciones as $col)
-                    <option value="{{ $col->colsej_name }}">{{ $col->colsej_name }}</option>
+                    <option value="{{ $col->ccol_coleccion }}">{{ $col->ccol_coleccion }}</option>
                 @endforeach
-                <option value="NingunaColeccion">Sin colección asignada</option>
+                {{-- <option value="NingunaColeccion">Sin colección asignada</option> --}}
             </select>
             <div class="form-text"></div>
             @error('coleccion')<error>{{ $message }}</error>@enderror
         </div>
 
-        <!-- Botón de buscar -->
+        <!-- -------------------- Buscar por texto de Familia, Género /sp Alias ---------------------->
+        <div class="col-sm-12 col-md-3 form-group">
+            <label for="buscar" class="form-label">Familia, nombre científico o común o alias:</label>
+            <input wire:model.live="buscar" id="buscar" class="@error('buscar') is-invalid @enderror form-control" @if($campus =='' or $camellon=='') disabled @endif>
+            <div class="form-text">Usa % como comodín (xej: agave% para todos los agaves).</div>
+            @error('buscar')<error>{{ $message }}</error>@enderror
+        </div>
+
+        <!-- -------------------- Botón de buscar ---------------------->
         <div class="col-sm-12 col-md-3 form-group">
             <br>
-            <button wire:click="BuscaEnEjemplares()" class="btn btn-primary" @if($campus =='') disabled @endif>Buscar</button>
+            <i class="bi bi-x-square agregar mx-2" wire:click="BorrarBuscar()"></i>
+            <button wire:click="BuscaEnCamellon()" class="btn btn-primary" @if($campus =='' or $camellon=='' or $buscar=='') disabled @endif>Buscar</button>
         </div>
 
         <div class="col-3">
@@ -118,6 +119,7 @@
                     </div>
                     <div>
                         <h3>{{ $campus }}</h3>
+                        @if($ejemplares){{ $ejemplares->count() }}@endif
                     </div>
                     <div class="table-responsive-sm">
                         <table class="table table-striped table-sm">
