@@ -120,7 +120,7 @@ $this->ejemplar_ubica = ej_ubicaciones::where('sig_ejmid',$this->idEjem)
             <div class="col-sm-6 col-md-3" style="vertical-align: top;">
                 <div style="font-size: 150%;">
                     <div>
-                        <b>Ejemplar ID  {{ $idEjem }} </b>
+                        <b>Ejemplar ID  {{str_pad($idEjem,4,"0",STR_PAD_LEFT) }} </b>
                     </div>
                     <div class="@if($ejemplar->ejm_bitid =='0') error2 @endif">
                         @if($ejemplar->ejm_bitid=='0')
