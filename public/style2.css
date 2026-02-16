@@ -556,7 +556,8 @@ div.elemento {
 }
 
 /*=======================================*/
-/* Caracteres de texto para traductores */
+/* Caracteres especiales de texto para
+traductores */
 .ar{
     border-top: 1px solid black;
 }
