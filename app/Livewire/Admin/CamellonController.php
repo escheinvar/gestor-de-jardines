@@ -4,6 +4,8 @@ namespace App\Livewire\Admin;
 
 use App\Models\cat_camellones;
 use App\Models\cat_campus;
+use App\Models\ej_ubicaciones;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\WithFileUploads;
@@ -14,20 +16,12 @@ class CamellonController extends Component
 
     public $camID, $campus, $came, $campusID;
     public $jardin, $campusName, $NombreCorto, $NombreLargo, $ZonaCorto, $ZonaLargo, $notas;
+    public $NumEjsCame;
     public $geojson,$NvoGeoJson, $color, $xmin, $xmax, $ymin, $ymax;
 
     public $temp;
-    public function MapaCamellones($datos,$streetMap,$DestacaId){
-        ##### Esta función requiere $datos, con la seleccion de cat_camellon a mapear
-        ##### $streetMap=1 como binario 0, 1 indicando si aparece fondo de StreeMap (1) o no (0)
-        ##### $DestacaId contiene null ó cam_id. Cuando null, muestra todo $datos, pero cuando
-        ##### es igial a cam_id, muestra $datos en gris y destaca y centra cam_id
-        // $streetMap='1';
-        // $datos=cat_camellones::join('cat_campus','cam_ccamid','=','ccam_id')
-        //     ->where('ccam_siglas',$this->CampusSelected)
-        //     ->get();
-        // $DestacaId=30;
 
+    public function MapaCamellones($datos,$streetMap,$DestacaId){
         ###### Calcula X y Y inicial (para visualizar el mapa)
         if($DestacaId==null){
             $centrar=$datos;
@@ -68,7 +62,7 @@ class CamellonController extends Component
     }
 
     public function mount(string $camID){
-        ###### Carga de datos para caso nuevo
+        ###### Carga de datos para caso nuevo camellón
         if(preg_match('/nuevo_.*/',$camID) ){
             $this->camID='nuevo';                   ##### IOndicador de nuevo o edición
             $this->came=[]; #$this->cam=collect();  ##### Nombre del camellón
@@ -77,7 +71,8 @@ class CamellonController extends Component
             ##### variables del formulario:
             $this->jardin=cat_campus::where('ccam_siglas',$this->campus)->join('cat_jardines','ccam_cjarid','=','cjar_id')->value('cjar_name'); ##### Nombre corto del campus
             $this->campusName=cat_campus::where('ccam_siglas',$this->campus)->value('ccam_name'); ##### Nombre completo del campus
-            $this->NombreCorto=$this->campus."_".cat_camellones::max('cam_id')+1;;
+            // $this->NombreCorto=$this->campus."_".cat_camellones::max('cam_id')+1;
+            $this->NombreCorto='';
             $this->NombreLargo='';
             $this->ZonaCorto='';
             $this->ZonaLargo='';
@@ -85,7 +80,7 @@ class CamellonController extends Component
             $this->color="#F54927";
             // $this->reset(['NombreCorto','NombreLargo','ZonaCorto','ZonaLargo','notas','geojson','xmin','xmax','ymin','ymax']);
 
-        ##### Carga de datos para edición de existente
+        ##### Carga de datos para caso de edición de camellón existente
         }else{
             ##### Carga variables de url
             $this->camID=$camID;  #### contiene el id del camellón
@@ -123,32 +118,48 @@ class CamellonController extends Component
     }
 
     public function crearDatos(){
+        ###### Verifica la construcción correcta del nombre del camellón
+        ###### (debe incluir el prefijo del jardín y ser único.)
+        if($this->NombreCorto==''){$this->NombreCorto=$this->campus."_".cat_camellones::max('cam_id')+1;}
+        if(!preg_match('/^'.$this->campus.'_/', $this->NombreCorto)){$this->NombreCorto=$this->campus."_".$this->NombreCorto;}
+
         $this->validate([
             'NombreCorto'=>'required|unique:cat_camellones,cam_camellon',
-        ]);
-        if($this->NombreCorto==''){$this->NombreCorto=$this->campus."_".cat_camellones::max('cam_id')+1;}
-            if($this->color==''){$this->color="#F54927";}
-            $NvoReg=cat_camellones::create([
-                'cam_id'=>cat_camellones::max('cam_id')+1,
-                'cam_ccamid'=>$this->campusID,
-                'cam_camellon'=>$this->NombreCorto,
-                'cam_camellonname'=>$this->NombreLargo, #no
-                'cam_zona'=>$this->ZonaCorto, #no
-                'cam_zonaname'=>$this->ZonaLargo, #no
-                'cam_color'=>$this->color,
-                'cam_notas'=>$this->notas, #no
-                // 'cam_mapa'=>$mapita,
-                // 'cam_mapa'=>json_encode($geoJsonData),
-                'cam_xmin'=>$this->xmin,
-                'cam_xmax'=>$this->xmax,
-                'cam_ymin'=>$this->ymin,
-                'cam_ymax'=>$this->ymax,
+            // 'NombreCorto'=>['required', ##### Validación de único indistinto a mayúsculas.
+            //         Rule::unique('cat_camellones','cam_camellon')->where(function($query) {
+            //             $query->whereRaw("LOWER(cam_camellon) = ?", strtolower($this->NombreCorto));
+            //         }),
+            //     ],
             ]);
-            ###### redirecciona para continuar EDITÁNDOLO
-            redirect('/camellon/'.$NvoReg->cam_id);
+        #dd('crea camellon',$this->NombreCorto, strtolower($this->NombreCorto));
+        ##### Crea el nuevo camellón
+        if($this->color==''){$this->color="#F54927";}
+        $NvoReg=cat_camellones::create([
+            'cam_id'=>cat_camellones::max('cam_id')+1,
+            'cam_ccamid'=>$this->campusID,
+            'cam_camellon'=>$this->NombreCorto,
+            'cam_camellonname'=>$this->NombreLargo, #no
+            'cam_zona'=>$this->ZonaCorto, #no
+            'cam_zonaname'=>$this->ZonaLargo, #no
+            'cam_color'=>$this->color,
+            'cam_notas'=>$this->notas, #no
+            // 'cam_mapa'=>$mapita,
+            // 'cam_mapa'=>json_encode($geoJsonData),
+            'cam_xmin'=>$this->xmin,
+            'cam_xmax'=>$this->xmax,
+            'cam_ymin'=>$this->ymin,
+            'cam_ymax'=>$this->ymax,
+        ]);
+        ###### redirecciona para continuar EDITÁNDOLO
+        redirect('/camellon/'.$NvoReg->cam_id);
     }
 
     public function guardarDatos(){
+        ###### Verifica la construcción correcta del nombre del camellón
+        ###### (debe incluir el prefijo del jardín y ser único.)
+        if($this->NombreCorto==''){$this->NombreCorto=$this->campus."_".cat_camellones::max('cam_id')+1;}
+        if(!preg_match('/^'.$this->campus.'_/', $this->NombreCorto)){$this->NombreCorto=$this->campus."_".$this->NombreCorto;}
+        ##### Valida cuestionario
         $this->validate([
             'jardin'=>'required',
             'campusName'=>'required',
@@ -168,7 +179,24 @@ class CamellonController extends Component
         redirect()->route('camellones', ['CampusSelected'=>'JebOax']);
     }
 
+    public function EliminarCamellon(){
+        if($this->NumEjsCame > '0'){
+            $this->dispatch('AvisoCamellon',msj:'No se puede eliminar el camellón hasta que reasignes los '.$this->NumEjsCame.' ejemplares que tiene. Se aborta la operación');
+            return;
+        }else{
+            cat_camellones::where('cam_id',$this->camID)->update([
+                'cam_camellon'=>$this->NombreCorto.'--Borrado'.date('Y-m-d_H:i'),
+                'cam_del'=>'1',
+            ]);
+            redirect('/camellones');
+        }
+    }
+
     public function render(){
+        ##### Verifica accesos correctos
+        if(!array_intersect(['admin-campus'],session('rol'))){
+            redirect('/noauth/Solo admin-cammpus');
+        }
         ##### Si se carga un nuevo mapa geoJson, lo sube a la base:
         if($this->NvoGeoJson != ''){
             ##### Lee json
@@ -217,7 +245,17 @@ class CamellonController extends Component
             $campusID=cat_camellones::where('cam_id', $this->camID)->value('cam_ccamid');
             $datos=cat_camellones::where('cam_ccamid',$campusID)->get();
             $this->MapaCamellones($datos,'0',$this->camID);
+
+            ##### Calcula número de ejemplares asignados al camellón
+            $this->NumEjsCame=ej_ubicaciones::where('sig_camid',$this->camID)
+                ->where('sig_act','1')
+                ->where('sig_del','0')
+                ->count();
+        }else{
+            $this->NumEjsCame='0';
         }
+
+
 
         return view('livewire.admin.camellon-controller');
     }

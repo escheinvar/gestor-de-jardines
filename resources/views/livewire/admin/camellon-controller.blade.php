@@ -12,7 +12,7 @@
     @if($camID=='nuevo')
         <h3>Ingresando nuevo camellón<br> al campus {{ $campus }}</h3>
     @else
-        <h3>Editando camellón {{ $came }}<br> en campus {{ $campus }} </h3>
+        <h3>Editando camellón {{ $came }}</h3>
     @endif
 
 
@@ -43,34 +43,6 @@
                             @error('NvoGeoJson')<error>{{ $message }}</error>@enderror
                             @error('geojson')<error>{{ $message }}</error>@enderror
                         </div>
-                        <!-- xmin --->
-                        {{-- <div class="col-sm-6 col-md-6 form-group">
-                            <label for="xmin" class="form-label">Longitud (x) mínima</label>
-                            <input wire:model="xmin" id="xmin" type="number" class="form-control" @if($camID=='nuevo') disabled @endif>
-                            <div class="form-text">Valor mínimo de coordenadas de longitud (x) de la extensión del polígono del camellón, en sistema decimal (de -180.0 a 180.0).</div>
-                            @error('xmin')<error>{{ $message }}</error>@enderror
-                        </div>
-                        <!-- xmax -->
-                        <div class="col-sm-6 col-md-6 form-group">
-                            <label for="xmax" class="form-label">Longitud (x) máxima</label>
-                            <input wire:model="xmax" id="xmax" type="number" class="form-control" @if($camID=='nuevo') disabled @endif>
-                            <div class="form-text">Valor máximo de coordenadas de longitud (x) de la extensión del polígono del camellón, en sistema decimal (de -180.0 a 180.0).</div>
-                            @error('xmax')<error>{{ $message }}</error>@enderror
-                        </div>
-                        <!-- ymin -->
-                        <div class="col-sm-6 col-md-6 form-group">
-                            <label for="ymin" class="form-label">Latitud (y) mínima</label>
-                            <input wire:model="ymin" id="ymin" type="number" class="form-control" @if($camID=='nuevo') disabled @endif>
-                            <div class="form-text">Valor mínimo de coordenadas de latitud (y) de la extensión del polígono del camellón, en sistema decimal (de -90.0 a 90.0).</div>
-                            @error('ymin')<error>{{ $message }}</error>@enderror
-                        </div>
-                        <!-- ymax -->
-                        <div class="col-sm-6 col-md-6 form-group">
-                            <label for="ymax" class="form-label">Latitud (y) máxima</label>
-                            <input wire:model="ymax" id="ymax" type="number" class="form-control" @if($camID=='nuevo') disabled @endif>
-                            <div class="form-text">Valor máximo de coordenadas de longitud (x) de la extensión del polígono del camellón, en sistema decimal (de -90.0 a 90.0).</div>
-                            @error('ymax')<error>{{ $message }}</error>@enderror
-                        </div> --}}
                     </div>
 
                 @endif
@@ -94,11 +66,14 @@
                     @error('campusName')<error>{{ $message }}</error>@enderror
                     <div class="form-text"></div>
                 </div>
-                <div class="col-sm-12 col-md-6 form-group">
+                <div class="col-sm-12 col-md-12 form-group">
                     <label for="NombreCorto" class="form-label">Nombre corto del camellón<red>*</red></label>
-                    <input wire:model.live="NombreCorto" id="NombreCorto"  type="text" class="form-control @error('NombreCorto') error @enderror" >
+                    <input wire:model.live="NombreCorto" style="width:30%;" id="NombreCorto"  type="text" class="form-control @error('NombreCorto') error @enderror" >
                     @error('NombreCorto')<error>{{ $message }}</error>@enderror
-                    <div class="form-text">Nombre de pocas letras (sin espacios ni caracteres)  <b>y único</b> que utilizará el sistema para identificar el camellón. Recomendamos usar como prefijo las siglas del jardín ej: JebOax_A1 </div>
+                    <div class="form-text">
+                        Nombre <b>corto</b> (pocas letras y sin espacios ni caracteres) <b>y único</b> que utilizará el sistema para identificar el camellón.
+                        <span style="font-weight:bolder;">El sistema agregará el prefijo <b>{{ $campus }}_</b> al nombre que escribas</span>.
+                    </div>
                 </div>
                 @if($camID != 'nuevo')
                     <div class="col-sm-12 col-md-6 form-group">
@@ -125,6 +100,7 @@
                         @error('notas')<error>{{ $message }}</error>@enderror
                         <div class="form-text"></div>
                     </div>
+
                     <!-- color -->
                     <div class="col-sm-12 col-md-6 form-group">
                         <label for="color" class="form-label">Color predeterminado</label>
@@ -132,6 +108,15 @@
                         @error('color')<error>{{ $message }}</error>@enderror
                         <div class="form-text">Determina un color predeterminado para distinguir el polígono</div>
                     </div>
+
+                    <!-- eliminar camellón -->
+                    <div class="col-sm-12 col-md-6 form-group">
+                        <b>Número de ejemplares asignados al camellón:</b> {{ $NumEjsCame }}<br>
+                        @if(in_array('admin-campus',session('rol')))
+                            <i class="bi bi-trash PaClick" wire:click="EliminarCamellon" wire:confirm="Estás por eliminar el camellón, con su polígono y toda su información asociada. ¿Quieres continuar?"> Eliminar completamente el camellón</i>
+                        @endif
+                    </div>
+
                 @endif
             </div>
             <div class="row my-3">
@@ -268,6 +253,10 @@
         Livewire.on('CierraMapa', (event) => {
             $("#map").replaceWith(`<div id="map">`)
         });
+
+        Livewire.on('AvisoCamellon',()=>{
+            alert(event.detail.msj);
+        })
 
     </script>
 

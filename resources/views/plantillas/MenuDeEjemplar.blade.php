@@ -108,6 +108,10 @@ $this->ejemplar_ubica = ej_ubicaciones::where('sig_ejmid',$this->idEjem)
             </li>
         @endif
     </ul>
+    <div style="float: right;">
+        <i class="bi bi-arrow-left-square-fill mx-2 PaClick" style="color:#87796d;"></i>
+        <i class="bi bi-arrow-right-square-fill mx-2 PaClick" style="color:#87796d;"></i>
+    </div>
 
 
 

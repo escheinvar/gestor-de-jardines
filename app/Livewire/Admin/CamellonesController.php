@@ -86,6 +86,11 @@ class CamellonesController extends Component
 
 
     public function render() {
+        ##### Verifica accesos correctos
+        if(!array_intersect(['admin-campus'],session('rol'))){
+            redirect('/noauth/Solo admin-cammpus');
+        }
+
         ###### Genera array con siglas de campus a los que
         ###### puede acceder el usr
         $campu=usr_roles::where('rol_usrid',Auth::user()->id)
