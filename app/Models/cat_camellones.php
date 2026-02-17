@@ -42,6 +42,11 @@ class cat_camellones extends ApiModel
     //     'cam_mapa' => 'json',
     // ];
 
+    ###### Esto convierte automáticamente el JSON de la BD a Array en PHP y viceversa
+    protected $casts = [
+        'cam_mapa' => 'array',
+    ];
+
     public function campus(){
         return $this->belongsTo(cat_campus::class, 'cam_ccamid');
     }

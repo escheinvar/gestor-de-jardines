@@ -21,10 +21,11 @@
         <table class="table table-striped">
             <thead>
                 <tr>
+                    <th>Jardín</th>
                     <th>Nombre corto del campus </th>
                     <th>Siglas del campus</th>
                     <th>Nombre completo del campus</th>
-                    <th>Jardín al que pertenece (Siglas) [tipo]</th>
+                    <th>Tipo</th>
                     <th>Edo / mpio</th>
                     <th></th>
                 </tr>
@@ -32,6 +33,10 @@
             <tbody>
                 @foreach ($campus as $c)
                     <tr wire:click="AbreElModalCampus('{{ $c->ccam_id }}')" class="PaClick @if($c->ccam_act=='0') inact @endif">
+                        <td>
+                            {{ $c->jardin->cjar_name }}<br>
+                            <small>[{{ $c->jardin->cjar_siglas }}]</small>
+                        </td>
                         <td>
                             @if( $c->cjar_logo =='')
                                 <img src="/avatar/jardines/default.png" style="width:30px; margin-right:5px;">
@@ -48,9 +53,7 @@
                             {{ $c->ccam_nombre }}
                         </td>
                         <td>
-                            {{ $c->cjar_name }}
-                            ({{ $c->cjar_siglas }})
-                            [{{ $c->cjar_tipo }}]
+                            {{ $c->cjar_tipo }}
 
                         </td>
                         <td>

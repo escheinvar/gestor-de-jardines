@@ -152,7 +152,8 @@ class CampusYjardinesController extends Component
         }
 
         $campus=cat_campus::join('cat_jardines','ccam_cjarid','=','cjar_id')
-            ->orderBy('ccam_name','asc')
+            ->orderBy('ccam_id','asc')
+            ->with('jardin')
             ->get();
 
         $jardines=cat_jardines::all();

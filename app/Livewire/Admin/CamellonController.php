@@ -201,6 +201,14 @@ class CamellonController extends Component
         if($this->NvoGeoJson != ''){
             ##### Lee json
             $mapita=$this->NvoGeoJson->get();
+            //--------------------------------- Inicia de juego
+
+
+
+
+
+            //--------------------------------- Fin de juego
+            dd($mapita);
             $geoJsonData= json_decode($mapita,true);
             $geoJsonData['features'][0]['properties']['SisGesJarId']=$this->camID;
             $geoJsonData['features'][0]['properties']['SisGesJarCamellon']=$this->NombreCorto;
