@@ -191,7 +191,8 @@
             if(event.camellones != 'null'){
                 event.camellones.forEach(function(mapita) {
                     ///// convierte texto recibido en geoJson
-                    var geojsonFeature =JSON.parse(mapita.cam_mapa)
+                    // var geojsonFeature =JSON.parse(mapita.cam_mapa)
+                    var geojsonFeature =mapita.cam_mapa
                     ///// Detecta color
                     if(event.DestacaCamId != 'null'){
                         if(mapita.cam_id == event.DestacaCamId){

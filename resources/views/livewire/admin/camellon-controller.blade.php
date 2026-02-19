@@ -219,7 +219,8 @@
             event.mapas.forEach(function(mapita) {
                 console.log("va3:",mapita.cam_id);
                 ///// convierte texto recibido en geoJson
-                var geojsonFeature =JSON.parse(mapita.cam_mapa)
+                // var geojsonFeature =JSON.parse(mapita.cam_mapa)
+                var geojsonFeature =mapita.cam_mapa
                 ///// Detecta color
                 if(event.DestacaId != null){
                     if(mapita.cam_id == event.DestacaId){
